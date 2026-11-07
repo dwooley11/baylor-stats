@@ -1,7 +1,7 @@
 {
  "source": "https://247sports.com/college/baylor/team/baylor-bears-basketball-26/roster/ (one page per season, ?year=2019 ... current)",
  "pulled": "2026-11-07",
- "note": "247Sports rating (prospect grade) from each season's Baylor roster page. Stars from 247's scale: 98+ five, 90-97 four, 80-89 three, 70-79 two. Rows 247 lists without a linked profile or school carry another row's rating on the page, so those are treated as unrated.",
+ "note": "Prospect grades from 247Sports. rating = 247Sports high school rating (0-100) from each season's Baylor roster page; hsComposite = 247Sports Composite high school rating (0-1) where only that is listed; transfer.rating = 247Sports transfer portal rating (0-100) from Baylor's Commits page for that year. Stars: rating/transfer 98+ five, 90-97 four, 80-89 three, 70-79 two; Composite .9834+ five, .8900+ four, .8000+ three. Roster rows without a linked profile repeat another row's rating, so those are treated as unrated.",
  "players": [
   {
    "name": "Adam Flagler",
@@ -11,7 +11,12 @@
     "2019-20",
     "2020-21",
     "2022-23"
-   ]
+   ],
+   "transfer": {
+    "year": 2019,
+    "from": "Presbyterian",
+    "rating": null
+   }
   },
   {
    "name": "Andre Iguodala II",
@@ -37,7 +42,12 @@
    "school": "Central Hardin",
    "seasons": [
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Liberty",
+    "rating": 88
+   }
   },
   {
    "name": "Caden Powell",
@@ -46,7 +56,12 @@
    "seasons": [
     "2025-26",
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Rice",
+    "rating": 88
+   }
   },
   {
    "name": "Caleb Lohner",
@@ -55,7 +70,12 @@
    "seasons": [
     "2022-23",
     "2023-24"
-   ]
+   ],
+   "transfer": {
+    "year": 2022,
+    "from": "BYU",
+    "rating": 88
+   }
   },
   {
    "name": "Cameron Carr",
@@ -82,7 +102,12 @@
    "seasons": [
     "2021-22",
     "2022-23"
-   ]
+   ],
+   "transfer": {
+    "year": 2021,
+    "from": "Fairmont State",
+    "rating": null
+   }
   },
   {
    "name": "Daniel Skillings",
@@ -90,7 +115,12 @@
    "school": "Roman Catholic",
    "seasons": [
     "2025-26"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Cincinnati",
+    "rating": 91
+   }
   },
   {
    "name": "Dantwan Grimes",
@@ -164,7 +194,12 @@
    "school": "McLennan C.C.",
    "seasons": [
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "UAB",
+    "rating": 87
+   }
   },
   {
    "name": "Flo Thamba",
@@ -191,7 +226,12 @@
    "school": "Winter Haven",
    "seasons": [
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Yale",
+    "rating": 91
+   }
   },
   {
    "name": "Isaac Williams IV",
@@ -200,7 +240,12 @@
    "seasons": [
     "2025-26",
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Texas A&M-Corpus Christi",
+    "rating": 86
+   }
   },
   {
    "name": "JJ White",
@@ -208,7 +253,12 @@
    "school": "Norman North",
    "seasons": [
     "2025-26"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Omaha",
+    "rating": 91
+   }
   },
   {
    "name": "Ja'Kobe Walter",
@@ -250,7 +300,13 @@
    "seasons": [
     "2022-23",
     "2023-24"
-   ]
+   ],
+   "transfer": {
+    "year": 2022,
+    "from": "West Virginia",
+    "rating": 90
+   },
+   "hsComposite": 0.9649
   },
   {
    "name": "Jalen Celestine",
@@ -258,7 +314,12 @@
    "school": "Long Island Lutheran",
    "seasons": [
     "2024-25"
-   ]
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "California",
+    "rating": null
+   }
   },
   {
    "name": "James Akinjo",
@@ -266,7 +327,12 @@
    "school": "Salesian",
    "seasons": [
     "2021-22"
-   ]
+   ],
+   "transfer": {
+    "year": 2021,
+    "from": "Arizona",
+    "rating": null
+   }
   },
   {
    "name": "James Goodis",
@@ -309,7 +375,12 @@
    "seasons": [
     "2023-24",
     "2024-25"
-   ]
+   ],
+   "transfer": {
+    "year": 2023,
+    "from": "VCU",
+    "rating": 91
+   }
   },
   {
    "name": "Jeremy Roach",
@@ -317,7 +388,12 @@
    "school": "Paul VI Catholic",
    "seasons": [
     "2024-25"
-   ]
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "Duke",
+    "rating": 96
+   }
   },
   {
    "name": "Jeremy Sochan",
@@ -336,7 +412,12 @@
     "2020-21",
     "2022-23",
     "2023-24"
-   ]
+   ],
+   "transfer": {
+    "year": 2019,
+    "from": "UNLV",
+    "rating": null
+   }
   },
   {
    "name": "Jordan Turner",
@@ -366,7 +447,12 @@
    "seasons": [
     "2025-26",
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "High Point",
+    "rating": 90
+   }
   },
   {
    "name": "Kaleb Jackson",
@@ -382,7 +468,12 @@
    "school": "Long Island Lutheran",
    "seasons": [
     "2026-27"
-   ]
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Penn State",
+    "rating": 94
+   }
   },
   {
    "name": "Kendall Brown",
@@ -521,7 +612,12 @@
    "school": "Germany",
    "seasons": [
     "2025-26"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Oregon State",
+    "rating": 95
+   }
   },
   {
    "name": "Miro Little",
@@ -537,7 +633,12 @@
    "school": null,
    "seasons": [
     "2024-25"
-   ]
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "Miami",
+    "rating": 97
+   }
   },
   {
    "name": "Obi Agbim",
@@ -545,7 +646,12 @@
    "school": "Rangeview",
    "seasons": [
     "2025-26"
-   ]
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Wyoming",
+    "rating": 95
+   }
   },
   {
    "name": "Obim Okeke",
@@ -570,7 +676,13 @@
    "school": "Oswego East",
    "seasons": [
     "2023-24"
-   ]
+   ],
+   "transfer": {
+    "year": 2023,
+    "from": "Toledo",
+    "rating": 94
+   },
+   "hsComposite": 0.8556
   },
   {
    "name": "Robert Wright III",
@@ -647,5 +759,9 @@
     "2022-23"
    ]
   }
+ ],
+ "sources": [
+  "https://247sports.com/college/baylor/team/baylor-bears-basketball-26/roster/?year=YYYY",
+  "https://247sports.com/college/baylor/season/YYYY-basketball/commits/"
  ]
 }
