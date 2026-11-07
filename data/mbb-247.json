@@ -1,0 +1,23 @@
+{
+  "source": "https://247sports.com/team/baylor-bears-basketball-26/roster/",
+  "season": "2026-27",
+  "pulled": "2026-11-07",
+  "note": "247Sports rating (prospect grade). Stars from 247's scale: 98+ five, 90-97 four, 80-89 three, 70-79 two.",
+  "players": [
+    {"name": "Juslin Bodo Bodo", "jersey": "21", "school": "SoCal Academy", "rating": 87},
+    {"name": "Isaac Celiscar", "jersey": "8", "school": "Winter Haven", "rating": 86},
+    {"name": "Evan Chatman", "jersey": "15", "school": "McLennan C.C.", "rating": null},
+    {"name": "Brett Decker Jr.", "jersey": "2", "school": "Central Hardin", "rating": 82},
+    {"name": "James Goodis", "jersey": "13", "school": null, "rating": null},
+    {"name": "Andre Iguodala II", "jersey": "7", "school": "Link Academy", "rating": 87},
+    {"name": "Tegra Makabu", "jersey": "22", "school": null, "rating": null},
+    {"name": "Dylan Mingo", "jersey": "5", "school": "Long Island Lutheran", "rating": 98},
+    {"name": "Kayden Mingo", "jersey": "4", "school": "Long Island Lutheran", "rating": 95},
+    {"name": "Maikcol Perez", "jersey": "20", "school": "Italy", "rating": 92},
+    {"name": "Drew Perry", "jersey": "3", "school": null, "rating": null},
+    {"name": "Caden Powell", "jersey": "44", "school": "Waco Midway", "rating": 85},
+    {"name": "Mayo Soyoye", "jersey": "46", "school": "Blair Academy", "rating": 89},
+    {"name": "Elijah Williams", "jersey": "0", "school": "TMI Episcopal", "rating": 96},
+    {"name": "Isaac Williams IV", "jersey": "10", "school": "Faith Family Academy of Oak Cliff", "rating": 83}
+  ]
+}

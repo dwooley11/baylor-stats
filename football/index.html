@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baylor Football</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F3EBD8;--paper:#FAF5E9;--ink:#1c1c1a;--muted:#6f6a5e;--line:#d9cfb8;--green:#154734;--green2:#2f6b52;--gold:#FFB81C;--sage:#9dbba9;--red:#c8553d;--blue:#7d9bd1;--opp:#3a3a3a;--opp2:#7a7670;--opp3:#a9a49b}
+*{box-sizing:border-box}
+html,body{margin:0;background:#11110f;color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:12px 10px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;background:#11110f;color:#f3ebd8;padding:6px 4px 10px}
+.brand{font-family:Oswald;font-weight:700;font-size:20px;letter-spacing:.5px}
+.brand span{color:var(--gold)}
+.src{font-size:11px;color:#a9a49b;text-align:right}
+.rf{margin-top:6px;background:transparent;border:1px solid #57544c;color:#f3ebd8;border-radius:999px;padding:4px 10px;font:600 11px Inter,system-ui,sans-serif;cursor:pointer}
+.rf:disabled{opacity:.5}
+#rfmsg{margin-top:3px;max-width:180px;margin-left:auto}
+.home{color:#a9a49b;font:500 11px Inter,system-ui,sans-serif;text-decoration:none;display:block;margin-bottom:2px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.chip{flex:0 0 auto;border:1px solid #3c3b36;background:#1d1c19;color:#e8e0cc;border-radius:999px;padding:6px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--gold);color:#1c1c1a;border-color:var(--gold)}
+.chip .r{font-weight:700;margin-left:4px}
+.card{background:var(--cream);border-radius:6px;margin:0 0 12px;overflow:hidden}
+.card .hd{background:#1d1c19;color:#f3ebd8;display:flex;justify-content:space-between;align-items:center;padding:9px 14px;font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.6px;text-transform:uppercase}
+.card .bd{padding:14px}
+.score{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.score h1{margin:0;font:700 clamp(22px,5.6vw,34px)/1.05 Oswald;text-transform:uppercase;letter-spacing:.3px}
+.wl{flex:0 0 auto;width:42px;height:42px;display:grid;place-items:center;font:700 24px Oswald,'Arial Narrow',sans-serif;color:#fff;background:var(--green)}
+.wl.L{background:var(--red)}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.rule{border:0;border-top:2px solid var(--ink);margin:12px 0}
+.label{font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.strong{font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase}
+/* scoring bars */
+.sb{display:grid;grid-template-columns:minmax(70px,110px) 1fr 1fr 44px;gap:6px 8px;align-items:center;margin-top:8px}
+.sb .tm{font:700 13px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
+.bar{display:flex;height:20px;align-items:stretch}
+.bar i{display:flex;align-items:center;justify-content:center;font:600 10px Inter,system-ui,sans-serif;color:#fff;font-style:normal;overflow:hidden;white-space:nowrap}
+.bar b{font:700 12px Oswald,'Arial Narrow',sans-serif;margin-left:5px;align-self:center}
+.sb .tot{font:700 22px Oswald,'Arial Narrow',sans-serif;text-align:right}
+.legend{display:flex;gap:10px;font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+/* svg */
+svg{display:block;width:100%;height:auto}
+.courts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.court-h{flex-direction:column;font-size:11px}}
+.court-h{display:flex;justify-content:space-between;font:700 12px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;margin-bottom:4px}
+/* compare */
+.cmp{display:grid;grid-template-columns:minmax(78px,1fr) minmax(60px,1.3fr) auto;gap:9px 10px;align-items:center}
+.cmp .m{line-height:1.15;font:600 13px Oswald,'Arial Narrow',sans-serif}
+.trk{position:relative;height:16px}
+.trk:before{content:"";position:absolute;left:0;right:0;top:7px;height:3px;background:#ddd3bd;border-radius:2px}
+.trk .seg{position:absolute;top:7px;height:3px;background:var(--green)}
+.trk .seg.bad{background:var(--red)}
+.trk .u,.trk .t{position:absolute;top:1px;width:15px;height:15px;border-radius:50%;margin-left:-7.5px}
+.trk .u{background:var(--cream);border:2px solid var(--ink)}
+.trk .t{background:var(--green)}
+.trk .t.bad{background:var(--red)}
+.trk .t.same{background:#9b958a}
+.vd{display:flex;justify-content:space-between;gap:8px;white-space:nowrap;min-width:128px;background:var(--green);color:#fff;padding:5px 8px;font:600 11px Inter,system-ui,sans-serif;border-radius:2px}
+.vd.bad{background:var(--red)}.vd.same{background:#a9a397}
+.vd .k{font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px}
+.sec{font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.4px;color:var(--green);text-transform:uppercase;margin:4px 0 8px}
+.sec small{color:var(--muted);font:500 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;margin-left:8px}
+/* box */
+.box{overflow-x:auto;-webkit-overflow-scrolling:touch;border:2px solid var(--ink);margin-bottom:14px}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:12px}
+th{background:var(--green);color:#fff;font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;padding:6px 5px;text-align:center}
+th:first-child{text-align:left}
+td{padding:4px 5px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+td:first-child{text-align:left;font:600 12px Oswald,'Arial Narrow',sans-serif;position:sticky;left:0;background:var(--cream)}
+td:first-child small{color:var(--muted);font:500 9px Oswald,'Arial Narrow',sans-serif;margin-left:3px}
+tr.bench td{border-top:0}
+tr.split td{border-top:2px solid var(--ink)}
+tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#ebe1c9}
+tr.tot td:first-child{background:#ebe1c9}
+tr.dnp td{color:#a39d90}
+.opp th{background:#1d1c19}
+.hot{background:#e9a594;border-radius:2px;padding:1px 4px}
+.cold{background:#a9bde4;border-radius:2px;padding:1px 4px}
+.hi{background:var(--ink);color:#fff;border-radius:2px;padding:1px 4px}
+.opp .hi{background:var(--ink)}
+.bay .hi{background:var(--green)}
+.pct{font-size:9px;color:var(--muted);margin-left:2px}
+.foot{font:500 9.5px Oswald,'Arial Narrow',sans-serif;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;margin-top:8px;line-height:1.4}
+/* watch */
+.big{font:700 44px/1 Oswald,'Arial Narrow',sans-serif;color:var(--green)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.f{border:1px solid var(--ink);background:transparent;padding:5px 10px;font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;cursor:pointer;border-radius:2px;color:var(--ink)}
+.f.on{background:var(--ink);color:var(--cream)}
+.wt td{font-size:12px;padding:4px 3px}.wt th{padding:6px 3px}
+.wt input{width:58px;padding:3px 4px;border:1px solid var(--line);background:var(--paper);font:500 12px Inter,system-ui,sans-serif;text-align:center;border-radius:2px}
+.wt tr.out td{color:#aaa49a}
+.tip{position:fixed;pointer-events:none;background:#1d1c19;color:#f3ebd8;font:500 11px Inter,system-ui,sans-serif;padding:5px 7px;border-radius:3px;display:none;z-index:9;max-width:220px}
+.seasons{display:grid;grid-template-columns:58px 1fr 78px;gap:6px 8px;align-items:center}
+.sl{font:600 12px Oswald,'Arial Narrow',sans-serif}
+.sbar{height:16px;background:#e6dcc4}
+.sbar i{display:block;height:100%;background:#8e8a80}
+.sbar i.cur{background:var(--green)}
+.sv{font-size:12px;white-space:nowrap}.sv b{font:700 14px Oswald,'Arial Narrow',sans-serif}.sv span{color:var(--muted);font-size:11px}
+.note{font-size:12px;color:var(--muted);line-height:1.45}
+.empty{color:#e8e0cc;padding:30px;text-align:center}
+.home{color:#a9a49b;font:500 11px Inter,system-ui,sans-serif;text-decoration:none;display:block;margin-bottom:2px}
+.pick{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:#a9a49b;font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase}
+.sel{background:#1d1c19;color:#f3ebd8;border:1px solid #3c3b36;border-radius:4px;padding:6px 8px;font:600 13px Inter,system-ui,sans-serif}
+.chip.L .r{color:#e88c78}.chip.on.L .r{color:#7a1f10}
+.wt tr.pick-row{cursor:pointer}
+.pl{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left;text-decoration:underline;text-decoration-color:#b9af97;text-underline-offset:3px}
+.ov{position:fixed;inset:0;background:rgba(17,17,15,.6);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.ov.on{display:flex}
+@media(min-width:560px){.ov{align-items:center}}
+.pc{background:var(--cream);width:100%;max-width:440px;border-radius:10px 10px 0 0;overflow:hidden;max-height:88vh;overflow-y:auto}
+@media(min-width:560px){.pc{border-radius:8px}}
+.pc .ph{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.pc .num{font:700 40px/1 Oswald,'Arial Narrow',sans-serif;color:var(--gold);min-width:54px;text-align:center}
+.pc .nm{font:700 22px/1.1 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
+.pc .bio{font-size:12px;opacity:.85;margin-top:3px}
+.pc .x{margin-left:auto;align-self:flex-start;background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1}
+.pc .pb{padding:14px 16px}
+.stars{font-size:20px;letter-spacing:2px;color:var(--gold);-webkit-text-stroke:.5px #8a6a10}
+.stars .off{color:#ddd3bd;-webkit-text-stroke:0}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.pg div{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:6px;text-align:center}
+.pg b{display:block;font:700 18px Oswald,'Arial Narrow',sans-serif}
+.pg span{font:600 9px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.rec{display:flex;align-items:center;gap:14px;background:var(--cream);border-radius:6px;padding:12px 14px;margin:0 0 12px}
+.rec .wl2{font:700 40px/1 Oswald,'Arial Narrow',sans-serif;color:var(--green);white-space:nowrap}
+.rec .lbl{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted)}
+.rec .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:6px 10px;flex:1}
+.rec .grid b{display:block;font:700 17px Oswald,'Arial Narrow',sans-serif}
+.rec .form{display:flex;gap:3px;margin-top:3px}
+.rec .form i{width:16px;height:16px;display:grid;place-items:center;font:700 9px Inter,sans-serif;font-style:normal;color:#fff;background:var(--green);border-radius:2px}
+.rec .form i.L{background:var(--red)}
+@media(max-width:420px){.rec{flex-direction:column;align-items:flex-start}.rec .grid{width:100%}}
+
+/* football */
+.sc .kick{font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:var(--green)}
+.sc .kick.live{color:var(--red)}
+.ls{width:100%;min-width:0;border-collapse:collapse;margin-top:8px}
+.ls th{background:none;color:var(--muted);font:600 11px Oswald,'Arial Narrow',sans-serif;padding:2px 4px}
+.ls td{border:0;font:700 22px Oswald,'Arial Narrow',sans-serif;padding:2px 4px;text-align:center;position:static;background:none}
+.ls td.tn{text-align:left;font:700 22px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;background:none}
+.ls .t{border-left:2px solid var(--line);font-size:30px}
+.ls td.dim{color:var(--muted)}
+.tb{font-size:13px}
+.tbh,.tbr{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}
+.tbh{font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink)}
+.tbh span:last-child,.tbr b:last-child{text-align:right}
+.tbr span{font:500 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);text-align:center}
+.tbr b{font:700 16px Oswald,'Arial Narrow',sans-serif}
+.sh{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:4px;margin-bottom:6px;font:700 14px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
+.sh .wb{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;color:var(--muted)}
+.strips{display:grid;grid-template-columns:minmax(92px,1.1fr) auto 1.3fr;gap:9px 10px;align-items:center}
+.strips .sm{font-size:13px;line-height:1.15}
+.sv2{text-align:right;line-height:1}
+.sv2 b{display:block;font:700 17px ui-monospace,Menlo,monospace;color:var(--green);white-space:nowrap}
+.sv2 b.bad{color:var(--red)}
+.sv2 small{font-size:9px;color:var(--muted)}
+.st{position:relative;height:16px}
+.st:before{content:"";position:absolute;left:0;right:0;top:7px;height:3px;background:#ddd3bd;border-radius:2px}
+.st .dot{position:absolute;top:2px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--green)}
+.st .dot.bad{background:var(--red)}
+.st .dia{position:absolute;top:3px;width:10px;height:10px;margin-left:-5px;transform:rotate(45deg);border:2px solid var(--green);background:var(--cream)}
+.lg{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.lg.cmp,.lg.dotl{background:var(--green)}.lg.inc{border:2px solid #8e8a80;background:transparent}.lg.td{background:var(--gold);border:2px solid var(--green)}
+.lg.dial{border-radius:0;transform:rotate(45deg) scale(.8);border:2px solid var(--green)}
+.qb .qh{background:var(--green);color:#f3ebd8;padding:16px}
+.qb .qn{font:700 34px/1 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;margin:4px 0 10px}
+.qs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qs div{border-right:1px solid rgba(255,255,255,.25);padding-right:6px}.qs div:last-child{border:0}
+.qs b{display:block;font:700 clamp(22px,6.5vw,34px)/1 Oswald,'Arial Narrow',sans-serif;white-space:nowrap}
+.qs span{font:500 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;opacity:.8}
+.qm{margin-top:10px;font:500 13px ui-monospace,Menlo,monospace}
+.qnote{margin-top:6px;color:var(--gold);font-weight:600;font-size:13px}
+#passsvg .cmp{fill:var(--green)}#passsvg .inc{fill:var(--cream);stroke:#8e8a80;stroke-width:2.5}#passsvg .td{fill:var(--gold);stroke:var(--green);stroke-width:3}
+#passsvg .pt{cursor:pointer}
+.bk{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink);text-align:center}
+.bk div{padding:8px 4px;border-right:1px solid var(--line)}.bk div:last-child{border:0}
+.bk .lbl{display:block;font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted);min-height:26px}
+.bk b{display:block;font:700 24px ui-monospace,Menlo,monospace}.bk small{font-size:11px;color:var(--muted)}
+.pbh,.pbr{display:grid;grid-template-columns:minmax(100px,2fr) repeat(6,minmax(26px,auto));gap:4px 6px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pbr span:not(:first-child),.pbh span:not(:first-child){white-space:nowrap}
+.pbh{font:700 13px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;border-bottom:2px solid var(--ink);margin-top:12px}
+.pbh span:not(:first-child){font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted);text-align:right}
+.pbr span:not(:first-child){text-align:right;font-family:ui-monospace,Menlo,monospace}
+.pbr small{color:var(--muted);font-size:10px}
+.dr{display:grid;grid-template-columns:minmax(110px,1fr) 2.4fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+table.pt2{min-width:0}
+table.pt2 td{font-size:12px;padding:5px 3px}
+table.pt2 th{font-size:10px;padding:5px 3px;letter-spacing:.5px}
+
+table.pt2 td:first-child{font:600 12px Inter,system-ui,sans-serif;white-space:normal}
+.chip.LV .r{color:#ff8a73}
+.tbadge{display:inline-grid;place-items:center;min-width:30px;height:20px;padding:0 4px;border-radius:4px;font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px;vertical-align:2px}
+.tbadge.big{min-width:36px;height:24px;font-size:12px}
+.d-td{fill:#2f5a45}.d-fg{fill:#f2b83a}.d-punt{fill:#bcb29d}.d-miss{fill:#e8aaa5}.d-to{fill:#d9634f}.d-clock{fill:transparent;stroke:#9f988a;stroke-dasharray:3 3}
+#cfbdrives .dl{font:700 10px Oswald,'Arial Narrow',sans-serif;fill:#fff}#cfbdrives .dl.punt,#cfbdrives .dl.fg,#cfbdrives .dl.miss{fill:#1c1c1a}
+#cfbdrives .dv{cursor:pointer}
+.dlg{justify-content:flex-start;font-size:11px}.sw{display:inline-block;width:11px;height:11px;margin-right:4px;vertical-align:-1px;border-radius:1px}
+i.sw.d-td{background:#2f5a45}i.sw.d-fg{background:#f2b83a}i.sw.d-punt{background:#bcb29d}i.sw.d-miss{background:#e8aaa5}i.sw.d-to{background:#d9634f}i.sw.d-clock{border:1.5px dashed #9f988a}
+.tsh{display:flex;justify-content:space-between;font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;margin:6px 0 2px}
+.tsr{display:grid;grid-template-columns:72px 1fr 72px;align-items:end;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.tsr b{font:700 20px Oswald,'Arial Narrow',sans-serif}.tsr b.l{color:var(--green)}.tsr b.r{text-align:right}
+.tsm{text-align:center}.tsm span{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.4px;text-transform:uppercase}
+.tsb{display:flex;height:5px;margin-top:4px;gap:2px}.tsb i:first-child{background:var(--green)}.tsb i:last-child{background:#1c1c1a}
+.fbg{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:680px){.fbg{grid-template-columns:1fr 1fr}}
+.fbn{font:700 20px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.bayb .fbn{color:var(--green)}
+table.fb{min-width:0;width:100%;margin-bottom:8px;font-size:12px}
+table.fb th{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;padding:4px 5px;text-align:right}
+table.fb th:first-child{text-align:left}
+.oppb table.fb th{background:#1d1c19}
+table.fb td{padding:4px 5px;text-align:right;white-space:nowrap}
+table.fb td:first-child{text-align:left;font:600 12px Oswald,'Arial Narrow',sans-serif;white-space:normal;position:static}
+table.fb td small{color:var(--muted);font:500 9px Inter,sans-serif}
+table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#ebe1c9}
+.hi2{display:inline-block;padding:0 4px;border-radius:2px;color:#fff;background:var(--green)}
+.oppb .hi2{background:#1c1c1a}
+.sx{display:inline-block;min-width:44px;padding:2px 5px;border-radius:3px;font-weight:700}
+.sx.good{background:#8fd19e;color:#0b3d1f}.sx.bad{background:#f3cdc3;color:#7a2112}
+.sitt tr.sit{cursor:pointer}.sitt tr.small td{color:#a39d90}.sitt tr.small .sx{background:none;color:#a39d90}
+.sitt .chev{display:inline-block;margin-left:5px;color:#b9af97;transition:transform .15s}.sitt tr.on .chev{transform:rotate(90deg)}
+.sitt tr.sub{display:none}.sitt tr.sub.on{display:table-row}.sitt tr.sub td{font-size:11px;color:var(--muted);background:var(--paper);text-align:left;padding:5px 8px}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:6px 0 10px;font-size:12px;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand">BAYLOR <span>FOOTBALL</span></div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
+  <div class="pick"><label for="season">Season</label><select id="season" class="sel"></select></div>
+  <div class="rec" id="rec"></div>
+  <div class="chips" id="chips"></div>
+  <div id="app"><div class="empty">Loading…</div></div>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+(function(){
+"use strict";
+const BAY = "239";
+const API = "https://site.api.espn.com/apis/site/v2/sports/football/college-football";
+const DATA = "../data/";
+let B = null;                 // data/cfb.json
+const GAMES = {};             // id -> compact game
+let live = false;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const f1 = x => x == null || !isFinite(x) ? "—" : x.toFixed(1);
+const pc0 = x => x == null || !isFinite(x) ? "—" : Math.round(x * 100) + "%";
+const day = d => new Date(d).toLocaleDateString("en-US", {month: "short", day: "numeric", timeZone: "America/Chicago"});
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------- data ---------- */
+async function getJSON(url, ms = 15000){
+  const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), ms);
+  try { const r = await fetch(url, {signal: ctl.signal, cache: "no-store"}); if (!r.ok) throw new Error(r.status); return await r.json(); }
+  finally { clearTimeout(t); }
+}
+async function loadIndex(){ B = await getJSON(DATA + "cfb.json?t=" + Date.now()); }
+async function loadGame(id){ if (!GAMES[id]) GAMES[id] = await getJSON(DATA + "cfb/" + id + ".json"); return GAMES[id]; }
+const curSeason = () => B.seasons.find(s => s.year === B.seasonYear) || B.seasons[B.seasons.length - 1];
+function findGame(id){ for (const s of B.seasons){ const g = s.games.find(x => x.id === id); if (g) return {s, g}; } return null; }
+const played = s => s.games.filter(g => (g.completed || g.state === "in") && g.hasCard);
+const finals = s => s.games.filter(g => g.completed && g.pf != null);
+
+/* ESPN summary -> compact game (same shape as scripts/build_cfb.py) */
+const SKIP = new Set(["Timeout", "End Period", "End of Half", "End of Game", "End of Regulation"]);
+function compact(s){
+  const comp = s.header.competitions[0], st = (comp.status || {}).type || {};
+  const teams = comp.competitors.map(c => { const bt = (s.boxscore.teams || []).find(t => t.team.id === c.team.id) || {}; const o = {};
+    (bt.statistics || []).forEach(x => o[x.name] = x.displayValue);
+    return {id: c.team.id, abbr: c.team.abbreviation, name: c.team.displayName, loc: c.team.location, short: c.team.shortDisplayName, color: c.team.color,
+            homeAway: c.homeAway, score: c.score, lines: (c.linescores || []).map(l => l.displayValue), stats: o}; });
+  const box = {};
+  (s.boxscore.players || []).forEach(p => { box[p.team.id] = {}; (p.statistics || []).forEach(c => box[p.team.id][c.name] = {keys: c.keys || [],
+    athletes: (c.athletes || []).map(a => [a.athlete.displayName, a.athlete.jersey || "", a.athlete.id || "", a.stats || []])}); });
+  const drives = [], plays = [];
+  const all = ((s.drives || {}).previous || []).concat((s.drives || {}).current ? [s.drives.current] : []);
+  all.forEach((dr, i) => { const tid = (dr.team || {}).id;
+    const a0 = dr.start || {}, b0 = dr.end || {};
+    drives.push({team: tid, result: dr.result || dr.displayResult, label: dr.displayResult, isScore: !!dr.isScore, start: a0.yardLine, plays: dr.offensivePlays, yds: dr.yards,
+                 t0: [(a0.period || {}).number, (a0.clock || {}).displayValue], t1: [(b0.period || {}).number, (b0.clock || {}).displayValue]});
+    (dr.plays || []).forEach(p => { const typ = p.type.text; if (SKIP.has(typ)) return; const a = p.start || {}, b = p.end || {};
+      plays.push([i, tid, p.period.number, p.clock.displayValue, typ, p.text || "", a.down, a.distance, a.yardsToEndzone, b.yardsToEndzone,
+                  p.statYardage || 0, p.scoringPlay ? 1 : 0, p.homeScore, p.awayScore, p.isPenalty ? 1 : 0, p.isTurnover ? 1 : 0]); }); });
+  return {date: comp.date, neutral: !!comp.neutralSite, conf: !!comp.conferenceCompetition, state: st.state, status: st.shortDetail || st.detail, completed: !!st.completed, teams, box, drives, plays};
+}
+
+/* ---------- play classification ---------- */
+// row: [drive, team, period, clock, type, text, down, dist, yte, yteEnd, yds, scoring, hs, as, penalty, turnover]
+function classify(r){
+  const [drive, team, per, clock, type, text, down, dist, yte, yteEnd, yds] = r;
+  const t = text || "";
+  let kind = null;
+  if (/Sack/.test(type)) kind = "sack";
+  else if (/^Rush|Rushing Touchdown/.test(type) || (/Fumble/.test(type) && /\b(run|rush(es)?)\b/i.test(t) && !/\bpass\b/i.test(t))) kind = /kneel/i.test(t) ? "kneel" : "run";
+  else if (/Pass|Interception/.test(type) || (/Fumble/.test(type) && /\bpass\b/i.test(t))) kind = /spike/i.test(t) ? "spike" : "pass";
+  if (!kind) return null;
+  if (/no play/i.test(t)) return null;
+  const p = {drive, team, per, clock, type, text: t, down, dist, yte, yds: +yds || 0, kind, lost: /Fumble Recovery \(Opponent\)|Fumble Return Touchdown/.test(type) || !!r[15]};
+  p.td = /Touchdown/.test(type) || /TOUCHDOWN/.test(t);
+  if (kind === "pass"){
+    p.int = /Interception/.test(type) || /intercepted/i.test(t);
+    p.complete = !p.int && (/Pass Reception|Passing Touchdown|Pass Completion/.test(type) || /pass complete/i.test(t));
+    const d = t.match(/\b(short|deep) (left|middle|right)\b/i); if (d){ p.depthWord = d[1].toLowerCase(); p.dir = d[2].toLowerCase(); }
+    const sp = t.match(/(?:caught at|thrown to) (?:the )?([A-Za-z.&' ]+?)\s?(\d{1,2})\b/);
+    if (sp && yte != null){ const bayTok = /^(Baylor|BAY)$/i.test(sp[1].trim()); const own = team === BAY ? bayTok : !bayTok; const tgtYte = own ? 100 - +sp[2] : +sp[2]; p.air = yte - tgtYte; }
+    const tg = t.match(/pass (?:complete|incomplete|intercepted)?(?: (?:short|deep) (?:left|middle|right))? ?(?:to|intended for) (?:#(\d+) )?([A-Z][\w.'-]*(?: [A-Z][\w.'-]*)*)/);
+    if (tg){ p.tgtNo = tg[1] || null; p.tgtName = tg[2]; }
+    const qb = t.match(/(?:#(\d+) )?([A-Z][\w.'-]*(?: [A-Z][\w.'-]*)*) pass/); if (qb){ p.qbNo = qb[1] || null; p.qbName = qb[2]; }
+  } else if (kind === "run"){
+    const d = t.match(/\brush(?:es)? (?:up the )?(left|middle|right)\b/i); if (d) p.dir = d[1].toLowerCase();
+    const rb = t.match(/(?:#(\d+) )?([A-Z][\w.'-]*(?: [A-Z][\w.'-]*)*) (?:rush|run|scramble)/); if (rb){ p.ballNo = rb[1] || null; p.ballName = rb[2]; }
+  } else if (kind === "sack"){
+    const qb = t.match(/(?:#(\d+) )?([A-Z][\w.'-]*(?: [A-Z][\w.'-]*)*) sacked/); if (qb){ p.qbNo = qb[1] || null; p.qbName = qb[2]; }
+  }
+  const need = dist || 10;
+  p.success = p.td || (down === 1 ? p.yds >= need * .5 : down === 2 ? p.yds >= need * .7 : p.yds >= need);
+  if (p.int || (kind === "sack")) p.success = p.td && !p.int ? true : (kind === "sack" ? false : p.success && !p.int);
+  if (p.int) p.success = false;
+  p.conv = p.td || (p.yds >= need && !p.int);
+  p.explosive = (kind === "run" && p.yds >= 20) || (kind === "pass" && p.complete && p.yds >= 20);
+  return p;
+}
+const isPlay = p => p && (p.kind === "run" || p.kind === "pass" || p.kind === "sack");
+function gamePlays(gm){ if (!gm._plays) gm._plays = gm.plays.map(classify).filter(Boolean); return gm._plays; }
+
+/* team summary for one offense in one game (optionally a period filter) */
+function summary(gm, teamId, perFilter){
+  const ps = gamePlays(gm).filter(p => p.team === teamId && isPlay(p) && (!perFilter || perFilter(p.per)));
+  const runs = ps.filter(p => p.kind === "run"), drops = ps.filter(p => p.kind === "pass" || p.kind === "sack");
+  const third = ps.filter(p => p.down === 3);
+  const sum = a => a.reduce((x, p) => x + p.yds, 0);
+  // trips: drives that reach the opponent 40 (TD = 7, FG = 3)
+  const tripDrives = {};
+  // a trip = a drive with a snap at or inside the opponent's 40 (a long TD from outside the 40 isn't a trip)
+  ps.forEach(p => { if (p.yte != null && p.yte <= 40) tripDrives[p.drive] = true; });
+  gm.plays.forEach(r => { if (r[1] === teamId && /Field Goal/.test(r[4]) && r[8] != null && r[8] <= 40 && (!perFilter || perFilter(r[2]))) tripDrives[r[0]] = true; });
+  let trips = 0, tripPts = 0;
+  Object.keys(tripDrives).forEach(i => { const d = gm.drives[i]; if (!d) return; trips++; const res = String(d.result || "").toUpperCase(); tripPts += /TD|TOUCHDOWN/.test(res) ? 7 : /^FG$|FIELD GOAL$|^FG GOOD/.test(res) && !/MISS/.test(res) ? 3 : 0; });
+  return {n: ps.length, yds: sum(ps), runs: runs.length, runYds: sum(runs), drops: drops.length, dropYds: sum(drops),
+          expl: ps.filter(p => p.explosive).length, third: third.length, thirdConv: third.filter(p => p.conv).length,
+          trips, tripPts, succ: ps.filter(p => p.success).length};
+}
+function addSum(a, b){ const o = Object.assign({}, a); Object.keys(b).forEach(k => o[k] = (o[k] || 0) + b[k]); return o; }
+const RATES = s => ({ypp: s.yds / s.n, ypc: s.runYds / s.runs, ypd: s.dropYds / s.drops, expl: s.expl / s.n, third: s.thirdConv / s.third, ppt: s.tripPts / s.trips, succ: s.succ / s.n});
+
+/* ---------- small helpers ---------- */
+const bay = gm => gm.teams.find(t => t.id === BAY), opp = gm => gm.teams.find(t => t.id !== BAY);
+const oppName = (gm) => { const o = opp(gm); return o.short || o.loc || o.name; };
+function boxCat(gm, teamId, cat){ return ((gm.box || {})[teamId] || {})[cat] || {keys: [], athletes: []}; }
+const val = (cat, a, key) => { const i = cat.keys.indexOf(key); return i < 0 ? undefined : a[3][i]; };
+const lastName = s => String(s || "").replace(/\b(Jr\.?|Sr\.?|II|III|IV)\b/g, "").trim().split(/\s+/).pop().toLowerCase();
+// match a play's player (jersey or name) to a box score athlete
+function matchAthlete(list, no, name){
+  if (no != null){ const a = list.find(x => x[1] === String(no)); if (a) return a; }
+  if (name){ const n = name.replace(/^[A-Z]\./, "").toLowerCase(); return list.find(x => x[0] && (x[0].toLowerCase() === name.toLowerCase() || lastName(x[0]) === lastName(n))) || null; }
+  return null;
+}
+
+/* ---------- render: header / record ---------- */
+function record(season){
+  const gs = finals(season);
+  const wl = f => { const x = gs.filter(f); const w = x.filter(g => g.pf > g.pa).length; return [w, x.length - w]; };
+  const fmt = ([w, l]) => w + "-" + l;
+  let streak = "";
+  if (gs.length){ const won = gs[gs.length - 1].pf > gs[gs.length - 1].pa; let n = 0; for (let i = gs.length - 1; i >= 0 && (gs[i].pf > gs[i].pa) === won; i--) n++; streak = (won ? "W" : "L") + n; }
+  const post = wl(g => g.post);
+  const cell = (lab, v) => `<div><span class="lbl">${lab}</span><b>${v}</b></div>`;
+  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(wl(() => true))}</div></div>
+    <div class="grid">${cell("Big 12", fmt(wl(g => g.conf && g.site !== "N")))}${cell("Home", fmt(wl(g => g.site === "H")))}${cell("Away", fmt(wl(g => g.site === "A")))}${cell("Neutral", fmt(wl(g => g.site === "N")))}${post[0] + post[1] ? cell("Bowl", fmt(post)) : ""}
+    <div><span class="lbl">Streak</span><b>${streak || "—"}</b><div class="form">${gs.slice(-5).map(g => g.pf > g.pa ? "<i>W</i>" : `<i class="L">L</i>`).join("")}</div></div></div>`;
+}
+const recStr = s => { const gs = finals(s), w = gs.filter(g => g.pf > g.pa).length; return w + "-" + (gs.length - w); };
+
+function scoreCard(gm, row){
+  const b = bay(gm), o = opp(gm);
+  const n = Math.max(4, b.lines.length, o.lines.length);
+  const qh = Array.from({length: n}, (_, i) => `<th>${i < 4 ? ["1st", "2nd", "3rd", "4th"][i] : (i === 4 ? "OT" : (i - 3) + "OT")}</th>`).join("");
+  const line = t => Array.from({length: n}, (_, i) => `<td>${esc(t.lines[i] ?? "")}</td>`).join("");
+  const isLive = !gm.completed;
+  const win = +b.score > +o.score;
+  return `<div class="card sc"><div class="bd">
+    <div class="row"><span class="kick ${isLive ? "live" : ""}">${isLive ? "● " + esc(gm.status || "In progress") : "Final" + (n > 4 ? "/OT" : "")} · ${day(gm.date)}${row.post ? " · Bowl" : ""}</span>${isLive ? "" : `<span class="wl ${win ? "" : "L"}">${win ? "W" : "L"}</span>`}</div>
+    <table class="ls"><thead><tr><th></th>${qh}<th class="t">T</th></tr></thead><tbody>
+      <tr><td class="tn" style="color:var(--green)">${badge(b)} Baylor</td>${line(b)}<td class="t">${esc(b.score)}</td></tr>
+      <tr><td class="tn">${badge(o)} ${esc(oppName(gm))}</td>${line(o)}<td class="t dim">${esc(o.score)}</td></tr></tbody></table>
+    <div class="sub">${row.site === "H" ? "vs" : row.site === "A" ? "at" : "vs (neutral)"} ${esc(o.name)}${gm.conf ? " · Big 12" : ""}</div>
+  </div></div>`;
+}
+
+function teamBox(gm){
+  const b = bay(gm).stats, o = opp(gm).stats;
+  const sacksMade = tid => { const c = boxCat(gm, tid, "defensive"); return c.athletes.reduce((x, a) => x + (+val(c, a, "sacks") || 0), 0); };
+  const rows = [
+    ["Passing", s => `${(s.completionAttempts || "").replace("/", "-")}, ${s.netPassingYards ?? "—"} yds`],
+    ["Rushing", s => `${s.rushingAttempts ?? "—"} for ${s.rushingYards ?? "—"} yds`],
+    ["Total yards", s => s.totalYards ?? "—"], ["First downs", s => s.firstDowns ?? "—"],
+    ["3rd down", s => s.thirdDownEff ?? "—"], ["4th down", s => s.fourthDownEff ?? "—"],
+    ["Turnovers", s => s.turnovers ?? "—"], ["Penalties", s => (s.totalPenaltiesYards || "").replace("-", " for ") + " yds"],
+    ["Possession", s => s.possessionTime ?? "—"]];
+  const sk = [sacksMade(BAY), sacksMade(opp(gm).id)].map(v => +v.toFixed(1));
+  return `<div class="tb"><div class="tbh"><span>Baylor</span><span></span><span>${esc(oppName(gm))}</span></div>
+    ${rows.map(([lab, f]) => `<div class="tbr"><b>${esc(f(b))}</b><span>${lab}</span><b>${esc(f(o))}</b></div>`).join("")}
+    <div class="tbr"><b>${sk[0]}</b><span>Sacks made</span><b>${sk[1]}</b></div></div>`;
+}
+
+/* ---------- strips: this game vs Baylor's other games this season ---------- */
+const METRICS = [
+  ["Yards per play", "ypp", s => `${s.n} plays`, f1, 3, 9, true],
+  ["Yards per carry", "ypc", s => `${s.runs} carries`, f1, 1, 8, true],
+  ["Yards per dropback", "ypd", s => `${s.drops} dropbacks`, f1, 2, 12, true],
+  ["Success rate", "succ", s => `${s.succ} of ${s.n}`, pc0, .25, .65, true],
+  ["Explosive play rate", "expl", s => `${s.expl} of ${s.n}`, pc0, 0, .16, true],
+  ["3rd-down conversions", "third", s => `${s.thirdConv} of ${s.third}`, pc0, .1, .7, true],
+  ["Points per trip inside the 40", "ppt", s => `${s.trips} trips`, f1, 1, 7, true]];
+function strips(title, game, avg, offense){
+  const row = ([lab, k, sub, fmt, lo, hi, hib]) => {
+    const g = RATES(game)[k], a = avg ? RATES(avg)[k] : null;
+    const good = offense ? hib : !hib;
+    const pos = v => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+    const better = a == null || !isFinite(a) || !isFinite(g) ? null : (good ? g >= a : g <= a);
+    // offense: right = better; defense: flip so right = better
+    const P = v => offense ? pos(v) : 100 - pos(v);
+    return `<div class="sm">${lab}</div><div class="sv2"><b class="${better === false ? "bad" : ""}">${isFinite(g) ? (k === "expl" || k === "third" ? sub(game) : fmt(g)) : "—"}</b><small>${k === "expl" || k === "third" ? (isFinite(g) ? fmt(g) : "") : sub(game)}</small></div>
+      <div class="st">${a != null && isFinite(a) ? `<i class="dia" style="left:${P(a)}%"></i>` : ""}${isFinite(g) ? `<i class="dot ${better === false ? "bad" : ""}" style="left:${P(g)}%"></i>` : ""}</div>`;
+  };
+  return `<div class="sh"><span>${title}</span><span class="wb">worse · better</span></div><div class="strips">${METRICS.map(row).join("")}</div>`;
+}
+
+/* ---------- QB card + pass chart ---------- */
+function qbCard(m){
+  const cat = boxCat(m.gm, BAY, "passing");
+  if (!cat.athletes.length) return "";
+  const qb = cat.athletes.slice().sort((a, b) => (+String(val(cat, b, "completions/passingAttempts")).split("/")[1] || 0) - (+String(val(cat, a, "completions/passingAttempts")).split("/")[1] || 0))[0];
+  const [c, a] = String(val(cat, qb, "completions/passingAttempts") || "0/0").split("/").map(Number);
+  const yds = +val(cat, qb, "passingYards") || 0, td = val(cat, qb, "passingTouchdowns") || 0, int = val(cat, qb, "interceptions") || 0;
+  const rc = boxCat(m.gm, BAY, "rushing"), qr = rc.athletes.find(x => x[2] === qb[2]);
+  const ps = gamePlays(m.gm).filter(p => p.team === BAY);
+  const mine = p => matchAthlete([qb], p.qbNo, p.qbName) === qb;
+  const passes = ps.filter(p => p.kind === "pass" && mine(p)), sacks = ps.filter(p => p.kind === "sack" && mine(p)).length;
+  // season context: his YPA in Baylor's other games this season (10+ attempts)
+  let note = "";
+  const others = m.seasonGames.filter(x => x.id !== m.row.id).map(x => { const gm = GAMES[x.id]; if (!gm) return null; const cc = boxCat(gm, BAY, "passing"); const q = cc.athletes.find(z => z[2] === qb[2]); if (!q) return null;
+    const [c2, a2] = String(val(cc, q, "completions/passingAttempts") || "0/0").split("/").map(Number); return a2 >= 10 ? {ypa: (+val(cc, q, "passingYards") || 0) / a2, opp: x.opp, date: x.date} : null; }).filter(Boolean);
+  if (a >= 10 && others.length){
+    const ypa = yds / a, best = others.reduce((x, y) => y.ypa > x.ypa ? y : x), before = others.filter(o => o.date < m.row.date);
+    if (before.length && ypa > Math.max(...before.map(o => o.ypa))){ const pb = before.reduce((x, y) => y.ypa > x.ypa ? y : x); note = `His best yards per attempt this season to that point. Previous high: ${pb.ypa.toFixed(1)} vs. ${esc(pb.opp)}`; }
+    else if (ypa >= best.ypa) note = `His best yards per attempt this season. Next best: ${best.ypa.toFixed(1)} vs. ${esc(best.opp)}`;
+  }
+  // chart
+  const charted = passes.filter(p => p.air != null && p.dir);
+  const W = 620, H = 340, L = 40, R = 40, T = 12, Bm = 38, ymin = -5, ymax = Math.max(30, Math.ceil(Math.max(0, ...charted.map(p => p.air)) / 10) * 10 + 5);
+  const y = v => T + (ymax - Math.max(ymin, Math.min(ymax, v))) / (ymax - ymin) * (H - T - Bm);
+  const third = (W - L - R) / 3, colX = {left: 0, middle: 1, right: 2};
+  const counts = {left: 0, middle: 0, right: 0};
+  const dots = charted.map((p, i) => { const k = counts[p.dir]++; const jitter = ((k * 37) % 80) / 100 + .1; const cx = L + third * colX[p.dir] + third * jitter;
+    const cls = p.int ? "int" : p.td ? "td" : p.complete ? "cmp" : "inc";
+    return p.int ? `<g class="pt" data-t="${esc(p.text)}"><path d="M${cx - 6},${y(p.air) - 6}l12,12m0,-12l-12,12" stroke="var(--red)" stroke-width="3"/></g>`
+                 : `<circle class="pt ${cls}" data-t="${esc(p.text)}" cx="${cx}" cy="${y(p.air)}" r="${p.td ? 10 : 7}"/>`; }).join("");
+  const grid = [0, 10, 20, 30, 40, 50, 60].filter(v => v <= ymax).map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0 ? "#1c1c1a" : "#d6ccb4"}" stroke-width="${v === 0 ? 2 : 1}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="15" fill="#6f6a5e" font-family="ui-monospace,monospace">${v}</text>`).join("");
+  const seps = [1, 2].map(i => `<line x1="${L + third * i}" x2="${L + third * i}" y1="${T}" y2="${H - Bm + 6}" stroke="#c9bfa6" stroke-dasharray="3 4"/>`).join("");
+  const labs = ["LEFT", "MIDDLE", "RIGHT"].map((s, i) => `<text x="${L + third * (i + .5)}" y="${H - 8}" text-anchor="middle" font-size="18" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="#1c1c1a">${s}</text>`).join("");
+  const bucket = (lo, hi) => { const x = passes.filter(p => p.air != null && p.air >= lo && p.air < hi); return {c: x.filter(p => p.complete).length, a: x.length, y: x.reduce((s, p) => s + (p.complete ? p.yds : 0), 0), td: x.filter(p => p.td && p.complete).length}; };
+  const bk = [["Under 10 yds downfield", bucket(-99, 10)], ["10 to 19 yds", bucket(10, 20)], ["20+ yds", bucket(20, 999)]];
+  const noSpot = passes.length - charted.length;
+  return `<div class="card qb"><div class="qh"><div class="kick" style="color:var(--gold)">Baylor ${esc(bay(m.gm).score)}, ${esc(oppName(m.gm))} ${esc(opp(m.gm).score)}</div>
+      <div class="qn">${esc(qb[0])}</div>
+      <div class="qs"><div><b>${c}–${a}</b><span>Comp-att</span></div><div><b>${yds}</b><span>Pass yds</span></div><div><b>${esc(td)}</b><span>Pass TD</span></div><div><b>${a ? (yds / a).toFixed(1) : "—"}</b><span>Yds per att</span></div></div>
+      <div class="qm">${esc(int)} INT${qr ? ` · ${esc(val(rc, qr, "rushingAttempts"))} rushes for ${esc(val(rc, qr, "rushingYards"))} yds` : ""} · sacked ${sacks}x</div>
+      ${note ? `<div class="qnote">${note}</div>` : ""}</div>
+    <div class="bd">${charted.length ? `<div class="sh"><span>Pass chart</span><span class="wb" style="text-transform:none;letter-spacing:0">Yards past the line of scrimmage, by where the ball went</span></div>
+      <svg viewBox="0 0 ${W} ${H}" id="passsvg">${grid}${seps}<text x="${W - R + 4}" y="${y(0) + 5}" font-size="14" fill="#6f6a5e" font-family="Oswald,sans-serif">LOS</text>${dots}${labs}</svg>
+      <div class="lgd"><span><i class="lg cmp"></i>Complete</span><span><i class="lg inc"></i>Incomplete</span><span><i class="lg td"></i>Touchdown</span><span style="color:var(--red)">✕ Interception</span></div>
+      <div class="bk">${bk.map(([lab, v]) => `<div><span class="lbl">${lab}</span><b>${v.c}-${v.a}</b><small>${v.y} yds${v.td ? ", " + v.td + " TD" : ""}</small></div>`).join("")}</div>
+      <div class="foot">Each dot is a pass, placed where it was caught or thrown to, from ESPN play-by-play. ESPN logs direction only as left, middle or right, so dots are spread within each third. Yards in the splits include yards after the catch.${noSpot ? ` ${noSpot} throw${noSpot === 1 ? "" : "s"} without a logged spot not shown.` : ""}</div>`
+      : `<div class="note">ESPN didn't log pass direction or depth for this game, so there's no pass chart. ESPN started logging them partway through 2025.</div>`}</div></div>`;
+}
+
+/* ---------- play types + situations: success rate vs. a baseline ---------- */
+// green/red = success rate 5+ points above/below the baseline; needs 3+ plays here and 5+ in the baseline
+function succCell(x, base){
+  const n = x.length, s = n ? x.filter(p => p.success).length / n : null;
+  let cls = "", tip = "";
+  if (base && base.length){ const bs = base.filter(p => p.success).length / base.length; tip = `${pc0(bs)} on ${base.length}`;
+    if (n >= 3 && base.length >= 5){ if (s - bs >= .05) cls = "good"; else if (bs - s >= .05) cls = "bad"; } }
+  return {s, cls, tip};
+}
+function sitTable(head, groups, off, baseOff, showRun){
+  let html = "", k = 0;
+  groups.forEach(([lab, f]) => {
+    const x = off.filter(f); if (!x.length) return;
+    const bx = baseOff ? baseOff.filter(f) : null, sc = succCell(x, bx), id = "sr" + (++k) + head.replace(/\W/g, "");
+    const r = x.filter(p => p.kind === "run"), q = x.filter(p => p.kind !== "run");
+    const rs = a => a.length ? `${pc0(a.filter(p => p.success).length / a.length)} (${a.length})` : "—";
+    const small = x.length < 3 ? " small" : "";
+    html += `<tr class="sit${small}" data-open="${id}"><td>${lab}<span class="chev">›</span></td><td>${x.length}</td>${showRun ? `<td>${pc0(r.length / x.length)}</td>` : ""}<td><b class="sx ${sc.cls}">${pc0(sc.s)}</b></td><td>${f1(x.reduce((t, p) => t + p.yds, 0) / x.length)}</td>${showRun ? "" : `<td>${x.filter(p => p.explosive).length}</td>`}</tr>
+      <tr class="sub" id="${id}"><td colspan="5">${showRun ? `Run success ${rs(r)} · Pass success ${rs(q)}` : ""}${sc.tip ? `${showRun ? " · " : ""}Baseline ${sc.tip}` : ""}</td></tr>`;
+  });
+  return `<table class="pt2 sitt"><thead><tr><th>${head}</th><th>Plays</th>${showRun ? "<th>Run%</th>" : ""}<th>Success</th><th>Yds/play</th>${showRun ? "" : "<th>20+</th>"}</tr></thead><tbody>${html}</tbody></table>`;
+}
+const PLAYTYPES = [
+  ["Inside run", p => p.kind === "run" && p.dir === "middle"],
+  ["Outside run", p => p.kind === "run" && (p.dir === "left" || p.dir === "right")],
+  ["Run (direction not logged)", p => p.kind === "run" && !p.dir],
+  ["Short pass (<10 air yds)", p => p.kind === "pass" && p.air != null && p.air < 10],
+  ["Intermediate (10–19)", p => p.kind === "pass" && p.air != null && p.air >= 10 && p.air < 20],
+  ["Deep (20+)", p => p.kind === "pass" && p.air != null && p.air >= 20],
+  ["Pass (depth not logged)", p => p.kind === "pass" && p.air == null],
+  ["Sacks", p => p.kind === "sack"]];
+const DOWNS = [["1st & 10+", p => p.down === 1 && p.dist >= 10], ["1st & <10", p => p.down === 1 && p.dist < 10],
+  ["2nd & 1–3", p => p.down === 2 && p.dist <= 3], ["2nd & 4–6", p => p.down === 2 && p.dist >= 4 && p.dist <= 6], ["2nd & 7+", p => p.down === 2 && p.dist >= 7],
+  ["3rd & 1–2", p => p.down === 3 && p.dist <= 2], ["3rd & 3–6", p => p.down === 3 && p.dist >= 3 && p.dist <= 6], ["3rd & 7+", p => p.down === 3 && p.dist >= 7], ["4th down", p => p.down === 4]];
+const FIELD = [["Own 1–10", p => p.yte >= 90], ["Own 11–49", p => p.yte >= 51 && p.yte < 90], ["Midfield – opp 21", p => p.yte > 20 && p.yte <= 50], ["Red zone (opp 20–6)", p => p.yte > 5 && p.yte <= 20], ["Goal line (opp 5–1)", p => p.yte <= 5]];
+function situationCard(plays, base, scopeLbl, baseLbl){
+  const off = plays.filter(p => p.team === BAY && isPlay(p)), bo = base ? base.filter(p => p.team === BAY && isPlay(p)) : null;
+  return `<div class="sec">Play types · ${scopeLbl}</div><div class="box" style="border-width:1px">${sitTable("Play type", PLAYTYPES, off, bo, false)}</div>
+    <div class="sec">Down &amp; distance · ${scopeLbl}</div><div class="box" style="border-width:1px">${sitTable("Situation", DOWNS, off, bo, true)}</div>
+    <div class="sec">Field position · ${scopeLbl}</div><div class="box" style="border-width:1px">${sitTable("Field", FIELD, off, bo, true)}</div>
+    <div class="lgd" style="justify-content:flex-start"><span><b class="sx good">Green</b> success 5+ pts better than ${baseLbl}</span><span><b class="sx bad">Red</b> 5+ pts worse</span><span style="color:var(--muted)">gray = under 3 plays</span></div>`;
+}
+
+/* ---------- Baylor player box ---------- */
+function playerBox(gm){
+  const P = boxCat(gm, BAY, "passing"), R = boxCat(gm, BAY, "rushing"), C = boxCat(gm, BAY, "receiving"), D = boxCat(gm, BAY, "defensive"), I = boxCat(gm, BAY, "interceptions");
+  const plays = gamePlays(gm).filter(p => p.team === BAY);
+  const sacked = a => plays.filter(p => p.kind === "sack" && matchAthlete([a], p.qbNo, p.qbName) === a).length;
+  const tgts = a => plays.filter(p => p.kind === "pass" && (p.tgtNo || p.tgtName) && matchAthlete(C.athletes, p.tgtNo, p.tgtName) === a).length;
+  const nm = a => `${esc(a[0])}${a[1] !== "" ? ` <small>#${esc(a[1])}</small>` : ""}`;
+  const tbl = (head, cols, rows) => rows.length ? `<div class="pbh"><span>${head}</span>${cols.map(c => `<span>${c}</span>`).join("")}</div>${rows.map(r => `<div class="pbr"><span>${r[0]}</span>${r.slice(1).map(c => `<span>${c}</span>`).join("")}</div>`).join("")}` : "";
+  const pass = tbl("Passing", ["C-ATT", "YDS", "AVG", "TD", "INT", "SACKED"], P.athletes.map(a => [nm(a), String(val(P, a, "completions/passingAttempts") || "").replace("/", "-"), val(P, a, "passingYards"), val(P, a, "yardsPerPassAttempt"), val(P, a, "passingTouchdowns"), val(P, a, "interceptions"), sacked(a)]));
+  const rush = tbl("Rushing", ["CAR", "YDS", "AVG", "LONG", "TD"], R.athletes.map(a => [nm(a), val(R, a, "rushingAttempts"), val(R, a, "rushingYards"), val(R, a, "yardsPerRushAttempt"), val(R, a, "longRushing"), val(R, a, "rushingTouchdowns")]));
+  const hasTgt = plays.some(p => p.kind === "pass" && (p.tgtNo || p.tgtName));
+  const rec = tbl("Receiving", ["REC", hasTgt ? "TGT" : "", "YDS", "LONG", "TD"], C.athletes.map(a => [nm(a), val(C, a, "receptions"), hasTgt ? tgts(a) : "", val(C, a, "receivingYards"), val(C, a, "longReception"), val(C, a, "receivingTouchdowns")]));
+  const top = D.athletes.slice().sort((a, b) => (+val(D, b, "totalTackles") || 0) - (+val(D, a, "totalTackles") || 0)).filter(a => +val(D, a, "totalTackles") > 0).slice(0, 4);
+  const sk = D.athletes.filter(a => +val(D, a, "sacks") > 0).sort((a, b) => +val(D, b, "sacks") - +val(D, a, "sacks"));
+  const pbu = D.athletes.filter(a => +val(D, a, "passesDefended") > 0).sort((a, b) => +val(D, b, "passesDefended") - +val(D, a, "passesDefended"));
+  const tfl = D.athletes.filter(a => +val(D, a, "tacklesForLoss") > 0).sort((a, b) => +val(D, b, "tacklesForLoss") - +val(D, a, "tacklesForLoss"));
+  const ints = I.athletes.filter(a => +val(I, a, "interceptions") > 0);
+  const tot = (list, c, k) => +list.reduce((s, a) => s + (+val(c, a, k) || 0), 0).toFixed(1);
+  const defRow = (lab, n, list, c, k, showN) => `<div class="dr"><span><b>${lab}</b>${n != null ? " " + n : ""}</span><span>${list.length ? list.map(a => esc(a[0]) + (showN(a) ? " " + val(c, a, k) : "")).join(", ") : "—"}</span></div>`;
+  return `${pass}${rush}${rec}<div class="pbh"><span>Defense</span></div>
+    ${defRow("Tackles", null, top, D, "totalTackles", () => true)}
+    ${defRow("Sacks", tot(sk, D, "sacks"), sk, D, "sacks", () => true)}
+    ${defRow("Tackles for loss", tot(tfl, D, "tacklesForLoss"), tfl, D, "tacklesForLoss", () => true)}
+    ${defRow("Interceptions", tot(ints, I, "interceptions"), ints, I, "interceptions", a => +val(I, a, "interceptions") > 1)}
+    ${defRow("Pass breakups", tot(pbu, D, "passesDefended"), pbu, D, "passesDefended", a => +val(D, a, "passesDefended") > 1)}
+    <div class="foot">Baylor players, ${gm.completed ? "full game" : "so far (unofficial)"}. ESPN box score${hasTgt ? "; targets from play-by-play" : ""}. Split sacks count a half each.</div>`;
+}
+
+/* ---------- team badge: team colors + abbreviation (no logos) ---------- */
+function badge(team, big){
+  const hex = c => /^[0-9a-f]{6}$/i.test(c || "") ? "#" + c : null;
+  const isB = team.id === BAY;
+  const bg = isB ? "#154734" : (hex(team.color) && !/^(fff|ffffff)$/i.test(team.color) ? hex(team.color) : "#3a3a3a");
+  const fg = isB ? "#FFB81C" : "#fff";
+  return `<span class="tbadge${big ? " big" : ""}" style="background:${bg};color:${fg}">${esc(isB ? "BU" : String(team.abbr || "").slice(0, 4))}</span>`;
+}
+/* ---------- game flow + every drive ---------- */
+const QSEC = 900, OTSEC = 300;
+function gclock(per, clock){
+  if (per == null) return null;
+  if (per >= 5) return 4 * QSEC + (per - 5) * OTSEC + OTSEC / 2;
+  const p = String(clock || "0:00").split(":").map(Number), s = p.length === 2 ? p[0] * 60 + p[1] : (+p[0] || 0);
+  return (per - 1) * QSEC + (QSEC - Math.min(QSEC, s));
+}
+const fmtClock = s => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
+function driveKind(res){
+  const r = String(res || "").toUpperCase();
+  if (r === "TD") return ["td", "TD"];
+  if (r === "FG") return ["fg", "FG"];
+  if (/^PUNT/.test(r)) return ["punt", "PUNT"];
+  if (/^MISSED FG/.test(r)) return ["miss", "MISS FG"];
+  if (/DOWNS/.test(r)) return ["to", "DOWNS"];
+  if (/^INT/.test(r)) return ["to", "INT"];
+  if (/FUMBLE/.test(r)) return ["to", "FUMBLE"];
+  if (r === "SF" || /SAFETY/.test(r)) return ["to", "SAFETY"];
+  return ["clock", ""];
+}
+function flowCard(gm){
+  const b = bay(gm), o = opp(gm), home = b.homeAway === "home";
+  const periods = Math.max(4, ...gm.plays.map(r => r[2] || 0), ...gm.drives.map(d => d.t1[0] || 0));
+  const total = 4 * QSEC + Math.max(0, periods - 4) * OTSEC;
+  const end = gm.completed ? total : Math.max(...gm.plays.map(r => gclock(r[2], r[3]) || 0));
+  // lead after every score
+  const flow = [{t: 0, m: 0}]; let lb = 0, lo = 0;
+  // scoring plays only, and scores never go backward (ESPN occasionally stamps a wrong score on a non-scoring play)
+  gm.plays.forEach(r => { const hs = r[12], as = r[13]; if (hs == null || as == null) return;
+    if (!(r[11] || /Touchdown|Field Goal Good|Safety|Extra Point|Two-Point|Conversion/i.test(r[4]))) return;
+    const bs = home ? hs : as, os = home ? as : hs;
+    if (bs < lb || os < lo) return;
+    if (bs !== lb || os !== lo){ flow.push({t: gclock(r[2], r[3]), m: bs - os, bs, os}); lb = bs; lo = os; } });
+  flow.push({t: end, m: flow[flow.length - 1].m});
+  let led = 0, maxL = 0, minL = 0;
+  for (let i = 0; i < flow.length - 1; i++){ const a = Math.min(flow[i].t, 4 * QSEC), z = Math.min(flow[i + 1].t, 4 * QSEC); if (flow[i].m > 0) led += Math.max(0, z - a); maxL = Math.max(maxL, flow[i].m); minL = Math.min(minL, flow[i].m); }
+  const W = 700, H = 190, L = 34, R = 8, T = 10, Bm = 20;
+  const top = Math.max(7, maxL), bot = Math.min(-7, minL);
+  const x = t => L + t / total * (W - L - R), y = v => T + (top - v) / (top - bot) * (H - T - Bm);
+  let d = `M${x(0)},${y(0)}`; flow.forEach((p, i) => { if (i) d += `H${x(p.t).toFixed(1)}V${y(p.m).toFixed(1)}`; });
+  const area = d + `V${y(0)}Z`;
+  const qlines = Array.from({length: periods - 1}, (_, i) => { const t = i < 3 ? (i + 1) * QSEC : 4 * QSEC + (i - 3) * OTSEC; return `<line x1="${x(t)}" x2="${x(t)}" y1="${T}" y2="${H - Bm}" stroke="#b9af97" stroke-dasharray="${i === 1 ? "4 3" : "2 4"}"/>`; }).join("");
+  const qlabs = Array.from({length: periods}, (_, i) => { const a = i < 4 ? i * QSEC : 4 * QSEC + (i - 4) * OTSEC, z = i < 4 ? a + QSEC : a + OTSEC; return `<text x="${x((a + z) / 2)}" y="${H - 4}" text-anchor="middle" font-size="11" font-family="ui-monospace,monospace" fill="#6f6a5e">${i < 4 ? "Q" + (i + 1) : (i === 4 ? "OT" : (i - 3) + "OT")}</text>`; }).join("");
+  const lab = (v, s) => `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="#6f6a5e">${s}</text>`;
+  const flowSvg = `<svg viewBox="0 0 ${W} ${H}" id="cfbflow" role="img" aria-label="Baylor's lead after every score">
+    <defs><clipPath id="fpos"><rect x="0" y="0" width="${W}" height="${y(0)}"/></clipPath><clipPath id="fneg"><rect x="0" y="${y(0)}" width="${W}" height="${H}"/></clipPath></defs>
+    ${qlines}<path d="${area}" fill="#3f5f4d" stroke="#1c1c1a" stroke-width="1.5" clip-path="url(#fpos)"/><path d="${area}" fill="#d9634f" stroke="#1c1c1a" stroke-width="1.5" clip-path="url(#fneg)"/>
+    <line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="#1c1c1a" stroke-width="1.2"/>
+    ${lab(top, "+" + top)}${lab(0, "0")}${minL < 0 ? lab(bot, String(bot)) : ""}${qlabs}</svg>`;
+  // every drive
+  const RW = 700, RH = 92, rowY = {[BAY]: 6, [o.id]: 50}, rh = 34;
+  const counts = {[BAY]: 0, [o.id]: 0};
+  const blocks = gm.drives.map(dv => { if (!(dv.team in rowY)) return ""; const t0 = gclock(dv.t0[0], dv.t0[1]), t1 = gclock(dv.t1[0], dv.t1[1]);
+    if (t0 == null) return ""; const a = x(t0), z = Math.max(a + 5, x(t1 == null ? t0 : t1)), w = z - a;
+    const [k, txt] = driveKind(dv.result); if (k === "td") counts[dv.team]++;
+    const tip = `${dv.team === BAY ? "Baylor" : oppName(gm)}: ${dv.label || dv.result || "Drive"} · ${dv.plays ?? "?"} plays, ${dv.yds ?? "?"} yds · Q${dv.t0[0]} ${dv.t0[1]}`;
+    return `<g class="dv" data-t="${esc(tip)}"><rect class="d-${k}" x="${a.toFixed(1)}" y="${rowY[dv.team]}" width="${w.toFixed(1)}" height="${rh}" rx="1.5"/>${txt && w > (txt.length * 7 + 6) ? `<text x="${(a + w / 2).toFixed(1)}" y="${rowY[dv.team] + rh / 2 + 4}" text-anchor="middle" class="dl ${k}">${txt}</text>` : ""}</g>`; }).join("");
+  const rq = Array.from({length: periods - 1}, (_, i) => { const t = i < 3 ? (i + 1) * QSEC : 4 * QSEC + (i - 3) * OTSEC; return `<line x1="${x(t)}" x2="${x(t)}" y1="0" y2="${RH}" stroke="#b9af97" stroke-dasharray="2 4"/>`; }).join("");
+  const oc = /^[0-9a-f]{6}$/i.test(o.color || "") && !/^(fff|ffffff)$/i.test(o.color) ? "#" + o.color : "#3a3a3a";
+  const rowLab = `<rect x="0" y="${rowY[BAY] + 5}" width="30" height="${rh - 10}" rx="3" fill="#154734"/><text x="15" y="${rowY[BAY] + rh / 2 + 4}" text-anchor="middle" font-size="11" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="#FFB81C">BU</text>
+    <rect x="0" y="${rowY[o.id] + 5}" width="30" height="${rh - 10}" rx="3" fill="${oc}"/><text x="15" y="${rowY[o.id] + rh / 2 + 4}" text-anchor="middle" font-size="${String(o.abbr || "").length > 3 ? 9 : 11}" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="#fff">${esc(String(o.abbr || "").slice(0, 4))}</text>`;
+  const driveSvg = `<svg viewBox="0 0 ${RW} ${RH}" id="cfbdrives">${rq}${rowLab}${blocks}</svg>`;
+  const trail = minL < 0 ? "Biggest deficit " + (-minL) : "Never trailed";
+  return `<div class="card"><div class="bd">
+    <div class="row"><span class="label">Game flow · Baylor's lead after every score</span><span class="strong">Biggest lead ${maxL} · ${trail}</span></div>
+    <div class="sub" style="margin:2px 0 6px">Baylor led for ${fmtClock(led)} of ${gm.completed || end >= 4 * QSEC ? "60:00" : fmtClock(Math.min(end, 4 * QSEC)) + " so far"}</div>
+    ${flowSvg}<hr class="rule">
+    <div class="row"><span class="label">Every drive · same clock as above</span><span class="strong">Baylor ${counts[BAY]} TD · ${esc(oppName(gm))} ${counts[o.id]} TD</span></div>
+    ${driveSvg}
+    <div class="lgd dlg"><span><i class="sw d-td"></i>TD</span><span><i class="sw d-fg"></i>FG</span><span><i class="sw d-punt"></i>Punt</span><span><i class="sw d-miss"></i>Missed FG</span><span><i class="sw d-to"></i>Turnover / downs</span><span><i class="sw d-clock"></i>Clock ran out</span></div>
+    <div class="foot">Lead = Baylor's points minus the opponent's, after every score. Drives start and end on ESPN's drive chart; tap one for details.</div>
+  </div></div>`;
+}
+
+/* ---------- team stats with split bars ---------- */
+function teamStatsCard(gm){
+  const b = bay(gm).stats, o = opp(gm).stats;
+  const att = s => +String(s.completionAttempts || "0/0").split(/[/-]/)[1] || 0;
+  const ypp = s => (+s.totalYards || 0) / ((+s.rushingAttempts || 0) + att(s));
+  const sacksMade = tid => { const c = boxCat(gm, tid, "defensive"); return +c.athletes.reduce((x, a) => x + (+val(c, a, "sacks") || 0), 0).toFixed(1); };
+  const bars = [["Total yards", +b.totalYards, +o.totalYards, v => v], ["Yards per play", ypp(b), ypp(o), v => v.toFixed(1)],
+    ["Passing yards", +b.netPassingYards, +o.netPassingYards, v => v], ["Rushing yards", +b.rushingYards, +o.rushingYards, v => v], ["First downs", +b.firstDowns, +o.firstDowns, v => v]];
+  const plain = [["3rd down", b.thirdDownEff, o.thirdDownEff], ["4th down", b.fourthDownEff, o.fourthDownEff], ["Turnovers", b.turnovers, o.turnovers],
+    ["Sacks made", sacksMade(BAY), sacksMade(opp(gm).id)], ["Penalties", (b.totalPenaltiesYards || "").replace("-", " for "), (o.totalPenaltiesYards || "").replace("-", " for ")], ["Possession", b.possessionTime, o.possessionTime]];
+  const barRow = ([lab, bv, ov, f]) => { const ok = isFinite(bv) && isFinite(ov) && bv + ov > 0; const share = ok ? Math.max(0, bv) / (Math.max(0, bv) + Math.max(0, ov)) * 100 : 50;
+    return `<div class="tsr"><b class="l">${ok ? f(bv) : "—"}</b><div class="tsm"><span>${lab}</span><div class="tsb"><i style="width:${share}%"></i><i style="width:${100 - share}%"></i></div></div><b class="r">${ok ? f(ov) : "—"}</b></div>`; };
+  const plainRow = ([lab, bv, ov]) => `<div class="tsr"><b class="l">${esc(bv ?? "—")}</b><div class="tsm"><span>${lab}</span></div><b class="r">${esc(ov ?? "—")}</b></div>`;
+  return `<div class="card"><div class="bd"><div class="row"><span class="label">Team stats</span></div>
+    <div class="tsh"><span style="color:var(--green)">${badge(bay(gm))} Baylor</span><span>${esc(oppName(gm))} ${badge(opp(gm))}</span></div>
+    ${bars.map(barRow).join("")}${plain.map(plainRow).join("")}
+    <div class="foot">Yards per play = total yards ÷ (rushes + pass attempts); sacks count as rushes in college stats.</div></div></div>`;
+}
+
+/* ---------- full box score, both teams ---------- */
+function teamBoxScore(gm, tid){
+  const isB = tid === BAY, t = gm.teams.find(x => x.id === tid);
+  const P = boxCat(gm, tid, "passing"), R = boxCat(gm, tid, "rushing"), C = boxCat(gm, tid, "receiving"), D = boxCat(gm, tid, "defensive"), K = boxCat(gm, tid, "kicking"), U = boxCat(gm, tid, "punting");
+  const plays = gamePlays(gm).filter(p => p.team === tid);
+  const hasTgt = plays.some(p => p.kind === "pass" && (p.tgtNo || p.tgtName));
+  const tgts = a => plays.filter(p => p.kind === "pass" && (p.tgtNo || p.tgtName) && matchAthlete(C.athletes, p.tgtNo, p.tgtName) === a).length;
+  const nm = a => `${esc(a[0])}${a[1] !== "" ? ` <small>#${esc(a[1])}</small>` : ""}`;
+  const hi = (list, cat, key) => Math.max(0, ...list.map(a => +val(cat, a, key) || 0));
+  const mark = (v, h) => (+v > 0 && +v === h) ? `<b class="hi2">${esc(v)}</b>` : esc(v ?? "—");
+  const sumK = (list, cat, key) => list.reduce((s, a) => s + (+val(cat, a, key) || 0), 0);
+  const sec = (head, cols, rows, total) => rows.length ? `<table class="fb"><thead><tr><th>${head}</th>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td>${c}</td>`).join("")}</tr>`).join("")}${total ? `<tr class="tot">${total.map(c => `<td>${c}</td>`).join("")}</tr>` : ""}</tbody></table>` : "";
+  const rh = hi(R.athletes, R, "rushingYards"), ch = hi(C.athletes, C, "receivingYards");
+  const pass = sec("Passing", ["C/ATT", "YDS", "TD", "INT"], P.athletes.map(a => [nm(a), esc(val(P, a, "completions/passingAttempts")), esc(val(P, a, "passingYards")), esc(val(P, a, "passingTouchdowns")), esc(val(P, a, "interceptions"))]));
+  const rush = sec("Rushing", ["CAR", "YDS", "TD", "LONG"], R.athletes.map(a => [nm(a), esc(val(R, a, "rushingAttempts")), mark(val(R, a, "rushingYards"), rh), esc(val(R, a, "rushingTouchdowns")), esc(val(R, a, "longRushing"))]),
+    R.athletes.length > 1 ? ["Total", esc(t.stats.rushingAttempts ?? sumK(R.athletes, R, "rushingAttempts")), esc(t.stats.rushingYards ?? sumK(R.athletes, R, "rushingYards")), sumK(R.athletes, R, "rushingTouchdowns"), ""] : null);
+  const rec = sec("Receiving", ["REC", ...(hasTgt ? ["TGT"] : []), "YDS", "TD", "LONG"], C.athletes.map(a => [nm(a), esc(val(C, a, "receptions")), ...(hasTgt ? [tgts(a)] : []), mark(val(C, a, "receivingYards"), ch), esc(val(C, a, "receivingTouchdowns")), esc(val(C, a, "longReception"))]),
+    C.athletes.length > 1 ? ["Total", sumK(C.athletes, C, "receptions"), ...(hasTgt ? [plays.filter(p => p.kind === "pass" && (p.tgtNo || p.tgtName)).length] : []), sumK(C.athletes, C, "receivingYards"), sumK(C.athletes, C, "receivingTouchdowns"), ""] : null);
+  const top5 = D.athletes.slice().sort((a, b) => (+val(D, b, "totalTackles") || 0) - (+val(D, a, "totalTackles") || 0)).filter(a => +val(D, a, "totalTackles") > 0).slice(0, 5);
+  const def = sec("Defense", ["TKL", "SACK", "TFL", "PD"], top5.map(a => [nm(a), esc(val(D, a, "totalTackles")), esc(val(D, a, "sacks")), esc(val(D, a, "tacklesForLoss")), esc(val(D, a, "passesDefended"))]));
+  const kick = sec("Kicking", ["FG", "LONG", "XP", "PTS"], K.athletes.map(a => [nm(a), esc(val(K, a, "fieldGoalsMade/fieldGoalAttempts")), esc(+val(K, a, "longFieldGoalMade") ? val(K, a, "longFieldGoalMade") : "–"), esc(val(K, a, "extraPointsMade/extraPointAttempts")), esc(val(K, a, "totalKickingPoints"))]));
+  const punt = sec("Punting", ["NO", "AVG", "IN 20", "LONG"], U.athletes.map(a => [nm(a), esc(val(U, a, "punts")), esc(val(U, a, "grossAvgPuntYards")), esc(val(U, a, "puntsInside20")), esc(val(U, a, "longPunt"))]));
+  return `<div class="fbt ${isB ? "bayb" : "oppb"}"><div class="fbn">${badge(t, true)} ${esc(isB ? "Baylor" : t.loc || t.name)}</div>${pass}${rush}${rec}${def}${kick}${punt}</div>`;
+}
+function boxScoreCard(gm){
+  return `<div class="card"><div class="hd"><span>Box score</span><span>${gm.completed ? "Final" : esc(gm.status || "In progress")}</span></div><div class="bd">
+    <div class="fbg">${teamBoxScore(gm, BAY)}${teamBoxScore(gm, opp(gm).id)}</div>
+    <div class="foot">Highlighted = team high. Defense = top five tacklers. Sacks count as rushes in college, so a QB's rushing yards include sacks.${gamePlays(gm).some(p => p.tgtNo || p.tgtName) ? " Targets from play-by-play." : ""} ${gm.completed ? "" : "Unofficial until final. "}Data: ESPN box score.</div></div></div>`;
+}
+
+/* ---------- page ---------- */
+let state = {season: null, game: null, scope: "game"};
+function pickFromHash(){
+  const h = (location.hash || "").slice(1);
+  if (h.startsWith("g")){ const f = findGame(h.slice(1)); if (f){ state.season = f.s.year; state.game = f.g.id; return; } }
+  if (h.startsWith("s")){ const s = B.seasons.find(x => String(x.year) === h.slice(1)); if (s){ state.season = s.year; state.game = null; return; } }
+  if (state.season == null){ const cs = curSeason(); state.season = played(cs).length ? cs.year : B.seasons[B.seasons.length - 2].year; }
+}
+let seq = 0;
+async function render(){
+  const my = ++seq;
+  pickFromHash();
+  const season = B.seasons.find(s => s.year === state.season);
+  const games = played(season);
+  if (!state.game || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
+  $("#src").innerHTML = `ESPN box score &amp; play-by-play<br>${live ? "live" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}))}`;
+  $("#season").innerHTML = B.seasons.slice().reverse().map(s => `<option value="${s.year}" ${s.year === season.year ? "selected" : ""}>${s.label}${s.year === B.seasonYear ? " (this season)" : ""} · ${recStr(s)}</option>`).join("");
+  $("#rec").innerHTML = record(season);
+  $("#chips").innerHTML = games.slice().reverse().map(g => { const lv = !g.completed; const w = g.pf > g.pa;
+    return `<button class="chip ${g.id === state.game ? "on" : ""} ${lv ? "LV" : w ? "" : "L"}" data-g="${g.id}">${day(g.date)} ${g.site === "A" ? "at" : "vs"} ${esc(g.oppAbbr)}<span class="r">${lv ? "LIVE " : (w ? "W " : "L ")}${g.pf ?? 0}-${g.pa ?? 0}</span></button>`; }).join("");
+  const on = $("#chips .chip.on"); if (on) on.scrollIntoView({block: "nearest", inline: "nearest"});
+  if (!state.game){ $("#app").innerHTML = `<div class="empty">No games in ${esc(season.label)} yet.</div>`; return; }
+  const row = games.find(g => g.id === state.game);
+  let gm, seasonGms;
+  try { [gm, seasonGms] = await Promise.all([loadGame(row.id), Promise.all(games.map(g => loadGame(g.id).catch(() => null)))]); }
+  catch(e){ if (my === seq) $("#app").innerHTML = `<div class="empty">Couldn't load this game's data.</div>`; return; }
+  if (my !== seq) return;
+  // Baylor's other completed games this season, for the season-average diamonds
+  const others = games.filter(g => g.id !== row.id && g.completed).map(g => GAMES[g.id]).filter(Boolean);
+  const agg = tid => others.reduce((s, x) => addSum(s, summary(x, tid(x))), {});
+  const offAvg = others.length ? agg(() => BAY) : null, defAvg = others.length ? agg(x => opp(x).id) : null;
+  const m = {gm, row, season, seasonGames: games};
+  const seasonPlays = games.filter(g => g.completed).map(g => GAMES[g.id]).filter(Boolean).flatMap(gamePlays);
+  const scope = state.scope;
+  const scoped = scope === "season" ? seasonPlays : gamePlays(gm);
+  // baseline for the success colors: this game vs. Baylor's other games this season; a season vs. the season before
+  let base = null, baseLbl = "";
+  if (scope === "season"){ const prev = B.seasons.find(s => s.year === season.year - 1);
+    if (prev){ const pg = finals(prev).filter(g => g.hasCard); await Promise.all(pg.map(g => loadGame(g.id).catch(() => null))); if (my !== seq) return;
+      base = pg.map(g => GAMES[g.id]).filter(Boolean).flatMap(gamePlays); baseLbl = `Baylor's ${prev.label} season`; } }
+  else { base = others.flatMap(gamePlays); baseLbl = `Baylor's other ${season.label} games`; }
+  const scopeLbl = scope === "season" ? `${season.label} season (${games.filter(g => g.completed).length} games)` : `This game`;
+  $("#app").innerHTML = scoreCard(gm, row)
+    + flowCard(gm) + teamStatsCard(gm)
+    + `<div class="card"><div class="hd"><span>Offense &amp; defense vs. season</span><span>${esc(oppName(gm))}</span></div><div class="bd">${strips("Baylor offense, " + (gm.completed ? "full game" : "so far"), summary(gm, BAY), offAvg, true)}
+       <div style="height:12px"></div>${strips("Baylor defense, " + (gm.completed ? "full game" : "so far"), summary(gm, opp(gm).id), defAvg, false)}
+       <div class="lgd" style="justify-content:flex-start;margin-top:10px"><span><i class="lg dotl"></i>This game</span>${others.length ? `<span><i class="lg dial"></i>Baylor's other ${esc(season.label)} games</span>` : ""}</div>
+       <div class="foot">Plays = runs, passes and sacks (no kneels or spikes); the box score counts sacks as runs, the strips count them as dropbacks. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Explosive = runs and catches of 20+ yds. Trip = drive with a snap at or inside the opponent's 40 (TD 7, FG 3).</div></div></div>`
+    + qbCard(m)
+    + boxScoreCard(gm)
+    + `<div class="card"><div class="hd"><span>Baylor offense by situation</span><span></span></div><div class="bd">
+        <div class="filters" style="margin-top:0"><button class="f ${scope === "game" ? "on" : ""}" data-scope="game">This game</button><button class="f ${scope === "season" ? "on" : ""}" data-scope="season">${esc(season.label)} season</button></div>
+        ${situationCard(scoped, base, scopeLbl, baseLbl || "baseline")}
+        <div class="foot">Tap a row for run vs. pass success and the baseline. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Inside run = ESPN "rush middle"; outside = left or right. Pass depth = air yards from the catch or target spot (logged by ESPN from partway through 2025 on).</div></div></div>`;
+  wireTip();
+}
+
+function wireTip(){
+  const tip = $("#tip");
+  ["#passsvg", "#cfbdrives"].forEach(sel => { const s = $(sel); if (!s) return;
+    s.querySelectorAll(".pt,.dv").forEach(el => { const show = e => { tip.textContent = el.dataset.t; tip.style.display = "block"; const pt = e.touches ? e.touches[0] : e;
+      tip.style.left = Math.max(8, Math.min(pt.clientX + 12, window.innerWidth - tip.offsetWidth - 8)) + "px"; tip.style.top = (pt.clientY + 14) + "px"; };
+      el.addEventListener("mouseenter", show); el.addEventListener("click", show); el.addEventListener("mouseleave", () => tip.style.display = "none"); }); });
+  return;
+  const svg = $("#passsvg"); if (!svg) return;
+  const show = (e, el) => { tip.textContent = el.dataset.t; tip.style.display = "block"; const pt = e.touches ? e.touches[0] : e;
+    tip.style.left = Math.max(8, Math.min(pt.clientX + 12, window.innerWidth - tip.offsetWidth - 8)) + "px"; tip.style.top = (pt.clientY + 14) + "px"; };
+  svg.querySelectorAll(".pt").forEach(el => { el.addEventListener("mouseenter", e => show(e, el)); el.addEventListener("click", e => show(e, el)); el.addEventListener("mouseleave", () => tip.style.display = "none"); });
+}
+
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; return; }
+  const so = e.target.closest("[data-open]"); if (so){ const r = document.getElementById(so.dataset.open); if (r){ r.classList.toggle("on"); so.classList.toggle("on"); } return; }
+  const sc = e.target.closest("[data-scope]"); if (sc){ state.scope = sc.dataset.scope; const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
+  if (!e.target.closest(".pt,.dv")) $("#tip").style.display = "none";
+});
+document.addEventListener("change", e => { if (e.target.id === "season") location.hash = "s" + e.target.value; });
+window.addEventListener("hashchange", () => { state.game = null; render(); });
+
+/* Live refresh: straight from ESPN where the page may reach it (the GitHub Pages site). */
+async function tryLive(){
+  try {
+    const sched = await getJSON(API + "/teams/" + BAY + "/schedule", 8000);
+    const cs = curSeason(); if (!cs || sched.season.year !== B.seasonYear) return false;
+    for (const e of sched.events){
+      const c = e.competitions[0], o = c.competitors.find(t => t.team.id !== BAY), b = c.competitors.find(t => t.team.id === BAY), st = c.status.type;
+      let g = cs.games.find(x => x.id === e.id);
+      if (!g){ g = {id: e.id, date: e.date, opp: o.team.location || o.team.displayName, oppName: o.team.displayName, oppAbbr: o.team.abbreviation, oppId: o.team.id,
+                    site: c.neutralSite ? "N" : (b.homeAway === "home" ? "H" : "A"), post: false}; cs.games.push(g); }
+      const wasDone = g.completed && g.hasCard;
+      g.completed = !!st.completed; g.state = st.state;
+      if (!(st.completed || st.state === "in") || wasDone) continue;
+      const gm = compact(await getJSON(API + "/summary?event=" + e.id, 15000));
+      GAMES[e.id] = gm; const bt = bay(gm), ot = opp(gm);
+      Object.assign(g, {pf: +bt.score || 0, pa: +ot.score || 0, conf: gm.conf, hasCard: gm.plays.length > 0, completed: gm.completed, state: gm.state});
+    }
+    cs.games.sort((a, b) => a.date < b.date ? -1 : 1);
+    live = true; return true;
+  } catch(_){ return false; }
+}
+async function refresh(){
+  const btn = $("#refresh"), msg = $("#rfmsg");
+  btn.disabled = true; msg.textContent = "Refreshing…";
+  try { await loadIndex(); } catch(_){}
+  Object.keys(GAMES).forEach(k => { const f = findGame(k); if (f && !f.g.completed) delete GAMES[k]; });
+  const ok = await tryLive();
+  btn.disabled = false;
+  msg.textContent = ok ? "Live from ESPN · " + new Date().toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit"}) : "Couldn't reach ESPN from here — showing saved data";
+  await render();
+}
+$("#refresh").addEventListener("click", refresh);
+
+(async function start(){
+  try { await loadIndex(); } catch(e){ $("#app").innerHTML = `<div class="empty">Couldn't load the saved data (data/cfb.json).</div>`; return; }
+  await render();
+  if (await tryLive()) render();
+})();
+})();
+</script>
+</body>
+</html>
