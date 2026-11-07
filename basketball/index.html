@@ -123,6 +123,7 @@ tr.dnp td{color:#a39d90}
 .pc .pb{padding:14px 16px}
 .stars{font-size:20px;letter-spacing:2px;color:var(--gold);-webkit-text-stroke:.5px #8a6a10}
 .stars .off{color:#ddd3bd;-webkit-text-stroke:0}
+.grl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0}.grk{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);min-width:78px}
 .pg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
 .pg div{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:6px;text-align:center}
 .pg b{display:block;font:700 18px Oswald,'Arial Narrow',sans-serif}
@@ -451,9 +452,11 @@ function watch(season){
 /* ---------- player card (Baylor only) ---------- */
 let CURM = null;
 const normName = s => String(s || "").toLowerCase().replace(/[^a-z ]/g, "").replace(/\b(jr|sr|ii|iii|iv)\b/g, "").replace(/\s+/g, " ").trim();
+const ALIAS247 = {"justin bodo bodo": "juslin bodo bodo", "dan skillings": "daniel skillings"};
 function recruitFor(name){
   const r = (B.recruit && B.recruit.players) || [];
-  return r.find(p => normName(p.name) === normName(name)) || null;
+  const n = ALIAS247[normName(name)] || normName(name);
+  return r.find(p => (ALIAS247[normName(p.name)] || normName(p.name)) === n) || null;
 }
 function starsFor(rating){ return rating == null ? 0 : rating >= 98 ? 5 : rating >= 90 ? 4 : rating >= 80 ? 3 : rating >= 70 ? 2 : 1; }
 function playerCard(aid){
@@ -468,14 +471,22 @@ function playerCard(aid){
   const pct = (mk, at) => sp[at] ? Math.round(sp[mk] / sp[at] * 1000) / 10 + "%" : "—";
   const bio = [a[1] || sp.pos, sp.cls, sp.ht, sp.wt].filter(Boolean).map(esc).join(" · ");
   const box = (lab, v) => `<div><b>${esc(v)}</b><span>${lab}</span></div>`;
-  const prospect = rc
-    ? (rc.rating != null
-        ? `<span class="stars" aria-label="${n} stars">${"★".repeat(n)}<span class="off">${"★".repeat(5 - n)}</span></span> <span class="note">247Sports rating <b>${rc.rating}</b></span>`
-        : `<span class="note">Not rated by 247Sports</span>`)
-    : `<span class="note">No 247Sports grade on file (we only have the ${esc((B.recruit || {}).season || "current")} roster)</span>`;
+  const starsHtml = k => `<span class="stars" aria-label="${k} stars">${"★".repeat(k)}<span class="off">${"★".repeat(5 - k)}</span></span>`;
+  const compStars = c => c >= .9834 ? 5 : c >= .89 ? 4 : c >= .8 ? 3 : c >= .7 ? 2 : 1;
+  const gl = (lab, html) => `<div class="grl"><span class="grk">${lab}</span>${html}</div>`;
+  let prospect = "";
+  if (rc){
+    const hs = rc.rating != null ? `${starsHtml(starsFor(rc.rating))} <span class="note">247Sports <b>${rc.rating}</b></span>`
+             : rc.hsComposite != null ? `${starsHtml(compStars(rc.hsComposite))} <span class="note">247 Composite <b>${rc.hsComposite.toFixed(4)}</b></span>`
+             : `<span class="note">Not rated</span>`;
+    prospect += gl("High school", hs);
+    if (rc.transfer) prospect += gl("Transfer", rc.transfer.rating != null
+        ? `${starsHtml(starsFor(rc.transfer.rating))} <span class="note">247Sports <b>${rc.transfer.rating}</b> · ${rc.transfer.year}, from ${esc(rc.transfer.from)}</span>`
+        : `<span class="note">Not rated · ${rc.transfer.year}, from ${esc(rc.transfer.from)}</span>`);
+  } else prospect = `<span class="note">No 247Sports grade on file for this player</span>`;
   $("#pc").innerHTML = `<div class="ph"><div class="num">${a[4] !== "" && a[4] != null ? "#" + esc(a[4]) : ""}</div><div><div class="nm">${esc(a[0])}</div><div class="bio">${bio}</div>${sp.home ? `<div class="bio">${esc(sp.home)}</div>` : ""}</div><button class="x" data-close aria-label="Close">×</button></div>
     <div class="pb">
-      <div class="label">Prospect grade</div><div style="margin:4px 0 2px">${prospect}</div>
+      <div class="label">Prospect grades</div><div style="margin:4px 0 2px">${prospect}</div>
       ${rc && rc.school ? `<div class="note">${esc(rc.school)}</div>` : ""}
       <div class="sec" style="margin-top:14px">This game <small>${day(m.gm.date)} vs ${esc(m.row.oppAbbr)}</small></div>
       <div class="pg">${box("PTS", g("points") ?? "—")}${box("REB", g("rebounds") ?? "—")}${box("AST", g("assists") ?? "—")}${box("MIN", g("minutes") ?? "—")}
@@ -483,7 +494,7 @@ function playerCard(aid){
       <div class="sec" style="margin-top:14px">${esc(m.season.label)} averages <small>${sp.gp ? sp.gp + " games, " + sp.gs + " starts" : "no games"}${m.season.year === B.seasonYear ? " · season to date" : ""}</small></div>
       <div class="pg">${box("PPG", avg("points"))}${box("RPG", avg("rebounds"))}${box("APG", avg("assists"))}${box("MPG", avg("minutes"))}
         ${box("FG%", pct("fgm", "fga"))}${box("3P%", pct("tpm", "tpa"))}${box("FT%", pct("ftm", "fta"))}${box("SPG", avg("steals"))}</div>
-      <div class="foot">Stats from ESPN box scores. Prospect grade from the 247Sports roster page (stars: 98+ five, 90–97 four, 80–89 three, 70–79 two).</div>
+      <div class="foot">Stats from ESPN box scores. Prospect grades from 247Sports' Baylor roster and commits pages, 2019-20 on: high school rating (or 247 Composite where that's all 247 lists) and transfer portal rating. Stars: 98+ five, 90–97 four, 80–89 three, 70–79 two.</div>
     </div>`;
   $("#ov").classList.add("on");
 }

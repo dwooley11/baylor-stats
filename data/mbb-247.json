@@ -1,23 +1,767 @@
 {
-  "source": "https://247sports.com/team/baylor-bears-basketball-26/roster/",
-  "season": "2026-27",
-  "pulled": "2026-11-07",
-  "note": "247Sports rating (prospect grade). Stars from 247's scale: 98+ five, 90-97 four, 80-89 three, 70-79 two.",
-  "players": [
-    {"name": "Juslin Bodo Bodo", "jersey": "21", "school": "SoCal Academy", "rating": 87},
-    {"name": "Isaac Celiscar", "jersey": "8", "school": "Winter Haven", "rating": 86},
-    {"name": "Evan Chatman", "jersey": "15", "school": "McLennan C.C.", "rating": null},
-    {"name": "Brett Decker Jr.", "jersey": "2", "school": "Central Hardin", "rating": 82},
-    {"name": "James Goodis", "jersey": "13", "school": null, "rating": null},
-    {"name": "Andre Iguodala II", "jersey": "7", "school": "Link Academy", "rating": 87},
-    {"name": "Tegra Makabu", "jersey": "22", "school": null, "rating": null},
-    {"name": "Dylan Mingo", "jersey": "5", "school": "Long Island Lutheran", "rating": 98},
-    {"name": "Kayden Mingo", "jersey": "4", "school": "Long Island Lutheran", "rating": 95},
-    {"name": "Maikcol Perez", "jersey": "20", "school": "Italy", "rating": 92},
-    {"name": "Drew Perry", "jersey": "3", "school": null, "rating": null},
-    {"name": "Caden Powell", "jersey": "44", "school": "Waco Midway", "rating": 85},
-    {"name": "Mayo Soyoye", "jersey": "46", "school": "Blair Academy", "rating": 89},
-    {"name": "Elijah Williams", "jersey": "0", "school": "TMI Episcopal", "rating": 96},
-    {"name": "Isaac Williams IV", "jersey": "10", "school": "Faith Family Academy of Oak Cliff", "rating": 83}
-  ]
+ "source": "https://247sports.com/college/baylor/team/baylor-bears-basketball-26/roster/ (one page per season, ?year=2019 ... current)",
+ "pulled": "2026-11-07",
+ "note": "Prospect grades from 247Sports. rating = 247Sports high school rating (0-100) from each season's Baylor roster page; hsComposite = 247Sports Composite high school rating (0-1) where only that is listed; transfer.rating = 247Sports transfer portal rating (0-100) from Baylor's Commits page for that year. Stars: rating/transfer 98+ five, 90-97 four, 80-89 three, 70-79 two; Composite .9834+ five, .8900+ four, .8000+ three. Roster rows without a linked profile repeat another row's rating, so those are treated as unrated.",
+ "players": [
+  {
+   "name": "Adam Flagler",
+   "rating": null,
+   "school": "Duluth",
+   "seasons": [
+    "2019-20",
+    "2020-21",
+    "2022-23"
+   ],
+   "transfer": {
+    "year": 2019,
+    "from": "Presbyterian",
+    "rating": null
+   }
+  },
+  {
+   "name": "Andre Iguodala II",
+   "rating": 87,
+   "school": "Link Academy",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Austin Sacks",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2022-23",
+    "2023-24"
+   ]
+  },
+  {
+   "name": "Brett Decker Jr.",
+   "rating": 82,
+   "school": "Central Hardin",
+   "seasons": [
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Liberty",
+    "rating": 88
+   }
+  },
+  {
+   "name": "Caden Powell",
+   "rating": 85,
+   "school": "Waco Midway",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Rice",
+    "rating": 88
+   }
+  },
+  {
+   "name": "Caleb Lohner",
+   "rating": 89,
+   "school": "Wasatch Academy",
+   "seasons": [
+    "2022-23",
+    "2023-24"
+   ],
+   "transfer": {
+    "year": 2022,
+    "from": "BYU",
+    "rating": 88
+   }
+  },
+  {
+   "name": "Cameron Carr",
+   "rating": 94,
+   "school": "Link Academy",
+   "seasons": [
+    "2024-25",
+    "2025-26"
+   ]
+  },
+  {
+   "name": "Dain Dainja",
+   "rating": 93,
+   "school": "Park Center",
+   "seasons": [
+    "2020-21",
+    "2021-22"
+   ]
+  },
+  {
+   "name": "Dale Bonner",
+   "rating": null,
+   "school": "Shaker Heights",
+   "seasons": [
+    "2021-22",
+    "2022-23"
+   ],
+   "transfer": {
+    "year": 2021,
+    "from": "Fairmont State",
+    "rating": null
+   }
+  },
+  {
+   "name": "Daniel Skillings",
+   "rating": 91,
+   "school": "Roman Catholic",
+   "seasons": [
+    "2025-26"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Cincinnati",
+    "rating": 91
+   }
+  },
+  {
+   "name": "Dantwan Grimes",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Darius Allen",
+   "rating": null,
+   "school": "Chaminade-Madonna",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Davidson Hubbard",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Davion Mitchell",
+   "rating": 94,
+   "school": "Liberty County",
+   "seasons": [
+    "2019-20",
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Devonte Bandoo",
+   "rating": null,
+   "school": "Athlete Institute Basketball Academy",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Drew Perry",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Dylan Mingo",
+   "rating": 98,
+   "school": "Long Island Lutheran",
+   "seasons": [
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Elijah Williams",
+   "rating": 96,
+   "school": "TMI Episcopal",
+   "seasons": [
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Evan Chatman",
+   "rating": null,
+   "school": "McLennan C.C.",
+   "seasons": [
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "UAB",
+    "rating": 87
+   }
+  },
+  {
+   "name": "Flo Thamba",
+   "rating": null,
+   "school": "Mountain Mission School",
+   "seasons": [
+    "2019-20",
+    "2020-21",
+    "2021-22",
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Freddie Gillespie",
+   "rating": null,
+   "school": "East Ridge",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Isaac Celiscar",
+   "rating": 86,
+   "school": "Winter Haven",
+   "seasons": [
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Yale",
+    "rating": 91
+   }
+  },
+  {
+   "name": "Isaac Williams IV",
+   "rating": 83,
+   "school": "Faith Family Academy of Oak Cliff",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Texas A&M-Corpus Christi",
+    "rating": 86
+   }
+  },
+  {
+   "name": "JJ White",
+   "rating": null,
+   "school": "Norman North",
+   "seasons": [
+    "2025-26"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Omaha",
+    "rating": 91
+   }
+  },
+  {
+   "name": "Ja'Kobe Walter",
+   "rating": 98,
+   "school": "Link Academy",
+   "seasons": [
+    "2023-24"
+   ]
+  },
+  {
+   "name": "Jackson Moffatt",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2019-20",
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Jake Lindsey",
+   "rating": null,
+   "school": "Olympus",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Jake Younkin",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Jalen Bridges",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2022-23",
+    "2023-24"
+   ],
+   "transfer": {
+    "year": 2022,
+    "from": "West Virginia",
+    "rating": 90
+   },
+   "hsComposite": 0.9649
+  },
+  {
+   "name": "Jalen Celestine",
+   "rating": 88,
+   "school": "Long Island Lutheran",
+   "seasons": [
+    "2024-25"
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "California",
+    "rating": null
+   }
+  },
+  {
+   "name": "James Akinjo",
+   "rating": 91,
+   "school": "Salesian",
+   "seasons": [
+    "2021-22"
+   ],
+   "transfer": {
+    "year": 2021,
+    "from": "Arizona",
+    "rating": null
+   }
+  },
+  {
+   "name": "James Goodis",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ]
+  },
+  {
+   "name": "James Nnaji",
+   "rating": null,
+   "school": "Nigeria",
+   "seasons": [
+    "2025-26"
+   ]
+  },
+  {
+   "name": "Jared Butler",
+   "rating": 93,
+   "school": "Riverside Academy",
+   "seasons": [
+    "2019-20",
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Jason Asemota",
+   "rating": 93,
+   "school": "Hillcrest Prep",
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Jayden Nunn",
+   "rating": 89,
+   "school": "Dream City Christian",
+   "seasons": [
+    "2023-24",
+    "2024-25"
+   ],
+   "transfer": {
+    "year": 2023,
+    "from": "VCU",
+    "rating": 91
+   }
+  },
+  {
+   "name": "Jeremy Roach",
+   "rating": 98,
+   "school": "Paul VI Catholic",
+   "seasons": [
+    "2024-25"
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "Duke",
+    "rating": 96
+   }
+  },
+  {
+   "name": "Jeremy Sochan",
+   "rating": 95,
+   "school": "Orange Academy",
+   "seasons": [
+    "2021-22"
+   ]
+  },
+  {
+   "name": "Jonathan Tchamwa Tchatchoua",
+   "rating": null,
+   "school": "NBA Global Academy",
+   "seasons": [
+    "2019-20",
+    "2020-21",
+    "2022-23",
+    "2023-24"
+   ],
+   "transfer": {
+    "year": 2019,
+    "from": "UNLV",
+    "rating": null
+   }
+  },
+  {
+   "name": "Jordan Turner",
+   "rating": 89,
+   "school": "Sunrise Christian Academy",
+   "seasons": [
+    "2019-20",
+    "2020-21",
+    "2021-22",
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Josh Ojianwuna",
+   "rating": 92,
+   "school": "NBA Global Academy",
+   "seasons": [
+    "2022-23",
+    "2023-24",
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Juslin Bodo Bodo",
+   "rating": 87,
+   "school": "SoCal Academy",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "High Point",
+    "rating": 90
+   }
+  },
+  {
+   "name": "Kaleb Jackson",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Kayden Mingo",
+   "rating": 95,
+   "school": "Long Island Lutheran",
+   "seasons": [
+    "2026-27"
+   ],
+   "transfer": {
+    "year": 2026,
+    "from": "Penn State",
+    "rating": 94
+   }
+  },
+  {
+   "name": "Kendall Brown",
+   "rating": 98,
+   "school": "Sunrise Christian Academy",
+   "seasons": [
+    "2021-22"
+   ]
+  },
+  {
+   "name": "Keyonte George",
+   "rating": 99,
+   "school": "IMG Academy",
+   "seasons": [
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Kijana Love",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2021-22"
+   ]
+  },
+  {
+   "name": "King McClure",
+   "rating": null,
+   "school": "Triple A Academy",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "LJ Cryer",
+   "rating": 91,
+   "school": "Morton Ranch",
+   "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23"
+   ]
+  },
+  {
+   "name": "Langston Love",
+   "rating": 97,
+   "school": "Montverde Academy",
+   "seasons": [
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25"
+   ]
+  },
+  {
+   "name": "MaCio Teague",
+   "rating": null,
+   "school": "Montverde Academy",
+   "seasons": [
+    "2019-20",
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Maikcol Perez",
+   "rating": 92,
+   "school": "Italy",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Makai Mason",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Marino Dubravcic",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Mario Kegler",
+   "rating": null,
+   "school": "Oak Hill Academy",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Mark Paterson",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Mark Vital",
+   "rating": null,
+   "school": "Washington-Marion",
+   "seasons": [
+    "2019-20",
+    "2020-21"
+   ]
+  },
+  {
+   "name": "Matthew Mayer",
+   "rating": null,
+   "school": "Austin Westlake",
+   "seasons": [
+    "2019-20",
+    "2020-21",
+    "2021-22"
+   ]
+  },
+  {
+   "name": "Mayo Soyoye",
+   "rating": 89,
+   "school": "Blair Academy",
+   "seasons": [
+    "2025-26",
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Michael Rataj",
+   "rating": null,
+   "school": "Germany",
+   "seasons": [
+    "2025-26"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Oregon State",
+    "rating": 95
+   }
+  },
+  {
+   "name": "Miro Little",
+   "rating": 94,
+   "school": "Sunrise Christian Academy",
+   "seasons": [
+    "2023-24"
+   ]
+  },
+  {
+   "name": "Norchad Omier",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2024-25"
+   ],
+   "transfer": {
+    "year": 2024,
+    "from": "Miami",
+    "rating": 97
+   }
+  },
+  {
+   "name": "Obi Agbim",
+   "rating": null,
+   "school": "Rangeview",
+   "seasons": [
+    "2025-26"
+   ],
+   "transfer": {
+    "year": 2025,
+    "from": "Wyoming",
+    "rating": 95
+   }
+  },
+  {
+   "name": "Obim Okeke",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "Omar Adegbola",
+   "rating": null,
+   "school": "Montverde Academy",
+   "seasons": [
+    "2023-24",
+    "2024-25"
+   ]
+  },
+  {
+   "name": "RayJ Dennis",
+   "rating": null,
+   "school": "Oswego East",
+   "seasons": [
+    "2023-24"
+   ],
+   "transfer": {
+    "year": 2023,
+    "from": "Toledo",
+    "rating": 94
+   },
+   "hsComposite": 0.8556
+  },
+  {
+   "name": "Robert Wright III",
+   "rating": 97,
+   "school": "Montverde Academy",
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Tegra Makabu",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2026-27"
+   ]
+  },
+  {
+   "name": "Tounde Yessoufou",
+   "rating": 98,
+   "school": "St Joseph",
+   "seasons": [
+    "2025-26"
+   ]
+  },
+  {
+   "name": "Tristan Clark",
+   "rating": null,
+   "school": "Converse Judson",
+   "seasons": [
+    "2019-20"
+   ]
+  },
+  {
+   "name": "VJ Edgecombe",
+   "rating": 99,
+   "school": "Long Island Lutheran",
+   "seasons": [
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Will Kuykendall",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2025-26"
+   ]
+  },
+  {
+   "name": "Yanis Ndjonga",
+   "rating": null,
+   "school": null,
+   "seasons": [
+    "2023-24",
+    "2024-25"
+   ]
+  },
+  {
+   "name": "Yves Missi",
+   "rating": 94,
+   "school": "Prolific Prep",
+   "seasons": [
+    "2023-24"
+   ]
+  },
+  {
+   "name": "Zach Loveday",
+   "rating": 89,
+   "school": "Huntington Expression Prep",
+   "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23"
+   ]
+  }
+ ],
+ "sources": [
+  "https://247sports.com/college/baylor/team/baylor-bears-basketball-26/roster/?year=YYYY",
+  "https://247sports.com/college/baylor/season/YYYY-basketball/commits/"
+ ]
 }
