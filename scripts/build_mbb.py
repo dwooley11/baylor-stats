@@ -123,6 +123,8 @@ def parse_lineterminal(page):
         if x.isdigit() and 1 <= int(x) <= 400 and _re.match(r"^[A-Z][A-Za-z.&' -]{1,38}$", lines[i + 1]):
             txt.setdefault(lines[i + 1], int(x))
     tries.append(txt)
+    junk = _re.compile(r"\b(rank|team|record|conf|schedule|tempo)\b", _re.I)  # header text, not teams
+    tries = [{k: v for k, v in d.items() if not junk.search(k)} for d in tries]
     best = max(tries, key=lambda d: len(set(d.values())))
     return best if len(set(best.values())) >= 300 else {}
 
