@@ -14,6 +14,7 @@ html,body{margin:0;background:#11110f;color:var(--ink);font-family:Inter,system-
 .top{display:flex;justify-content:space-between;align-items:center;background:#11110f;color:#f3ebd8;padding:6px 4px 10px}
 .brand{font-family:Oswald;font-weight:700;font-size:20px;letter-spacing:.5px}
 .brand span{color:var(--gold)}
+.brand{display:flex;align-items:center;gap:7px}.brand span{margin-left:-2px}.blogo{height:28px;width:auto}
 .src{font-size:11px;color:#a9a49b;text-align:right}
 .rf{margin-top:6px;background:transparent;border:1px solid #57544c;color:#f3ebd8;border-radius:999px;padding:4px 10px;font:600 11px Inter,system-ui,sans-serif;cursor:pointer}
 .rf:disabled{opacity:.5}
@@ -222,7 +223,7 @@ table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:
 </style></head>
 <body>
 <div class="wrap">
-  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand">BAYLOR <span>BASKETBALL</span></div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
+  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>BASKETBALL</span></div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="pick"><label for="season">Season</label><select id="season" class="sel"></select></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
