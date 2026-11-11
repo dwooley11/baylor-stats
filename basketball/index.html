@@ -654,8 +654,12 @@ $("#refresh").addEventListener("click", refresh);
 
 (async function start(){
   try { await loadIndex(); } catch(e){ $("#app").innerHTML = `<div class="empty">Couldn't load the saved data (data/mbb.json).</div>`; return; }
+  // Check ESPN before the first draw so a live game opens directly, without flashing the last final.
+  // If ESPN is slow (over 5s), show the saved data and switch when the live pull lands.
+  const pull = tryLive(), wait = new Promise(r => setTimeout(() => r("slow"), 5000));
+  const first = await Promise.race([pull, wait]);
   await render();
-  if (await tryLive()) render();
+  if (first === "slow" && await pull) render();
 })();
 })();
 </script>
