@@ -166,6 +166,7 @@ tr.dnp td{color:#a39d90}
 .bigs{font:700 clamp(46px,14vw,80px)/1 Oswald,'Arial Narrow',sans-serif;white-space:nowrap;margin-top:4px;letter-spacing:-1px}
 .bigs .w{color:var(--green)}.bigs .l{color:#9b968b}.bigs .ow{color:#1d1c19}
 .bigs i{font-style:normal;color:var(--gold);font-size:.55em;vertical-align:.35em;margin:0 .12em}
+.sbd .tm .kp{display:block;font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);text-transform:none;letter-spacing:.3px;margin-top:3px}
 .meta{text-align:center;font:500 13px Oswald,'Arial Narrow',sans-serif;color:var(--muted);margin-top:6px}
 @media(max-width:480px){.sbd .tm{flex-direction:column;gap:4px}.sbd .tm.r{flex-direction:column-reverse;align-items:flex-end}.sbd .tm:not(.r){align-items:flex-start}}
 /* points bars */
@@ -375,14 +376,17 @@ function header(m){
   const site = m.row.site === "H" ? "Home" : m.row.site === "A" ? "Away" : "Neutral";
   const fmt = s => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
   const rk = rankOf(m.season, m.row);
+  const brk = m.season.year === B.seasonYear ? (B.kenpom || {})[BAY] : m.season.bayRank;
+  const ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+  const kp = r => r != null ? `<small class="kp">${ord(+r)} in KenPom</small>` : "";
   const tag = m.isLive ? `<span class="fin lv">● ${esc(m.gm.status || "Live")}</span>` : `<span class="fin">Final${m.periods > 2 ? (m.periods > 3 ? "/" + (m.periods - 2) + "OT" : "/OT") : ""}</span>`;
   const bc = m.isLive || win ? "w" : "l", oc = m.isLive || !win ? "ow" : "l";
   return `<div class="sbd">
-      <div class="tm">${mark(m.bay)}<span>Baylor</span></div>
+      <div class="tm">${mark(m.bay)}<span>Baylor${kp(brk)}</span></div>
       <div class="mid">${tag}<div class="bigs"><span class="${bc}">${esc(m.bay.score)}</span><i>-</i><span class="${oc}">${esc(m.opp.score)}</span></div></div>
-      <div class="tm r"><span>${esc(oppShort(m))}</span>${mark(m.opp)}</div>
+      <div class="tm r"><span>${esc(oppShort(m))}${kp(rk)}</span>${mark(m.opp)}</div>
     </div>
-    <div class="meta">${dayDot(m.gm.date)} · ${site}${m.row.post ? " · Postseason" : ""}${rk != null ? " · KenPom No. " + rk : ""} · Baylor led for ${fmt(m.led)}${m.isLive ? " so far" : " of " + fmt(m.total)}</div>`;
+    <div class="meta">${dayDot(m.gm.date)} · ${site}${m.row.post ? " · Postseason" : ""} · Baylor led for ${fmt(m.led)}${m.isLive ? " so far" : " of " + fmt(m.total)}</div>`;
 }
 
 function scoring(m){

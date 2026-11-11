@@ -185,7 +185,9 @@ for y in range(FIRST, CUR + 1):
     for aid, t in tot.items():
         t.update({k: v for k, v in (roster.get(aid) or {}).items() if v})
     players = tot
-    seasons.append({"year": y, "label": f"{y-1}-{str(y)[2:]}", "hasRanks": bool(wn), "games": games, "players": players})
+    bay_name = match("Baylor") if wn else None
+    seasons.append({"year": y, "label": f"{y-1}-{str(y)[2:]}", "hasRanks": bool(wn), "bayRank": wn.get(bay_name) if bay_name else None,
+                    "games": games, "players": players})
     print(seasons[-1]["label"], sum(g["completed"] for g in games), "games; no KenPom:", sorted(nodi) or "-")
 
 cur_kenpom[BAY] = load_wn(f"{CACHE}/wn_{CUR}.html").get("Baylor")
