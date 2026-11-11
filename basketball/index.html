@@ -215,7 +215,8 @@ table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:
 @media(max-width:560px){.fc{grid-template-columns:1fr 1fr;gap:6px}.fc svg{grid-column:1/3;grid-row:2}.fc .sd{white-space:nowrap;min-width:0}.fc .sd b{display:block;font-size:14px;margin:0 0 1px;overflow:hidden;text-overflow:ellipsis}.fc .sd small{display:inline;margin:0 3px 0 0}.fc .sd small+small,.fc .sd .gap{margin-left:8px}}
 /* comparison */
 .nightk{display:flex;justify-content:space-between;gap:10px;font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;text-transform:uppercase;margin:2px 0 4px;white-space:nowrap}
-.nightk .b{color:var(--red)}.nightk .g{color:var(--green)}.nightk .k{color:var(--muted)}
+.nightk .b{color:var(--red)}
+.nightk .ar{display:inline;width:7px;height:9px;vertical-align:0}.nightk .g{color:var(--green)}.nightk .k{color:var(--muted)}
 .sub2{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid #b9af97;padding-bottom:4px;margin:12px 0 8px;font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--green)}
 .sub2 small{font:500 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted)}
 </style></head>
@@ -501,7 +502,7 @@ function compare(m){
   const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
   const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
   const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button></div>`;
-  return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b">◀&#xFE0E; Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night ▶&#xFE0E;</span></div>
+  return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b"><svg class="ar" viewBox="0 0 8 10" aria-hidden="true"><path d="M8 0V10L0 5Z" fill="currentColor"/></svg> Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night <svg class="ar" viewBox="0 0 8 10" aria-hidden="true"><path d="M0 0V10L8 5Z" fill="currentColor"/></svg></span></div>
     <div class="sub2">Baylor's offense <small>${bNote}</small></div>
     ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">${base === "this" ? `No other ${seasonLab} games yet.` : `No ${seasonLab} Baylor stats on ESPN.`}</div>`}
     <div class="sub2">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
