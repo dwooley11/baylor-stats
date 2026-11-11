@@ -96,6 +96,10 @@ for y in range(FIRST, CUR + 1):
     fresh = y == CUR
     wn_html = fetch(f"https://www.warrennolan.com/basketball/{y}/compare-rankings", f"{CACHE}/wn_{y}.html", fresh, ua=True)
     wn = load_wn(f"{CACHE}/wn_{y}.html") if wn_html else {}
+    # Warren Nolan has no POM column for 2019-20; fall back to KenPom's final ranks saved in data/kenpom-<year>.json
+    kp_file = os.path.join(DATA, f"kenpom-{y}.json")
+    if not wn and os.path.exists(kp_file):
+        wn = json.load(open(kp_file))["ranks"]
     if y == CUR and wn:
         prev = load_wn(f"{CACHE}/wn_{y-1}.html")
         same = sum(1 for k, v in wn.items() if prev.get(k) == v)

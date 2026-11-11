@@ -24,6 +24,8 @@ scripts/wnmatch.py       Reads Warren Nolan's Ranking Comparison page; matches E
 - **KenPom ranks** via Warren Nolan's Ranking Comparison page (POM column). A browser can't read that
   page directly, so the Action saves the ranks into `data/mbb.json`. Early in a season Warren Nolan
   still shows last season's final ranks; the page says so and switches on its own when they update.
+  Warren Nolan has no POM column for 2019-20, so that season uses KenPom's final ranks saved in
+  `data/kenpom-2020.json` (from the kenpomR-data dataset).
 
 ## How it runs
 - Served by GitHub Pages at https://dwooley11.github.io/baylor-stats/ (`.github/workflows/deploy.yml`, on every push to main).

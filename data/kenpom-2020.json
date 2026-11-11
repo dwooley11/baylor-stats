@@ -1,0 +1,27 @@
+{
+ "source": "KenPom final 2019-20 ratings (opponent ranks on Baylor's kenpom.com schedule), via github.com/saiemgilani/kenpomR-data team_schedules_2020.csv. Used because Warren Nolan's 2020 Ranking Comparison page has no POM column. Keys are ESPN team locations.",
+ "ranks": {
+  "Kansas": 1,
+  "Baylor": 3,
+  "West Virginia": 10,
+  "Villanova": 18,
+  "Arizona": 19,
+  "Texas Tech": 21,
+  "Butler": 25,
+  "Florida": 32,
+  "Oklahoma": 36,
+  "Oklahoma State": 53,
+  "Washington": 54,
+  "Texas": 61,
+  "TCU": 86,
+  "Iowa State": 89,
+  "Kansas State": 90,
+  "Texas State": 93,
+  "Ohio": 167,
+  "Coastal Carolina": 190,
+  "Jackson State": 281,
+  "Central Arkansas": 283,
+  "UT Martin": 338,
+  "Maryland Eastern Shore": 349
+ }
+}
