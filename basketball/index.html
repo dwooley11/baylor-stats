@@ -49,6 +49,7 @@ html,body{margin:0;background:#11110f;color:var(--ink);font-family:Inter,system-
 .legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
 /* svg */
 svg{display:block;width:100%;height:auto}
+#flowsvg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
 .courts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:520px){.court-h{flex-direction:column;font-size:11px}}
 .court-h{display:flex;justify-content:space-between;font:700 12px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;margin-bottom:4px}
@@ -211,7 +212,7 @@ table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:
 .fc br.wide{display:block}
 @media(max-width:560px){.fc br.wide{display:none}}
 .fc .sd:not(.r) b{color:var(--green)}
-@media(max-width:560px){.fc{grid-template-columns:1fr 1fr;gap:6px}.fc svg{grid-column:1/3;grid-row:2}.fc .sd b{display:inline;font-size:14px;margin:0 6px 0 0}.fc .sd small{display:inline;margin:0 3px 0 8px}}
+@media(max-width:560px){.fc{grid-template-columns:1fr 1fr;gap:6px}.fc svg{grid-column:1/3;grid-row:2}.fc .sd{white-space:nowrap;min-width:0}.fc .sd b{display:block;font-size:14px;margin:0 0 1px;overflow:hidden;text-overflow:ellipsis}.fc .sd small{display:inline;margin:0 3px 0 0}.fc .sd small+small,.fc .sd .gap{margin-left:8px}}
 /* comparison */
 .nightk{display:flex;justify-content:space-between;gap:10px;font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;text-transform:uppercase;margin:2px 0 4px;white-space:nowrap}
 .nightk .b{color:var(--red)}.nightk .g{color:var(--green)}.nightk .k{color:var(--muted)}
@@ -409,6 +410,7 @@ function flowChart(m){
     ${tv}${vline(1200)}${m.periods > 2 ? vline(2400) : ""}
     <path d="${area}" fill="var(--green2)" clip-path="url(#cpos)"/><path d="${area}" fill="${oc}" opacity=".8" clip-path="url(#cneg)"/>
     <path d="${d}" fill="none" stroke="var(--green)" stroke-width="1.2"/>
+    <line id="fcur" x1="0" x2="0" y1="${T}" y2="${H - Bm}" stroke="#1c1c1a" stroke-width="1.2" visibility="hidden"/>
     <line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="#1c1c1a" stroke-width=".8"/>
     ${lab(top - 5, "+" + (top - 5))}${lab(0, "0")}${m.minLead < 0 ? lab(bot + 5, String(bot + 5)) : ""}
     <text x="${L}" y="${H - 6}" font-size="9" font-family="Oswald,Arial Narrow,sans-serif" fill="#6f6a5e">TIP</text>
@@ -432,7 +434,7 @@ function fullCourt(m){
   const pos = (s, left) => left ? [s.y + hy, s.x] : [94 - (s.y + hy), 50 - s.x];
   const dots = (id, left, color) => m.shots.filter(s => s.team === id).map(s => { const [px, py] = pos(s, left);
     return `<circle cx="${Math.max(.9, Math.min(93.1, px)).toFixed(2)}" cy="${py.toFixed(2)}" r=".95" fill="${s.made ? color : "#f6f1e4"}" stroke="${s.made ? color : "#6f6a5e"}" stroke-width="${s.made ? 0 : .22}"/>`; }).join("");
-  const side = (box, name, r) => `<div class="sd ${r ? "r" : ""}"><b>${esc(name)}</b><small>FG</small>${box.fgm}-${box.fga}<br class="wide"><small>3PT</small>${box.tpm}-${box.tpa}</div>`;
+  const side = (box, name, r) => `<div class="sd ${r ? "r" : ""}"><b>${esc(name)}</b><small>FG</small>${box.fgm}-${box.fga}<br class="wide"><small class="gap">3PT</small>${box.tpm}-${box.tpa}</div>`;
   return secHead("Every shot", "● made · ○ missed") + `<div class="fc">
     ${side(m.bayBox, "Baylor", false)}
     <svg viewBox="-.6 -.6 95.2 51.2" role="img" aria-label="Shot map">
@@ -499,7 +501,7 @@ function compare(m){
   const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
   const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
   const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button></div>`;
-  return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b">◀ Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night ▶</span></div>
+  return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b">◀&#xFE0E; Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night ▶&#xFE0E;</span></div>
     <div class="sub2">Baylor's offense <small>${bNote}</small></div>
     ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">${base === "this" ? `No other ${seasonLab} games yet.` : `No ${seasonLab} Baylor stats on ESPN.`}</div>`}
     <div class="sub2">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
@@ -702,7 +704,8 @@ window.addEventListener("resize", () => fitBox());
 
 function wireFlowTip(m){
   const svg = $("#flowsvg"), tip = $("#tip"); if (!svg) return;
-  const hide = () => tip.style.display = "none";
+  const cur = svg.querySelector("#fcur");
+  const hide = () => { tip.style.display = "none"; if (cur) cur.setAttribute("visibility", "hidden"); };
   const show = e => {
     const r = svg.getBoundingClientRect(), W = 700, L = 34, R = 10;
     const pt = e.touches ? e.touches[0] : e;
@@ -713,7 +716,16 @@ function wireFlowTip(m){
     const left = t < 2400 ? 1200 - (t % 1200) : 300 - ((t - 2400) % 300);
     tip.textContent = `${per} ${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, "0")} · Baylor ${p.bs}-${p.os} (${p.m > 0 ? "+" : ""}${p.m})`;
     tip.style.display = "block";
-    tip.style.left = Math.min(pt.clientX + 12, window.innerWidth - tip.offsetWidth - 8) + "px"; tip.style.top = (pt.clientY - 34) + "px";
+    const vx = (pt.clientX - r.left) / r.width * W;
+    if (cur){ cur.setAttribute("x1", vx); cur.setAttribute("x2", vx); cur.setAttribute("visibility", "visible"); }
+    if (e.touches){
+      // finger on the chart: show the readout above the chart (below it if the chart is at the top of the screen)
+      const above = r.top - tip.offsetHeight - 8;
+      tip.style.top = (above > 8 ? above : r.bottom + 8) + "px";
+      tip.style.left = Math.max(8, Math.min(pt.clientX - tip.offsetWidth / 2, window.innerWidth - tip.offsetWidth - 8)) + "px";
+    } else {
+      tip.style.left = Math.min(pt.clientX + 12, window.innerWidth - tip.offsetWidth - 8) + "px"; tip.style.top = (pt.clientY - 34) + "px";
+    }
   };
   svg.addEventListener("mousemove", show); svg.addEventListener("touchstart", show, {passive: true}); svg.addEventListener("touchmove", show, {passive: true});
   svg.addEventListener("mouseleave", hide); svg.addEventListener("touchend", () => setTimeout(hide, 1200));
