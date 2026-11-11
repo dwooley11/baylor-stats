@@ -140,6 +140,80 @@ tr.dnp td{color:#a39d90}
 .rec .form i{width:16px;height:16px;display:grid;place-items:center;font:700 9px Inter,sans-serif;font-style:normal;color:#fff;background:var(--green);border-radius:2px}
 .rec .form i.L{background:var(--red)}
 @media(max-width:420px){.rec{flex-direction:column;align-items:flex-start}.rec .grid{width:100%}}
+/* ---- game card, styled after the @mcbaylor graphics ---- */
+.gc{background:var(--cream);border-radius:6px;margin:0 0 12px;overflow:hidden}
+.gc .in{padding:16px 16px 14px}
+.gc .cf{background:var(--green);color:#e8e0cc;padding:9px 16px;font:400 10px/1.4 Inter,system-ui,sans-serif}
+.sh{display:flex;align-items:center;gap:6px 10px;margin:18px 0 10px;flex-wrap:wrap}
+.sh .cap{margin-left:auto}
+.sh:first-child{margin-top:4px}
+.sh .bx{border:2px solid var(--green);color:var(--green);padding:3px 8px 2px;font:700 13px Oswald,'Arial Narrow',sans-serif;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.sh i{flex:1;border-top:1px solid #b9af97;min-width:12px}
+.sh .cap{font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);text-align:right}
+.lg{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+.lg img{display:none;height:34px;width:auto;max-width:44px}
+.lg.ok img{display:block}.lg.ok .tbadge{display:none}
+.tbadge{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 4px;border-radius:4px;font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px}
+.sbd{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.sbd .tm{display:flex;align-items:center;gap:8px;font:700 clamp(15px,4.4vw,24px)/1.05 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;color:var(--green)}
+.sbd .tm.r{justify-content:flex-end;text-align:right;color:#8a857a}
+.sbd .mid{text-align:center}
+.fin{display:inline-block;background:var(--green);color:#f3ebd8;font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:2px;padding:4px 10px;text-transform:uppercase}
+.fin.lv{background:var(--red)}
+.bigs{font:700 clamp(46px,14vw,80px)/1 Oswald,'Arial Narrow',sans-serif;white-space:nowrap;margin-top:4px;letter-spacing:-1px}
+.bigs .w{color:var(--green)}.bigs .l{color:#9b968b}.bigs .ow{color:#1d1c19}
+.bigs i{font-style:normal;color:var(--gold);font-size:.55em;vertical-align:.35em;margin:0 .12em}
+.meta{text-align:center;font:500 13px Oswald,'Arial Narrow',sans-serif;color:var(--muted);margin-top:6px}
+@media(max-width:480px){.sbd .tm{flex-direction:column;gap:4px}.sbd .tm.r{flex-direction:column-reverse;align-items:flex-end}.sbd .tm:not(.r){align-items:flex-start}}
+/* points bars */
+.pts{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center}
+.pts .tn{display:flex;align-items:center;gap:6px;font:700 16px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
+.pts .tn .lg img{height:22px}
+.pts .bar{height:26px}
+.pts .bar i{font:600 12px Oswald,'Arial Narrow',sans-serif}
+.pts .tot{font:700 26px Oswald,'Arial Narrow',sans-serif;text-align:right}
+.lgd{display:flex;gap:10px;font:500 11px Oswald,'Arial Narrow',sans-serif;color:var(--muted);white-space:nowrap}
+.lgd i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+/* box score: fits the screen, no side scrolling */
+.bxh{display:flex;align-items:baseline;gap:8px;margin:16px 0 4px;font:700 20px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;color:var(--green)}
+.bxh small{font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);text-transform:none}
+.bxh.o{color:#6e6a63}
+table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:500 13px Oswald,'Arial Narrow',sans-serif;font-variant-numeric:tabular-nums}
+.bs th{background:none;color:var(--green);font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px;padding:4px 3px;border-bottom:2px solid var(--ink);text-align:center}
+.bs td{padding:5px 3px;border-bottom:1px solid #ddd3bd;text-align:center;white-space:nowrap;background:none;position:static;font:inherit}
+.bs td.no,.bs th.no{text-align:right;color:var(--muted);padding-right:6px;width:1%}
+.bs td.nm,.bs th.nm{text-align:left;font-weight:700;font-size:14px;white-space:normal;line-height:1.15}
+.bs td.nm .ps{color:var(--muted);font-weight:500;font-size:11px;margin-left:4px;white-space:nowrap}
+.bs tr.split td{border-top:2px solid var(--ink)}
+.bs tr.tot td{border-top:2px solid var(--ink);border-bottom:0;font-weight:700;font-size:14px;background:none}
+.bs .hot,.bs .cold,.bs .hi{display:inline-block;padding:1px 4px;border-radius:2px;line-height:1.2}
+.bs .hot{background:#ecb7ab}.bs .cold{background:#c3cfe9}
+.bs .hi{background:var(--green);color:#fff}
+.bs .pct{font-size:9px;color:#5f5a50;margin-left:2px}
+.bs .pl{text-decoration-thickness:1px;text-decoration-color:#cdc3aa}
+@media(max-width:560px){
+  table.bs{font-size:11px}.bs th{font-size:10px;padding:3px 1px}.bs td{padding:4px 1px}
+  .bs td.nm{font-size:12px}.bs td.nm .ps{display:block;margin:0;font-size:9.5px}
+  .bs .pct{display:block;font-size:8px;margin:0;line-height:1}.bs .hot,.bs .cold,.bs .hi{padding:1px 2px}
+  .bs tr.tot td{font-size:12px}.bs td.no,.bs th.no{padding-right:3px}
+}
+.bkey{font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);margin-top:8px}
+.bkey span{padding:0 4px;border-radius:2px;color:var(--ink)}
+/* full-court shot map */
+.fc{display:grid;grid-template-columns:62px 1fr 62px;gap:8px;align-items:center}
+.fc .sd{font:700 13px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;line-height:1.25}
+.fc .sd b{display:block;font-size:17px;margin-bottom:4px}
+.fc .sd small{display:block;font:500 11px Oswald,'Arial Narrow',sans-serif;color:var(--muted);margin-top:4px}
+.fc .sd.r{text-align:right;color:#6e6a63}
+.fc br.wide{display:block}
+@media(max-width:560px){.fc br.wide{display:none}}
+.fc .sd:not(.r) b{color:var(--green)}
+@media(max-width:560px){.fc{grid-template-columns:1fr 1fr;gap:6px}.fc svg{grid-column:1/3;grid-row:2}.fc .sd b{display:inline;font-size:14px;margin:0 6px 0 0}.fc .sd small{display:inline;margin:0 3px 0 8px}}
+/* comparison */
+.nightk{display:flex;justify-content:space-between;gap:10px;font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;text-transform:uppercase;margin:2px 0 4px;white-space:nowrap}
+.nightk .b{color:var(--red)}.nightk .g{color:var(--green)}.nightk .k{color:var(--muted)}
+.sub2{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid #b9af97;padding-bottom:4px;margin:12px 0 8px;font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--green)}
+.sub2 small{font:500 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted)}
 </style></head>
 <body>
 <div class="wrap">
@@ -275,38 +349,47 @@ function rankOf(season, row){
 function oppColor(m){ const c = (m.opp.color || "3a3a3a").toLowerCase(); return /^(fff|ffffff|f.f.f.)$/.test(c) ? "#3a3a3a" : "#" + c; }
 const oppShort = m => m.opp.loc || m.opp.name;
 
+/* ---------- team marks: your own logo file if you add one (logos/<ESPN team id>.png), else a color badge ---------- */
+function badge(team){
+  const hex = c => /^[0-9a-f]{6}$/i.test(c || "") ? "#" + c : null;
+  const isB = team.id === BAY;
+  const bg = isB ? "#154734" : (hex(team.color) && !/^(fff|ffffff)$/i.test(team.color) ? hex(team.color) : "#3a3a3a");
+  return `<span class="tbadge" style="background:${bg};color:${isB ? "#FFB81C" : "#fff"}">${esc(isB ? "BU" : String(team.abbr || "").slice(0, 4))}</span>`;
+}
+function mark(team){
+  return `<span class="lg"><img src="../logos/${esc(team.id)}.png" alt="" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">${badge(team)}</span>`;
+}
+const dayDot = d => { const s = new Date(d).toLocaleDateString("en-US", {month: "short", day: "numeric", timeZone: "America/Chicago"}); return /^May/.test(s) ? s : s.replace(" ", ". "); };
+const secHead = (box, cap) => `<div class="sh"><span class="bx">${box}</span><i></i>${cap ? `<span class="cap">${cap}</span>` : ""}</div>`;
+
 function header(m){
-  const win = +m.bay.score > +m.opp.score;
-  const site = m.row.site === "H" ? "vs" : m.row.site === "A" ? "at" : "vs (neutral)";
+  const bs = +m.bay.score, os = +m.opp.score, win = bs > os;
+  const site = m.row.site === "H" ? "Home" : m.row.site === "A" ? "Away" : "Neutral";
   const fmt = s => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
   const rk = rankOf(m.season, m.row);
-  return `<div class="card"><div class="bd">
-    <div class="score"><h1>Baylor ${esc(m.bay.score)}, ${esc(String(oppShort(m)).toUpperCase())} ${esc(m.opp.score)}</h1>${m.isLive ? `<div class="wl LV">● ${esc(m.gm.status || "Live")}</div>` : `<div class="wl ${win ? "" : "L"}">${win ? "W" : "L"}</div>`}</div>
-    <div class="sub">${day(m.gm.date)}, ${m.season.label}${m.row.post ? " · postseason" : ""} · ${site} ${rk != null ? "KenPom No. " + rk + " " : ""}${esc(m.opp.name)} · Baylor led for ${fmt(m.led)}${m.isLive ? " so far" : " of " + fmt(m.total)}${m.periods > 2 ? " · " + (m.periods - 2) + "OT" : ""}</div>
-  </div></div>`;
+  const tag = m.isLive ? `<span class="fin lv">● ${esc(m.gm.status || "Live")}</span>` : `<span class="fin">Final${m.periods > 2 ? (m.periods > 3 ? "/" + (m.periods - 2) + "OT" : "/OT") : ""}</span>`;
+  const bc = m.isLive || win ? "w" : "l", oc = m.isLive || !win ? "ow" : "l";
+  return `<div class="sbd">
+      <div class="tm">${mark(m.bay)}<span>Baylor</span></div>
+      <div class="mid">${tag}<div class="bigs"><span class="${bc}">${esc(m.bay.score)}</span><i>-</i><span class="${oc}">${esc(m.opp.score)}</span></div></div>
+      <div class="tm r"><span>${esc(oppShort(m))}</span>${mark(m.opp)}</div>
+    </div>
+    <div class="meta">${dayDot(m.gm.date)} · ${site}${m.row.post ? " · Postseason" : ""}${rk != null ? " · KenPom No. " + rk : ""} · Baylor led for ${fmt(m.led)}${m.isLive ? " so far" : " of " + fmt(m.total)}</div>`;
 }
 
 function scoring(m){
-  const rows = [[BAY, "Baylor", ["var(--green)", "var(--gold)", "var(--sage)"], m.bay.score], [m.opp.id, oppShort(m), ["#1d1c19", "#6e6a63", "#a9a49b"], m.opp.score]];
-  const halves = m.periods > 2 ? [0, 1, 2] : [0, 1];
-  const max = Math.max(1, ...rows.flatMap(r => halves.map(h => { const s = m.by[r[0]][h]; return s.two + s.three + s.ft; })));
-  const cols = halves.length === 3 ? "grid-template-columns:minmax(70px,110px) 1fr 1fr .5fr 44px" : "";
-  let h = `<div class="row"><span class="label">Where the points came from</span><span class="legend"><span><i style="background:var(--green)"></i>2s</span><span><i style="background:var(--gold)"></i>3s</span><span><i style="background:var(--sage)"></i>FTs</span></span></div>
-    <div class="sb" style="${cols}"><span></span>${halves.map(x => `<span class="label">${["1st half", "2nd half", "OT"][x]}</span>`).join("")}<span class="label" style="text-align:right">Total</span>`;
-  rows.forEach(([id, name, col, tot]) => {
-    h += `<span class="tm" style="${id === BAY ? "color:var(--green)" : ""}">${esc(name)}</span>`;
-    halves.forEach(x => {
-      const s = m.by[id][x], sum = s.two + s.three + s.ft;
-      const seg = (v, c) => v ? `<i style="width:${v / max * 100}%;background:${c}">${v / max > .07 ? v : ""}</i>` : "";
-      h += `<div class="bar">${seg(s.two, col[0])}${seg(s.three, col[1])}${seg(s.ft, col[2])}<b>${sum}</b></div>`;
-    });
-    h += `<span class="tot">${esc(tot)}</span>`;
-  });
-  return h + `</div>`;
+  const tot = id => { const s = m.by[id]; return [0, 1, 2].reduce((a, h) => ({two: a.two + s[h].two, three: a.three + s[h].three, ft: a.ft + s[h].ft}), {two: 0, three: 0, ft: 0}); };
+  const rows = [[m.bay, tot(BAY), [["var(--green)", "#fff"], ["var(--gold)", "#1c1c1a"], ["var(--sage)", "#1c1c1a"]], "var(--green)"],
+                [m.opp, tot(m.opp.id), [["#5b5853", "#fff"], ["#9b968b", "#fff"], ["#c6c0b3", "#1c1c1a"]], "#6e6a63"]];
+  const max = Math.max(1, ...rows.map(r => r[1].two + r[1].three + r[1].ft));
+  const seg = (v, [bg, fg]) => v ? `<i style="width:${v / max * 100}%;background:${bg};color:${fg}">${v / max > .05 ? v : ""}</i>` : "";
+  return secHead("Where the points came from", `<span class="lgd"><span><i style="background:var(--green)"></i>2s</span><span><i style="background:var(--gold)"></i>3s</span><span><i style="background:var(--sage)"></i>Free throws</span></span>`)
+    + `<div class="pts">` + rows.map(([team, s, c, col]) => `<span class="tn" style="color:${col}">${mark(team)}${esc(team.id === BAY ? "Baylor" : oppShort(m))}</span>
+      <div class="bar">${seg(s.two, c[0])}${seg(s.three, c[1])}${seg(s.ft, c[2])}</div><span class="tot" style="color:${col}">${esc(team.score)}</span>`).join("") + `</div>`;
 }
 
 function flowChart(m){
-  const W = 700, H = 210, L = 34, R = 10, T = 26, Bm = 22;
+  const W = 700, H = 180, L = 34, R = 10, T = 26, Bm = 22;
   const top = Math.max(10, Math.ceil(m.maxLead / 5) * 5 + 5), bot = Math.min(-10, Math.floor(m.minLead / 5) * 5 - 5);
   const x = t => L + t / m.total * (W - L - R), y = v => T + (top - v) / (top - bot) * (H - T - Bm);
   let d = `M${x(0)},${y(0)}`;
@@ -316,7 +399,8 @@ function flowChart(m){
   const peak = m.flow.reduce((a, b) => b.m > a.m ? b : a, m.flow[0]);
   const vline = t => `<line x1="${x(t)}" x2="${x(t)}" y1="${T}" y2="${H - Bm}" stroke="#1c1c1a" stroke-width=".8"/>`;
   const lab = (v, txt) => `<text x="${L - 5}" y="${y(v) + 3}" font-size="9" text-anchor="end" font-family="Inter,sans-serif" fill="#6f6a5e">${txt}</text>`;
-  return `<div class="row"><span class="label">Game flow · Baylor's lead after every basket · TV timeouts marked</span><span class="strong">Biggest lead ${m.maxLead}${m.minLead < 0 ? " · trailed by " + (-m.minLead) : " · never trailed"}</span></div>
+  const low = m.flow.reduce((a, b) => b.m < a.m ? b : a, m.flow[0]);
+  return secHead("Game flow", "Baylor's lead after every basket") + `
   <svg viewBox="0 0 ${W} ${H}" id="flowsvg" role="img" aria-label="Baylor margin over the game">
     <defs><clipPath id="cpos"><rect x="0" y="0" width="${W}" height="${y(0)}"/></clipPath><clipPath id="cneg"><rect x="0" y="${y(0)}" width="${W}" height="${H}"/></clipPath></defs>
     ${tv}${vline(1200)}${m.periods > 2 ? vline(2400) : ""}
@@ -328,26 +412,35 @@ function flowChart(m){
     <text x="${x(1200)}" y="${H - 6}" font-size="9" text-anchor="middle" font-family="Oswald,Arial Narrow,sans-serif" fill="#6f6a5e">HALF</text>
     <text x="${W - R}" y="${H - 6}" font-size="9" text-anchor="end" font-family="Oswald,Arial Narrow,sans-serif" fill="#6f6a5e">END</text>
     ${peak.m > 0 ? `<text x="${Math.min(x(peak.t), W - 40)}" y="${y(peak.m) - 5}" font-size="11" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="var(--green)" text-anchor="middle">Up ${peak.m}</text>` : ""}
+    ${low.m < 0 ? `<text x="${Math.max(x(low.t), L + 24)}" y="${y(low.m) + 13}" font-size="11" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="${oc}" text-anchor="middle">Down ${-low.m}</text>` : ""}
   </svg>`;
 }
 
-function court(m, teamId, color){
-  const sh = m.shots.filter(s => s.team === teamId);
-  const box = teamId === BAY ? m.bayBox : m.oppBox;
-  const hy = 5.25, r3 = 22.146, cornerX = 3.35, cornerY = hy + Math.sqrt(r3 * r3 - (25 - cornerX) ** 2);
-  const ln = `stroke="#a39a86" stroke-width=".18" fill="none"`;
-  const dots = sh.map(s => `<circle cx="${s.x}" cy="${Math.max(.6, s.y + hy)}" r=".78" fill="${s.made ? color : "var(--cream)"}" stroke="${color}" stroke-width="${s.made ? 0 : .22}"/>`).join("");
-  const name = teamId === BAY ? "Baylor" : oppShort(m);
-  return `<div><div class="court-h"><span style="${teamId === BAY ? "color:var(--green)" : ""}">${esc(name)}</span><span>FG ${box.fgm}-${box.fga} · 3PT ${box.tpm}-${box.tpa}</span></div>
-  <svg viewBox="-.5 -.5 51 36" style="background:#e9dfc8;border:1.5px solid #1c1c1a">
-    <rect x="19" y="0" width="12" height="19" ${ln}/>
-    <path d="M19,19 A6,6 0 0 0 31,19" ${ln}/><path d="M19,19 A6,6 0 0 1 31,19" ${ln} stroke-dasharray=".6 .6"/>
-    <path d="M${cornerX},0 V${cornerY.toFixed(2)} A${r3},${r3} 0 0 0 ${50 - cornerX},${cornerY.toFixed(2)} V0" ${ln}/>
-    <path d="M21,${hy} A4,4 0 0 0 29,${hy}" ${ln}/>
-    <line x1="22" x2="28" y1="4" y2="4" stroke="#1c1c1a" stroke-width=".3"/><circle cx="25" cy="${hy}" r=".75" ${ln}/>
-    ${dots}
-    ${sh.length ? "" : `<text x="25" y="26" font-size="2.2" text-anchor="middle" fill="#6f6a5e" font-family="Inter,sans-serif">No shot locations from ESPN for this game</text>`}
-  </svg></div>`;
+function fullCourt(m){
+  const hy = 5.25, r3 = 22.146, cx3 = 3.35, run = hy + Math.sqrt(r3 * r3 - (25 - cx3) ** 2);
+  const ln = `stroke="#1d4a37" stroke-width=".22" fill="none"`;
+  // one basket end, drawn for the left side; the right side is the same group flipped
+  const end = `<rect x="0" y="19" width="19" height="12" ${ln}/>
+    <path d="M19,19 A6,6 0 0 1 19,31" ${ln}/><path d="M19,19 A6,6 0 0 0 19,31" ${ln} stroke-dasharray=".7 .7"/>
+    <path d="M0,${cx3} H${run.toFixed(2)} A${r3},${r3} 0 0 1 ${run.toFixed(2)},${50 - cx3} H0" ${ln}/>
+    <path d="M${hy},21 A4,4 0 0 1 ${hy},29" ${ln}/>
+    <line x1="4" x2="4" y1="22" y2="28" stroke="#1c1c1a" stroke-width=".35"/><circle cx="${hy}" cy="25" r=".75" ${ln}/>`;
+  // ESPN: x = feet across (0-50), y = feet out from the rim. Baylor shoots at the left basket, the opponent at the right.
+  const pos = (s, left) => left ? [s.y + hy, s.x] : [94 - (s.y + hy), 50 - s.x];
+  const dots = (id, left, color) => m.shots.filter(s => s.team === id).map(s => { const [px, py] = pos(s, left);
+    return `<circle cx="${Math.max(.9, Math.min(93.1, px)).toFixed(2)}" cy="${py.toFixed(2)}" r=".95" fill="${s.made ? color : "#f6f1e4"}" stroke="${s.made ? color : "#6f6a5e"}" stroke-width="${s.made ? 0 : .22}"/>`; }).join("");
+  const side = (box, name, r) => `<div class="sd ${r ? "r" : ""}"><b>${esc(name)}</b><small>FG</small>${box.fgm}-${box.fga}<br class="wide"><small>3PT</small>${box.tpm}-${box.tpa}</div>`;
+  return secHead("Every shot", "● made · ○ missed") + `<div class="fc">
+    ${side(m.bayBox, "Baylor", false)}
+    <svg viewBox="-.6 -.6 95.2 51.2" role="img" aria-label="Shot map">
+      <rect x="0" y="0" width="94" height="50" fill="#f1ede3" stroke="#1d4a37" stroke-width=".5"/>
+      <line x1="47" x2="47" y1="0" y2="50" ${ln}/><circle cx="47" cy="25" r="6" ${ln}/>
+      ${end}<g transform="translate(94,50) rotate(180)">${end}</g>
+      ${dots(BAY, true, "#1d4a37")}${dots(m.opp.id, false, "#2a2926")}
+      ${m.shots.length ? "" : `<text x="47" y="26" font-size="2.4" text-anchor="middle" fill="#6f6a5e" font-family="Inter,sans-serif">No shot locations from ESPN for this game</text>`}
+    </svg>
+    ${side(m.oppBox, oppShort(m), true)}
+  </div>`;
 }
 
 /* "Usual" baseline: last season (full) or this season (Baylor: every other game this season; opponent: ESPN season stats) */
@@ -365,7 +458,7 @@ async function needOppStats(year, id){
 }
 function compare(m){
   const base = baseOf(), yr = m.season.year, lab = y => `${y - 1}-${String(y).slice(2)}`;
-  let bl, ol, bNote, oNote, head;
+  let bl, ol, bNote, oNote, head; // head kept for reference
   if (base === "this"){
     const others = played(m.season).filter(g => g.id !== m.row.id);
     bl = others.length ? factors(sumTotals(others)) : null;
@@ -391,7 +484,8 @@ function compare(m){
                ["Turnovers forced", m.of.tov, ol && ol.tov, true, pc, .05, .35, .01],
                ["Off. rebounds allowed", m.of.orbMiss, ol && ol.orbMiss, false, pc, .15, .65, .015]];
   const row = ([lab, t, u, hib, fmt, lo, hi, tol]) => {
-    const pos = v => Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+    // right = a good night, so lower-is-better stats run the other way
+    const pos = v => { const p = Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100)); return hib ? p : 100 - p; };
     const has = u != null && isFinite(u);
     let cls = "same", word = has ? "SAME" : "—";
     if (has && Math.abs(t - u) > tol){ const good = hib ? t > u : t < u; cls = good ? "" : "bad"; word = good ? "BETTER" : "WORSE"; }
@@ -402,10 +496,10 @@ function compare(m){
   const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
   const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
   const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button></div>`;
-  return toggle + `<div class="row" style="margin-bottom:6px"><span class="label">${head}</span></div>
-    <div class="sec">Baylor's offense <small>${bNote}</small></div>
+  return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b">◀ Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night ▶</span></div>
+    <div class="sub2">Baylor's offense <small>${bNote}</small></div>
     ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">${base === "this" ? `No other ${seasonLab} games yet.` : `No ${seasonLab} Baylor stats on ESPN.`}</div>`}
-    <div class="sec" style="margin-top:14px">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
+    <div class="sub2">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
     ${ol ? `<div class="cmp">${def.map(row).join("")}</div>` : `<div class="note">${pending ? "Loading…" : `No ${seasonLab} season stats on ESPN for ${oname}${(m.season.games.find(g => g.oppId === m.opp.id) || {}).rank == null ? " (not a Division I team)" : ""}.`}</div>`}`;
 }
 
@@ -413,7 +507,7 @@ function boxTable(m, teamId, isBay){
   const p = m.gm.players[teamId];
   if (!p || !p.athletes.length) return "";
   const keys = p.keys, ix = k => keys.indexOf(k);
-  const cols = [["MIN", "minutes"], ["PTS", "points"], ["FG", "fieldGoalsMade-fieldGoalsAttempted", D1.fg], ["3PT", "threePointFieldGoalsMade-threePointFieldGoalsAttempted", D1.three], ["FT", "freeThrowsMade-freeThrowsAttempted", D1.ft], ["REB", "rebounds"], ["AST", "assists"], ["STL", "steals"], ["BLK", "blocks"], ["TO", "turnovers"], ["PF", "fouls"]];
+  const cols = [["MIN", "minutes"], ["PTS", "points"], ["FG", "fieldGoalsMade-fieldGoalsAttempted", D1.fg], ["3PT", "threePointFieldGoalsMade-threePointFieldGoalsAttempted", D1.three], ["FT", "freeThrowsMade-freeThrowsAttempted", D1.ft], ["REB", "rebounds"], ["AST", "assists"], ["STL", "steals"], ["BLK", "blocks"], ["TO", "turnovers"]];
   const ath = p.athletes.filter(a => a[3] && a[3].length);
   const highs = {};
   ["points", "rebounds", "assists", "steals", "blocks"].forEach(k => { highs[k] = Math.max(0, ...ath.map(a => +a[3][ix(k)] || 0)); });
@@ -428,15 +522,15 @@ function boxTable(m, teamId, isBay){
   ath.forEach(a => {
     const cls = !a[2] && !sawBench ? "split" : "";
     if (!a[2]) sawBench = true;
-    const tag = `<small>${a[4] !== undefined && a[4] !== "" ? "#" + esc(a[4]) + " " : ""}${esc(a[1])}</small>`;
     const nm = isBay && a[5] ? `<button class="pl" data-pl="${esc(a[5])}">${esc(a[0])}</button>` : esc(a[0]);
-    rows += `<tr class="${cls}"><td>${nm}${tag}</td>${cols.map(c => `<td>${cell(a, c)}</td>`).join("")}</tr>`;
+    rows += `<tr class="${cls}"><td class="no">${esc(a[4] ?? "")}</td><td class="nm">${nm}${a[1] ? `<span class="ps">${esc(a[1])}</span>` : ""}</td>${cols.map(c => `<td>${cell(a, c)}</td>`).join("")}</tr>`;
   });
   const team = isBay ? m.bay : m.opp, t = isBay ? m.bayBox : m.oppBox, tm = team.stats;
   const pct = (a, b) => b ? `<span class="pct">${Math.round(a / b * 100)}%</span>` : "";
-  rows += `<tr class="tot"><td>${esc(isBay ? "Baylor" : oppShort(m))}</td><td></td><td>${t.pts}</td><td>${t.fgm}-${t.fga}${pct(t.fgm, t.fga)}</td><td>${t.tpm}-${t.tpa}${pct(t.tpm, t.tpa)}</td><td>${t.ftm}-${t.fta}${pct(t.ftm, t.fta)}</td><td>${esc(tm.totalRebounds)}</td><td>${esc(tm.assists)}</td><td>${esc(tm.steals)}</td><td>${esc(tm.blocks)}</td><td>${t.to}</td><td>${esc(tm.fouls)}</td></tr>`;
-  return `<div class="sec" style="${isBay ? "" : "color:var(--ink)"}">${esc(isBay ? "Baylor" : team.name)}</div>
-    <div class="box ${isBay ? "bay" : "opp"}"><table><thead><tr><th></th>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  const sh = (a, b, d) => { const r = b ? a / b : 0, cls = b >= 3 ? (r >= d + .07 ? "hot" : r <= d - .07 ? "cold" : "") : ""; return `<span class="${cls}">${a}-${b}${pct(a, b)}</span>`; };
+  rows += `<tr class="tot"><td class="no"></td><td class="nm">${esc(isBay ? "Baylor" : oppShort(m))}</td><td></td><td>${t.pts}</td><td>${sh(t.fgm, t.fga, D1.fg)}</td><td>${sh(t.tpm, t.tpa, D1.three)}</td><td>${sh(t.ftm, t.fta, D1.ft)}</td><td>${esc(tm.totalRebounds)}</td><td>${esc(tm.assists)}</td><td>${esc(tm.steals)}</td><td>${esc(tm.blocks)}</td><td>${t.to}</td></tr>`;
+  return `<div class="bxh ${isBay ? "" : "o"}">${esc(isBay ? "Baylor" : oppShort(m))}</div>
+    <table class="bs"><thead><tr><th class="no">#</th><th class="nm"></th>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 /* ---------- the number I'm watching ---------- */
@@ -586,12 +680,11 @@ async function render(){
   try { gm = await loadGame(row.id); } catch(e){ if (seq === renderSeq) $("#app").innerHTML = `<div class="empty">Couldn't load this game's data.</div>` + watch(season); return; }
   if (seq !== renderSeq) return;
   const m = model(season, row, gm); CURM = m;
-  $("#app").innerHTML = header(m)
-    + `<div class="card"><div class="hd"><span>Box score</span><span>${esc(row.oppAbbr)}</span></div><div class="bd">${scoring(m)}<hr class="rule">${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
-       <div class="foot">Starters above the line · dark box = team high · shooting cells shaded hotter / colder than rough D1 averages (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
-    + `<div class="card"><div class="hd"><span>Game flow &amp; every shot</span><span>● made ○ missed</span></div><div class="bd">${flowChart(m)}<hr class="rule"><div class="courts">${court(m, BAY, "var(--green)")}${court(m, m.opp.id, "#1d1c19")}</div></div></div>`
-    + `<div class="card"><div class="hd"><span>This game vs. usual</span><span>Four factors</span></div><div class="bd">${compare(m)}
-       <div class="foot">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far)</div></div></div>`
+  $("#app").innerHTML =
+      `<div class="gc"><div class="in">${header(m)}${flowChart(m)}${fullCourt(m)}${compare(m)}</div>
+        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Data: ESPN box score &amp; play-by-play.</div></div>`
+    + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
+        <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
     + watch(season);
   wireFlowTip(m);
 }
