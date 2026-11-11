@@ -354,15 +354,17 @@ function rankOf(season, row){
 function oppColor(m){ const c = (m.opp.color || "3a3a3a").toLowerCase(); return /^(fff|ffffff|f.f.f.)$/.test(c) ? "#3a3a3a" : "#" + c; }
 const oppShort = m => m.opp.loc || m.opp.name;
 
-/* ---------- team marks: your own logo file if you add one (logos/<ESPN team id>.png), else a color badge ---------- */
+/* ---------- team marks: ESPN logo, else a color badge ---------- */
 function badge(team){
   const hex = c => /^[0-9a-f]{6}$/i.test(c || "") ? "#" + c : null;
   const isB = team.id === BAY;
   const bg = isB ? "#154734" : (hex(team.color) && !/^(fff|ffffff)$/i.test(team.color) ? hex(team.color) : "#3a3a3a");
   return `<span class="tbadge" style="background:${bg};color:${isB ? "#FFB81C" : "#fff"}">${esc(isB ? "BU" : String(team.abbr || "").slice(0, 4))}</span>`;
 }
+const LOGO = id => `https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/${encodeURIComponent(id)}.png&h=96&w=96`;
+// Team logo from ESPN's logo images; falls back to the color badge if ESPN has none for a team
 function mark(team){
-  return `<span class="lg"><img src="../logos/${esc(team.id)}.png" alt="" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">${badge(team)}</span>`;
+  return `<span class="lg"><img src="${LOGO(team.id)}" alt="" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">${badge(team)}</span>`;
 }
 const dayDot = d => { const s = new Date(d).toLocaleDateString("en-US", {month: "short", day: "numeric", timeZone: "America/Chicago"}); return /^May/.test(s) ? s : s.replace(" ", ". "); };
 const secHead = (box, cap) => `<div class="sh"><span class="bx">${box}</span><i></i>${cap ? `<span class="cap">${cap}</span>` : ""}</div>`;
