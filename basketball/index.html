@@ -143,6 +143,7 @@ tr.dnp td{color:#a39d90}
 /* ---- game card, styled after the @mcbaylor graphics ---- */
 .gc{background:var(--cream);border-radius:6px;margin:0 0 12px;overflow:hidden}
 .gc .in{padding:16px 16px 14px}
+@media(max-width:560px){.gc .in{padding:14px 11px 12px}}
 .gc .cf{background:var(--green);color:#e8e0cc;padding:9px 16px;font:400 10px/1.4 Inter,system-ui,sans-serif}
 .sh{display:flex;align-items:center;gap:6px 10px;margin:18px 0 10px;flex-wrap:wrap}
 .sh .cap{margin-left:auto}
@@ -179,10 +180,10 @@ tr.dnp td{color:#a39d90}
 .bxh small{font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);text-transform:none}
 .bxh.o{color:#6e6a63}
 table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:500 13px Oswald,'Arial Narrow',sans-serif;font-variant-numeric:tabular-nums}
-.bs th{background:none;color:var(--green);font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px;padding:4px 3px;border-bottom:2px solid var(--ink);text-align:center}
+.bs th{background:none;color:var(--green);font:700 .9em Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px;padding:4px 3px;border-bottom:2px solid var(--ink);text-align:center}
 .bs td{padding:5px 3px;border-bottom:1px solid #ddd3bd;text-align:center;white-space:nowrap;background:none;position:static;font:inherit}
 .bs td.no,.bs th.no{text-align:right;color:var(--muted);padding-right:6px;width:1%}
-.bs td.nm,.bs th.nm{text-align:left;font-weight:700;font-size:14px;white-space:normal;line-height:1.15}
+.bs td.nm,.bs th.nm{text-align:left;font-weight:700;line-height:1.15}
 .bs td.nm .ps{color:var(--muted);font-weight:500;font-size:11px;margin-left:4px;white-space:nowrap}
 .bs tr.split td{border-top:2px solid var(--ink)}
 .bs tr.tot td{border-top:2px solid var(--ink);border-bottom:0;font-weight:700;font-size:14px;background:none}
@@ -191,12 +192,14 @@ table.bs{width:100%;min-width:0;border-collapse:collapse;table-layout:auto;font:
 .bs .hi{background:var(--green);color:#fff}
 .bs .pct{font-size:9px;color:#5f5a50;margin-left:2px}
 .bs .pl{text-decoration-thickness:1px;text-decoration-color:#cdc3aa}
-@media(max-width:560px){
-  table.bs{font-size:11px}.bs th{font-size:10px;padding:3px 1px}.bs td{padding:4px 1px}
-  .bs td.nm{font-size:12px}.bs td.nm .ps{display:block;margin:0;font-size:9.5px}
-  .bs .pct{display:block;font-size:8px;margin:0;line-height:1}.bs .hot,.bs .cold,.bs .hi{padding:1px 2px}
-  .bs tr.tot td{font-size:12px}.bs td.no,.bs th.no{padding-right:3px}
-}
+/* one line per player; fitBox() shrinks the font until the table fits the screen */
+.bxw{width:100%;overflow:hidden}
+.bs td.nm,.bs th.nm{white-space:nowrap}
+.bs td.nm .ps{font-size:.78em}
+.bs .pct{font-size:.68em}
+.bs td.no{font-size:.9em}
+.bs tr.tot td,.bs td.nm{font-size:1.05em}
+@media(max-width:560px){.bs th{padding:3px 2px}.bs td{padding:3px 2px}.bs td.no,.bs th.no{padding-right:4px}.bs .hot,.bs .cold,.bs .hi{padding:0 2px}}
 .bkey{font:500 12px Oswald,'Arial Narrow',sans-serif;color:var(--muted);margin-top:8px}
 .bkey span{padding:0 4px;border-radius:2px;color:var(--ink)}
 /* full-court shot map */
@@ -530,7 +533,7 @@ function boxTable(m, teamId, isBay){
   const sh = (a, b, d) => { const r = b ? a / b : 0, cls = b >= 3 ? (r >= d + .07 ? "hot" : r <= d - .07 ? "cold" : "") : ""; return `<span class="${cls}">${a}-${b}${pct(a, b)}</span>`; };
   rows += `<tr class="tot"><td class="no"></td><td class="nm">${esc(isBay ? "Baylor" : oppShort(m))}</td><td></td><td>${t.pts}</td><td>${sh(t.fgm, t.fga, D1.fg)}</td><td>${sh(t.tpm, t.tpa, D1.three)}</td><td>${sh(t.ftm, t.fta, D1.ft)}</td><td>${esc(tm.totalRebounds)}</td><td>${esc(tm.assists)}</td><td>${esc(tm.steals)}</td><td>${esc(tm.blocks)}</td><td>${t.to}</td></tr>`;
   return `<div class="bxh ${isBay ? "" : "o"}">${esc(isBay ? "Baylor" : oppShort(m))}</div>
-    <table class="bs"><thead><tr><th class="no">#</th><th class="nm"></th>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+    <div class="bxw"><table class="bs"><thead><tr><th class="no">#</th><th class="nm"></th>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /* ---------- the number I'm watching ---------- */
@@ -686,8 +689,16 @@ async function render(){
     + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
         <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
     + watch(season);
-  wireFlowTip(m);
+  wireFlowTip(m); fitBox();
 }
+function fitBox(){
+  document.querySelectorAll("table.bs").forEach(tb => {
+    let fs = 13; tb.style.fontSize = fs + "px";
+    const w = tb.parentNode.clientWidth;
+    while (tb.scrollWidth > w && fs > 7.5){ fs -= .25; tb.style.fontSize = fs + "px"; }
+  });
+}
+window.addEventListener("resize", () => fitBox());
 
 function wireFlowTip(m){
   const svg = $("#flowsvg"), tip = $("#tip"); if (!svg) return;
