@@ -11,6 +11,7 @@ Past seasons are cached in .cache/ and only re-downloaded if missing; the curren
 """
 import json, os, re, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import kpnames  # noqa: F401  (name map for live KenPom ranks)
 from wnmatch import load_wn, matcher
 
 API = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball"
@@ -92,6 +93,71 @@ cur_sched = fetch(f"{API}/teams/{BAY}/schedule", f"{CACHE}/sched_current.json", 
 CUR = cur_sched["season"]["year"]
 
 seasons, stats, cur_kenpom, stale = [], {}, {}, False
+kp_source, cur_wn, cur_match = {"name": "Warren Nolan"}, {}, (lambda _n: None)
+
+
+def parse_lineterminal(page):
+    """Pull {team: rank} out of lineterminal's team-rankings page. Tries table rows, then embedded JSON, then plain text."""
+    import re as _re, html as _h
+    clean = lambda s: _re.sub(r"\s*\((?:[A-Za-z0-9 &.-]{1,8})\)\s*$", "", _re.sub(r"\s+", " ", _h.unescape(_re.sub("<[^>]+>", " ", s))).strip())
+    tries = []
+    rows = {}
+    for r in _re.findall(r"(?s)<tr[^>]*>(.*?)</tr>", page):
+        c = [clean(x) for x in _re.findall(r"(?s)<t[hd][^>]*>(.*?)</t[hd]>", r)]
+        c = [x for x in c if x]
+        if len(c) >= 2 and c[0].isdigit() and _re.search(r"[A-Za-z]", c[1]):
+            rows.setdefault(clean(c[1]), int(c[0]))
+    tries.append(rows)
+    js = {}
+    for m in _re.finditer(r'\{[^{}]{0,600}\}', page):
+        o = m.group(0)
+        rk = _re.search(r'"(?:kp_?rank|kenpom_?rank|rank|rk)"\s*:\s*"?(\d{1,3})', o, _re.I)
+        nm = _re.search(r'"(?:team_?name|team|name|school)"\s*:\s*"([^"]{2,40})"', o, _re.I)
+        if rk and nm:
+            js.setdefault(clean(nm.group(1)), int(rk.group(1)))
+    tries.append(js)
+    lines = [clean(x) for x in _re.split(r"<[^>]+>", _re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", "", page))]
+    lines = [x for x in lines if x]
+    txt = {}
+    for i, x in enumerate(lines[:-1]):
+        if x.isdigit() and 1 <= int(x) <= 400 and _re.match(r"^[A-Z][A-Za-z.&' -]{1,38}$", lines[i + 1]):
+            txt.setdefault(lines[i + 1], int(x))
+    tries.append(txt)
+    best = max(tries, key=lambda d: len(set(d.values())))
+    return best if len(set(best.values())) >= 300 else {}
+
+
+def live_kenpom(wn_names):
+    """({warren-nolan name: rank}, stale=False, source) from lineterminal, refreshed at most every 6 hours; None if unavailable."""
+    import time
+    from kpnames import to_wn
+    path, out = f"{CACHE}/lineterminal.html", os.path.join(DATA, "kenpom-live.json")
+    if not os.path.exists(path) or time.time() - os.path.getmtime(path) > 6 * 3600:
+        fetch("https://lineterminal.com/games/ncaab/team-rankings", path, True, ua=True)
+    try:
+        got = parse_lineterminal(open(path, errors="ignore").read()) if os.path.exists(path) else {}
+    except Exception as e:
+        print("lineterminal parse failed:", e); got = {}
+    today = __import__("datetime").date.today()
+    if got:
+        saved = json.load(open(out)) if os.path.exists(out) else {}
+        if saved.get("ranks") != got:
+            json.dump({"asOf": today.isoformat(), "source": "lineterminal.com/games/ncaab/team-rankings (ratings via KenPom)", "ranks": got},
+                      open(out, "w"), indent=0)
+    else:
+        print("lineterminal: no rankings parsed; using the saved copy if it's recent")
+    if not os.path.exists(out) or not wn_names:
+        return None
+    snap = json.load(open(out))
+    age = (today - __import__("datetime").date.fromisoformat(snap["asOf"])).days
+    if age > 4:
+        print("saved KenPom ranks are", age, "days old; falling back to Warren Nolan")
+        return None
+    ranks, miss = to_wn(snap["ranks"], wn_names)
+    if miss:
+        print("KenPom names not matched:", miss)
+    return ranks, False, {"name": "lineterminal.com", "asOf": snap["asOf"]}
+
 for y in range(FIRST, CUR + 1):
     fresh = y == CUR
     wn_html = fetch(f"https://www.warrennolan.com/basketball/{y}/compare-rankings", f"{CACHE}/wn_{y}.html", fresh, ua=True)
@@ -104,7 +170,14 @@ for y in range(FIRST, CUR + 1):
         prev = load_wn(f"{CACHE}/wn_{y-1}.html")
         same = sum(1 for k, v in wn.items() if prev.get(k) == v)
         stale = same / len(wn) > 0.95
+    if y == CUR:
+        # Current KenPom ranks republished on lineterminal.com; used whenever the saved copy is fresh (Warren Nolan lags)
+        live = live_kenpom(list(wn or load_wn(f"{CACHE}/wn_{y-1}.html")))
+        if live:
+            wn, stale, kp_source = live
     match = matcher(wn)
+    if y == CUR:
+        cur_wn, cur_match = wn, match
     stats.setdefault(str(y - 1), {})
     stats[str(y - 1)][BAY] = team_stats(BAY, y - 1, False)
     games, nodi = [], set()
@@ -190,11 +263,11 @@ for y in range(FIRST, CUR + 1):
                     "games": games, "players": players})
     print(seasons[-1]["label"], sum(g["completed"] for g in games), "games; no KenPom:", sorted(nodi) or "-")
 
-cur_kenpom[BAY] = load_wn(f"{CACHE}/wn_{CUR}.html").get("Baylor")
+cur_kenpom[BAY] = cur_wn.get(cur_match("Baylor")) if cur_wn else None
 r247 = os.path.join(DATA, "mbb-247.json")
 recruit = json.load(open(r247)) if os.path.exists(r247) else None
 index = {"recruit": recruit, "season": cur_sched["season"]["displayName"], "seasonYear": CUR, "seasons": seasons, "stats": stats,
-         "kenpom": cur_kenpom, "kenpomStale": stale}
+         "kenpom": cur_kenpom, "kenpomStale": stale, "kenpomSource": kp_source}
 OUT = os.path.join(DATA, "mbb.json")
 # keep old timestamps when nothing changed, so the scheduled job only commits real updates
 now = __import__("datetime").datetime.now(__import__("datetime").timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

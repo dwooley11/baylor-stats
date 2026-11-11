@@ -578,7 +578,7 @@ function watch(season){
     <td>${g.bay.pts}-${g.o.pts}</td><td><b>${f2(o.ppp)}</b></td><td>${f2(b.ppp)}</td><td>${pc(o.tov)}</td></tr>`; }).join("");
   const rankNote = isCur
     ? (B.kenpomStale ? `This season's ranks are still last season's final KenPom ranks — Warren Nolan hasn't posted ${esc(B.season)} ranks yet; they switch over on their own once it does.`
-                     : `This season's ranks are each opponent's current KenPom rank, not its rank on game day.`)
+                     : `This season's ranks are each opponent's current KenPom rank, not its rank on game day${B.kenpomSource && B.kenpomSource.asOf ? ` (as of ${esc(dayDot(B.kenpomSource.asOf + "T12:00:00"))}, via ${esc(B.kenpomSource.name)})` : ""}.`)
     : `${esc(season.label)} ranks are each opponent's KenPom rank at season's end (Selection Sunday to early April).`;
   return `<div class="card" id="watch"><div class="hd"><span>The number I'm watching</span><span>${esc(season.label)}</span></div><div class="bd">
     <div class="filters" style="margin-top:0">${METRICS.map(x => `<button class="f ${x[0] === met[0] ? "on" : ""}" data-metric="${x[0]}">${x[1].replace("Points per possession", "PPP")}</button>`).join("")}</div>
