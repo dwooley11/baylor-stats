@@ -198,7 +198,7 @@ table.pt2 td:first-child{font:600 12px Inter,system-ui,sans-serif;white-space:no
 .chip.LV .r{color:#ff8a73}
 .tbadge{display:inline-grid;place-items:center;min-width:30px;height:20px;padding:0 4px;border-radius:4px;font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:.5px;vertical-align:2px}
 .tbadge.big{min-width:36px;height:24px;font-size:12px}
-.lg{display:inline-flex;align-items:center;vertical-align:middle}.lg img{display:none;height:22px;width:auto}.lg.big img{height:28px}.lg.ok img{display:block}.lg.ok .tbadge{display:none}
+.tlg{display:inline-flex;align-items:center;vertical-align:middle}.tlg img{display:none;height:22px;width:auto}.tlg.big img{height:28px}.tlg.ok img{display:block}.tlg.ok .tbadge{display:none}
 .d-td{fill:#2f5a45}.d-fg{fill:#f2b83a}.d-punt{fill:#bcb29d}.d-miss{fill:#e8aaa5}.d-to{fill:#d9634f}.d-clock{fill:transparent;stroke:#9f988a;stroke-dasharray:3 3}
 #cfbdrives .dl{font:700 10px Oswald,'Arial Narrow',sans-serif;fill:#fff}#cfbdrives .dl.punt,#cfbdrives .dl.fg,#cfbdrives .dl.miss{fill:#1c1c1a}
 #cfbdrives .dv{cursor:pointer}
@@ -565,7 +565,7 @@ function badge(team, big){
   const bg = isB ? "#154734" : (hex(team.color) && !/^(fff|ffffff)$/i.test(team.color) ? hex(team.color) : "#3a3a3a");
   const fg = isB ? "#FFB81C" : "#fff";
   const bd = `<span class="tbadge${big ? " big" : ""}" style="background:${bg};color:${fg}">${esc(isB ? "BU" : String(team.abbr || "").slice(0, 4))}</span>`;
-  return team.id ? `<span class="lg${big ? " big" : ""}"><img src="${LOGO(team.id)}" alt="" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">${bd}</span>` : bd;
+  return team.id ? `<span class="tlg${big ? " big" : ""}"><img src="${LOGO(team.id)}" alt="" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">${bd}</span>` : bd;
 }
 const LOGO = id => `https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/${encodeURIComponent(id)}.png&h=96&w=96`;
 /* ---------- game flow + every drive ---------- */
