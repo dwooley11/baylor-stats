@@ -395,7 +395,9 @@ function scoring(m){
                 [m.opp, tot(m.opp.id), [["#5b5853", "#fff"], ["#9b968b", "#fff"], ["#c6c0b3", "#1c1c1a"]], "#6e6a63"]];
   const max = Math.max(1, ...rows.map(r => r[1].two + r[1].three + r[1].ft));
   const seg = (v, [bg, fg]) => v ? `<i style="width:${v / max * 100}%;background:${bg};color:${fg}">${v / max > .05 ? v : ""}</i>` : "";
-  return secHead("Where the points came from", `<span class="lgd"><span><i style="background:var(--green)"></i>2s</span><span><i style="background:var(--gold)"></i>3s</span><span><i style="background:var(--sage)"></i>Free throws</span></span>`)
+  // key shows both teams' shades: Baylor's color, then the opponent's gray
+  const key = (bc, oc, lab) => `<span><i style="background:${bc};margin-right:1px"></i><i style="background:${oc}"></i>${lab}</span>`;
+  return secHead("Where the points came from", `<span class="lgd">${key("var(--green)", rows[1][2][0][0], "2s")}${key("var(--gold)", rows[1][2][1][0], "3s")}${key("var(--sage)", rows[1][2][2][0], "Free throws")}</span>`)
     + `<div class="pts">` + rows.map(([team, s, c, col]) => `<span class="tn" style="color:${col}">${mark(team)}${esc(team.id === BAY ? "Baylor" : oppShort(m))}</span>
       <div class="bar">${seg(s.two, c[0])}${seg(s.three, c[1])}${seg(s.ft, c[2])}</div><span class="tot" style="color:${col}">${esc(team.score)}</span>`).join("") + `</div>`;
 }
