@@ -350,10 +350,38 @@ function court(m, teamId, color){
   </svg></div>`;
 }
 
+/* "Usual" baseline: last season (full) or this season (Baylor: every other game this season; opponent: ESPN season stats) */
+const baseOf = () => store.get("bgn_base", "last");
+const sumTotals = gs => { const o = {}; gs.forEach(g => Object.entries(g.bay).forEach(([k, v]) => o[k] = (o[k] || 0) + (+v || 0))); return o; };
+const OPP_PENDING = {};
+async function needOppStats(year, id){
+  const k = String(year); B.stats[k] = B.stats[k] || {};
+  const cur = year === B.seasonYear;
+  if (OPP_PENDING[k + id] || (!cur && id in B.stats[k]) || (cur && OPP_PENDING[k + id] === false)) return;
+  OPP_PENDING[k + id] = true;
+  try { const s = await getJSON(`${API}/teams/${id}/statistics?season=${year}`, 8000); const o = {}; s.results.stats.categories.forEach(c => c.stats.forEach(x => o[x.name] = x.value)); B.stats[k][id] = o.fieldGoalsAttempted ? o : null; }
+  catch(_){ if (!(id in B.stats[k])) B.stats[k][id] = null; }
+  OPP_PENDING[k + id] = false; render();
+}
 function compare(m){
-  const prior = String(m.season.year - 1), priorLabel = `${m.season.year - 2}-${String(m.season.year - 1).slice(2)}`;
-  const st = (B.stats || {})[prior] || {};
-  const bl = factors(seasonTeam(st[BAY])), ol = factors(seasonTeam(st[m.opp.id]));
+  const base = baseOf(), yr = m.season.year, lab = y => `${y - 1}-${String(y).slice(2)}`;
+  let bl, ol, bNote, oNote, head;
+  if (base === "this"){
+    const others = played(m.season).filter(g => g.id !== m.row.id);
+    bl = others.length ? factors(sumTotals(others)) : null;
+    const os = ((B.stats || {})[String(yr)] || {})[m.opp.id];
+    if (os === undefined || (yr === B.seasonYear && OPP_PENDING[yr + m.opp.id] !== false)) needOppStats(yr, m.opp.id);
+    ol = factors(seasonTeam(os));
+    const n = os && os.gamesPlayed;
+    head = `This game ● vs. their usual ○ · ${lab(yr)} season`;
+    bNote = `vs. Baylor's other ${others.length} game${others.length === 1 ? "" : "s"} in ${lab(yr)}`;
+    oNote = n ? `in its ${n} game${n === 1 ? "" : "s"} of ${lab(yr)}` : `in ${lab(yr)}`;
+  } else {
+    const st = (B.stats || {})[String(yr - 1)] || {};
+    bl = factors(seasonTeam(st[BAY])); ol = factors(seasonTeam(st[m.opp.id]));
+    head = `This game ● vs. their usual ○ · full ${lab(yr - 1)} season`;
+    bNote = `vs. Baylor's own ${lab(yr - 1)} offense`; oNote = `in ${lab(yr - 1)}`;
+  }
   const off = [["Points per trip", m.bf.ppp, bl && bl.ppp, true, f2, .6, 1.5, .03],
                ["eFG%", m.bf.efg, bl && bl.efg, true, pc, .3, .7, .015],
                ["Turnovers", m.bf.tov, bl && bl.tov, false, pc, .05, .35, .01],
@@ -371,12 +399,14 @@ function compare(m){
     return `<div class="m">${lab}</div><div class="trk">${a != null ? `<div class="seg ${cls}" style="left:${Math.min(a, b)}%;width:${Math.abs(b - a)}%"></div><div class="u" style="left:${a}%"></div>` : ""}<div class="t ${cls}" style="left:${b}%"></div></div>
       <div class="vd ${cls}"><span class="k">${word}</span><span>${fmt(t)}${has ? " · usual " + fmt(u) : ""}</span></div>`;
   };
-  const oname = esc(oppShort(m));
-  return `<div class="row" style="margin-bottom:6px"><span class="label">This game ● vs. their usual ○ · full ${priorLabel} season</span></div>
-    <div class="sec">Baylor's offense <small>vs. Baylor's own ${priorLabel} offense</small></div>
-    ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">No ${priorLabel} Baylor stats on ESPN.</div>`}
-    <div class="sec" style="margin-top:14px">Baylor's defense <small>vs. what ${oname} scored in ${priorLabel}</small></div>
-    ${ol ? `<div class="cmp">${def.map(row).join("")}</div>` : `<div class="note">No ${priorLabel} season stats on ESPN for ${oname}${(m.season.games.find(g => g.oppId === m.opp.id) || {}).rank == null ? " (not a Division I team)" : ""}.</div>`}`;
+  const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
+  const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
+  const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button></div>`;
+  return toggle + `<div class="row" style="margin-bottom:6px"><span class="label">${head}</span></div>
+    <div class="sec">Baylor's offense <small>${bNote}</small></div>
+    ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">${base === "this" ? `No other ${seasonLab} games yet.` : `No ${seasonLab} Baylor stats on ESPN.`}</div>`}
+    <div class="sec" style="margin-top:14px">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
+    ${ol ? `<div class="cmp">${def.map(row).join("")}</div>` : `<div class="note">${pending ? "Loading…" : `No ${seasonLab} season stats on ESPN for ${oname}${(m.season.games.find(g => g.oppId === m.opp.id) || {}).rank == null ? " (not a Division I team)" : ""}.`}</div>`}`;
 }
 
 function boxTable(m, teamId, isBay){
@@ -561,7 +591,7 @@ async function render(){
        <div class="foot">Starters above the line · dark box = team high · shooting cells shaded hotter / colder than rough D1 averages (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
     + `<div class="card"><div class="hd"><span>Game flow &amp; every shot</span><span>● made ○ missed</span></div><div class="bd">${flowChart(m)}<hr class="rule"><div class="courts">${court(m, BAY, "var(--green)")}${court(m, m.opp.id, "#1d1c19")}</div></div></div>`
     + `<div class="card"><div class="hd"><span>This game vs. usual</span><span>Four factors</span></div><div class="bd">${compare(m)}
-       <div class="foot">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN</div></div></div>`
+       <div class="foot">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far)</div></div></div>`
     + watch(season);
   wireFlowTip(m);
 }
@@ -590,6 +620,7 @@ document.addEventListener("click", e => {
   const pl = e.target.closest("[data-pl]"); if (pl){ playerCard(pl.dataset.pl); return; }
   if (e.target.closest("[data-close]") || e.target.id === "ov"){ closeCard(); return; }
   const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; if (c.closest("#watch")) window.scrollTo({top: 0}); return; }
+  const bs = e.target.closest("[data-base]"); if (bs){ store.set("bgn_base", bs.dataset.base); const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
   const f = e.target.closest("[data-tier]"); if (f){ store.set("bgn_tier", f.dataset.tier); render().then(() => $("#watch").scrollIntoView({block: "nearest"})); return; }
   const mt = e.target.closest("[data-metric]"); if (mt){ store.set("bgn_metric", mt.dataset.metric); render().then(() => $("#watch").scrollIntoView({block: "nearest"})); }
 });

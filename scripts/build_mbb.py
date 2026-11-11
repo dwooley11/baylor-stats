@@ -140,6 +140,11 @@ for y in range(FIRST, CUR + 1):
                 stats[str(y - 1)].setdefault(g["oppId"], team_stats(g["oppId"], y - 1, False))
                 if wn and rank is None:
                     nodi.add(g["opp"])
+            # this season's stats for each opponent (the "vs. this season" comparison); refreshed hourly for the current season
+            if g["completed"] or y == CUR:
+                stats.setdefault(str(y), {})
+                if g["oppId"] not in stats[str(y)] or fresh:
+                    stats[str(y)][g["oppId"]] = team_stats(g["oppId"], y, fresh)
             games.append(g)
     games.sort(key=lambda g: g["date"])
     # Baylor roster (bio) + season totals per player, from the box scores
