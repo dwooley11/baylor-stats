@@ -23,6 +23,9 @@ html,body{margin:0;background:#11110f;color:var(--ink);font-family:Inter,system-
 .chip{flex:0 0 auto;border:1px solid #3c3b36;background:#1d1c19;color:#e8e0cc;border-radius:999px;padding:6px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--gold);color:#1c1c1a;border-color:var(--gold)}
 .chip .r{font-weight:700;margin-left:4px}
+.chip.LV .r{color:#ff8a73}
+.chip.LV.on .r{color:var(--red)}
+.wl.LV{width:auto;padding:0 10px;font-size:16px;background:var(--red)}
 .card{background:var(--cream);border-radius:6px;margin:0 0 12px;overflow:hidden}
 .card .hd{background:#1d1c19;color:#f3ebd8;display:flex;justify-content:space-between;align-items:center;padding:9px 14px;font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.6px;text-transform:uppercase}
 .card .bd{padding:14px}
@@ -200,7 +203,9 @@ function compact(s){
     const co = p.coordinate || {};
     plays.push([p.period.number, p.clock.displayValue, (p.team || {}).id, p.homeScore, p.awayScore, tv ? "T" : (/FreeThrow/i.test(typ) ? "F" : "S"),
       p.scoringPlay ? (p.scoreValue || 0) : 0, co.x, co.y, p.scoringPlay ? 1 : 0, (p.pointsAttempted === 3 || p.scoreValue === 3) ? 3 : 0]); });
-  return {date: comp.date, neutral: !!comp.neutralSite, conf: !!comp.conferenceCompetition, teams, players, plays};
+  const stt = (comp.status || {}).type || {};
+  return {date: comp.date, neutral: !!comp.neutralSite, conf: !!comp.conferenceCompetition, teams, players, plays,
+          done: stt.completed !== false, status: stt.shortDetail || stt.detail || ""};
 }
 function totalsFrom(stats, pts){
   const [fgm, fga] = split(stats["fieldGoalsMade-fieldGoalsAttempted"]);
@@ -245,14 +250,16 @@ function model(season, row, gm){
     const bs = bayHome ? hs : as, os = bayHome ? as : hs;
     if (bs != null && (bs !== lastB || os !== lastO)){ flow.push({t, m: bs - os, bs, os}); lastB = bs; lastO = os; }
   });
-  flow.push({t: total, m: flow[flow.length - 1].m, bs: lastB, os: lastO});
+  const isLive = gm.done === false;
+  const lastT = gm.plays.length ? elapsed(gm.plays[gm.plays.length - 1][0], gm.plays[gm.plays.length - 1][1]) : 0;
+  flow.push({t: isLive ? Math.max(lastT, flow[flow.length - 1].t) : total, m: flow[flow.length - 1].m, bs: lastB, os: lastO});
   let led = 0, maxLead = 0, minLead = 0;
   for (let i = 0; i < flow.length - 1; i++){ if (flow[i].m > 0) led += flow[i + 1].t - flow[i].t; maxLead = Math.max(maxLead, flow[i].m); minLead = Math.min(minLead, flow[i].m); }
   // shots (no free throws); ESPN y is feet out from the rim
   const shots = gm.plays.filter(p => p[5] === "S" && p[2] && p[7] != null && p[8] != null)
     .map(p => ({team: p[2], x: p[7], y: p[8], made: !!p[9], three: p[10] === 3}))
     .filter(p => p.x >= 0 && p.x <= 50 && p.y >= -6 && p.y <= 45);
-  return {season, row, gm, bay, opp, bayBox, oppBox, bf: factors(bayBox), of: factors(oppBox), by, flow, tv, total, periods, led, maxLead, minLead, shots};
+  return {isLive, season, row, gm, bay, opp, bayBox, oppBox, bf: factors(bayBox), of: factors(oppBox), by, flow, tv, total, periods, led, maxLead, minLead, shots};
 }
 
 /* ---------- KenPom ranks ---------- */
@@ -274,8 +281,8 @@ function header(m){
   const fmt = s => Math.floor(s / 60) + ":" + String(Math.round(s % 60)).padStart(2, "0");
   const rk = rankOf(m.season, m.row);
   return `<div class="card"><div class="bd">
-    <div class="score"><h1>Baylor ${esc(m.bay.score)}, ${esc(String(oppShort(m)).toUpperCase())} ${esc(m.opp.score)}</h1><div class="wl ${win ? "" : "L"}">${win ? "W" : "L"}</div></div>
-    <div class="sub">${day(m.gm.date)}, ${m.season.label}${m.row.post ? " · postseason" : ""} · ${site} ${rk != null ? "KenPom No. " + rk + " " : ""}${esc(m.opp.name)} · Baylor led for ${fmt(m.led)} of ${fmt(m.total)}${m.periods > 2 ? " · " + (m.periods - 2) + "OT" : ""}</div>
+    <div class="score"><h1>Baylor ${esc(m.bay.score)}, ${esc(String(oppShort(m)).toUpperCase())} ${esc(m.opp.score)}</h1>${m.isLive ? `<div class="wl LV">● ${esc(m.gm.status || "Live")}</div>` : `<div class="wl ${win ? "" : "L"}">${win ? "W" : "L"}</div>`}</div>
+    <div class="sub">${day(m.gm.date)}, ${m.season.label}${m.row.post ? " · postseason" : ""} · ${site} ${rk != null ? "KenPom No. " + rk + " " : ""}${esc(m.opp.name)} · Baylor led for ${fmt(m.led)}${m.isLive ? " so far" : " of " + fmt(m.total)}${m.periods > 2 ? " · " + (m.periods - 2) + "OT" : ""}</div>
   </div></div>`;
 }
 
@@ -411,6 +418,9 @@ const METRICS = [
 ];
 function agg(rows, metric){ let a = 0, b = 0; rows.forEach(r => { const [x, y] = metric[2](r); a += x; b += y; }); return rows.length && b ? a / b : null; }
 const played = s => s.games.filter(g => g.completed && g.bay && g.o);
+// Games with a card: finals plus a game in progress. The next game never shows until it tips off,
+// so the latest game stays up until then.
+const shown = s => s.games.filter(g => g.bay && g.o && (g.completed || g.state === "in"));
 
 function watch(season){
   const tier = TIERS.find(t => t[0] === store.get("bgn_tier", "low")) || TIERS[0];
@@ -523,20 +533,22 @@ function pickFromHash(){
   const h = (location.hash || "").slice(1);
   if (h.startsWith("g")){ const f = findGame(h.slice(1)); if (f){ state.season = f.s.year; state.game = f.g.id; return; } }
   if (h.startsWith("s")){ const s = B.seasons.find(x => String(x.year) === h.slice(1)); if (s){ state.season = s.year; state.game = null; return; } }
-  if (state.season == null){ const cs = curSeason(); state.season = played(cs).length ? cs.year : B.seasons[B.seasons.length - 2].year; }
+  if (state.season == null){ const cs = curSeason(); state.season = shown(cs).length ? cs.year : B.seasons[B.seasons.length - 2].year; }
 }
 let renderSeq = 0;
 async function render(){
   const seq = ++renderSeq;
   pickFromHash();
   const season = B.seasons.find(s => s.year === state.season);
-  const games = played(season);
-  if (!state.game || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
+  const games = shown(season);
+  // No game picked: show the latest game that has tipped off (a live game takes over once it starts)
+  const picked = (location.hash || "").startsWith("#g");
+  if (!picked || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
   $("#src").innerHTML = `ESPN box score &amp; play-by-play<br>${live ? "live" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}))}`;
   $("#season").innerHTML = B.seasons.slice().reverse().map(s => `<option value="${s.year}" ${s.year === season.year ? "selected" : ""}>${s.label}${s.year === B.seasonYear ? " (this season)" : ""} · ${recStr(s)}</option>`).join("");
   $("#rec").innerHTML = record(season);
-  $("#chips").innerHTML = games.slice().reverse().map(g => { const w = g.bay.pts > g.o.pts;
-    return `<button class="chip ${g.id === state.game ? "on" : ""} ${w ? "" : "L"}" data-g="${g.id}">${day(g.date)} ${g.site === "A" ? "at" : "vs"} ${esc(g.oppAbbr)}<span class="r">${w ? "W" : "L"} ${g.bay.pts}-${g.o.pts}</span></button>`; }).join("");
+  $("#chips").innerHTML = games.slice().reverse().map(g => { const w = g.bay.pts > g.o.pts, lv = !g.completed;
+    return `<button class="chip ${g.id === state.game ? "on" : ""} ${lv ? "LV" : w ? "" : "L"}" data-g="${g.id}">${day(g.date)} ${g.site === "A" ? "at" : "vs"} ${esc(g.oppAbbr)}<span class="r">${lv ? "LIVE" : w ? "W" : "L"} ${g.bay.pts}-${g.o.pts}</span></button>`; }).join("");
   const on = $("#chips .chip.on"); if (on) on.scrollIntoView({block: "nearest", inline: "nearest"});
   if (!state.game){ $("#app").innerHTML = `<div class="empty">No completed games in ${esc(season.label)} yet.</div>` + watch(season); return; }
   const row = games.find(g => g.id === state.game);
@@ -599,18 +611,23 @@ async function tryLive(){
       let g = cs.games.find(x => x.id === e.id);
       if (!g){ g = {id: e.id, date: e.date, opp: opp.team.location, oppName: opp.team.displayName, oppAbbr: opp.team.abbreviation, oppId: opp.team.id,
                     site: c.neutralSite ? "N" : (bay.homeAway === "home" ? "H" : "A"), post: false, rank: (B.kenpom || {})[opp.team.id] ?? null, completed: false}; cs.games.push(g); }
-      if (!c.status.type.completed || (g.completed && g.bay)) continue;
+      const st = c.status.type;
+      if (g.completed && g.bay) continue;                         // already have the final
+      g.state = st.state;
+      if (!(st.completed || st.state === "in")) continue;          // not tipped off yet
       const gm = compact(await getJSON(API + "/summary?event=" + e.id, 15000));
       const bt = gm.teams.find(t => t.id === BAY), ot = gm.teams.find(t => t.id !== BAY);
-      GAMES[e.id] = gm; g.completed = true; g.conf = gm.conf;
+      GAMES[e.id] = gm; g.conf = gm.conf;
+      g.bay = totalsFrom(bt.stats, bt.score); g.o = totalsFrom(ot.stats, ot.score);
+      g.completed = !!st.completed && gm.done; if (!g.completed) g.state = "in";
       const bp = gm.players[BAY]; cs.players = cs.players || {};
-      if (bp){ const ix = k => bp.keys.indexOf(k);
+      if (g.completed && bp){ const ix = k => bp.keys.indexOf(k);
         bp.athletes.forEach(a => { const st = a[3]; if (!st || !st.length || !a[5]) return;
           const t = cs.players[a[5]] = cs.players[a[5]] || {name: a[0], jersey: a[4], pos: a[1], gp: 0, gs: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, minutes: 0, points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0};
           t.gp++; if (a[2]) t.gs++;
           ["minutes", "points", "rebounds", "assists", "steals", "blocks", "turnovers"].forEach(k => t[k] += +st[ix(k)] || 0);
           [["fieldGoalsMade-fieldGoalsAttempted", "fgm", "fga"], ["threePointFieldGoalsMade-threePointFieldGoalsAttempted", "tpm", "tpa"], ["freeThrowsMade-freeThrowsAttempted", "ftm", "fta"]].forEach(([k, mk, at]) => { const [x, y] = split(st[ix(k)]); t[mk] += x; t[at] += y; });
-        }); } g.bay = totalsFrom(bt.stats, bt.score); g.o = totalsFrom(ot.stats, ot.score);
+        }); }
       if (!(g.oppId in B.stats[prior])){
         try { const s = await getJSON(`${API}/teams/${g.oppId}/statistics?season=${prior}`, 8000); const o = {}; s.results.stats.categories.forEach(cat => cat.stats.forEach(x => o[x.name] = x.value)); B.stats[prior][g.oppId] = o.fieldGoalsAttempted ? o : null; }
         catch(_){ B.stats[prior][g.oppId] = null; }
@@ -626,6 +643,7 @@ async function refresh(){
   const btn = $("#refresh"), msg = $("#rfmsg");
   btn.disabled = true; msg.textContent = "Refreshing…";
   try { await loadIndex(); } catch(_){}
+  Object.keys(GAMES).forEach(k => { const f = findGame(k); if (!f || !f.g.completed) delete GAMES[k]; });
   const ok = await tryLive();
   btn.disabled = false;
   msg.textContent = ok ? "Live from ESPN · " + new Date().toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit"})
