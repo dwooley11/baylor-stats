@@ -433,26 +433,26 @@ function flowChart(m){
 
 function fullCourt(m){
   const hy = 5.25, r3 = 22.146, cx3 = 3.35, run = hy + Math.sqrt(r3 * r3 - (25 - cx3) ** 2);
-  const ln = `stroke="#1d4a37" stroke-width=".22" fill="none"`;
+  const ln = `stroke="#8f8b83" stroke-width=".22" fill="none"`;
   // one basket end, drawn for the left side; the right side is the same group flipped
   const end = `<rect x="0" y="19" width="19" height="12" ${ln}/>
     <path d="M19,19 A6,6 0 0 1 19,31" ${ln}/><path d="M19,19 A6,6 0 0 0 19,31" ${ln} stroke-dasharray=".7 .7"/>
     <path d="M0,${cx3} H${run.toFixed(2)} A${r3},${r3} 0 0 1 ${run.toFixed(2)},${50 - cx3} H0" ${ln}/>
     <path d="M${hy},21 A4,4 0 0 1 ${hy},29" ${ln}/>
-    <line x1="4" x2="4" y1="22" y2="28" stroke="#1c1c1a" stroke-width=".35"/><circle cx="${hy}" cy="25" r=".75" ${ln}/>`;
+    <line x1="4" x2="4" y1="22" y2="28" stroke="#e6e2da" stroke-width=".35"/><circle cx="${hy}" cy="25" r=".75" ${ln}/>`;
   // ESPN: x = feet across (0-50), y = feet out from the rim. Baylor shoots at the left basket, the opponent at the right.
   const pos = (s, left) => left ? [s.y + hy, s.x] : [94 - (s.y + hy), 50 - s.x];
   const dots = (id, left, color) => m.shots.filter(s => s.team === id).map(s => { const [px, py] = pos(s, left);
-    return `<circle cx="${Math.max(.9, Math.min(93.1, px)).toFixed(2)}" cy="${py.toFixed(2)}" r=".95" fill="${s.made ? color : "#f6f1e4"}" stroke="${s.made ? color : "#6f6a5e"}" stroke-width="${s.made ? 0 : .22}"/>`; }).join("");
+    return `<circle cx="${Math.max(.9, Math.min(93.1, px)).toFixed(2)}" cy="${py.toFixed(2)}" r=".95" fill="${s.made ? color : "none"}" stroke="${color}" stroke-width="${s.made ? 0 : .24}" opacity="${s.made ? 1 : .8}"/>`; }).join("");
   const side = (box, name, r) => `<div class="sd ${r ? "r" : ""}"><b>${esc(name)}</b><small>FG</small>${box.fgm}-${box.fga}<br class="wide"><small class="gap">3PT</small>${box.tpm}-${box.tpa}</div>`;
   return secHead("Every shot", "● made · ○ missed") + `<div class="fc">
     ${side(m.bayBox, "Baylor", false)}
     <svg viewBox="-.6 -.6 95.2 51.2" role="img" aria-label="Shot map">
-      <rect x="0" y="0" width="94" height="50" fill="#f1ede3" stroke="#1d4a37" stroke-width=".5"/>
+      <rect x="0" y="0" width="94" height="50" fill="#34343a" stroke="#1c1c1a" stroke-width=".5"/>
       <line x1="47" x2="47" y1="0" y2="50" ${ln}/><circle cx="47" cy="25" r="6" ${ln}/>
       ${end}<g transform="translate(94,50) rotate(180)">${end}</g>
-      ${dots(BAY, true, "#1d4a37")}${dots(m.opp.id, false, "#2a2926")}
-      ${m.shots.length ? "" : `<text x="47" y="26" font-size="2.4" text-anchor="middle" fill="#6f6a5e" font-family="Inter,sans-serif">No shot locations from ESPN for this game</text>`}
+      ${dots(BAY, true, "#FFB81C")}${dots(m.opp.id, false, "#ffffff")}
+      ${m.shots.length ? "" : `<text x="47" y="26" font-size="2.4" text-anchor="middle" fill="#b8b3a8" font-family="Inter,sans-serif">No shot locations from ESPN for this game</text>`}
     </svg>
     ${side(m.oppBox, oppShort(m), true)}
   </div>`;
