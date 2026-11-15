@@ -229,6 +229,28 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 .sitt .chev{display:inline-block;margin-left:5px;color:#b9af97;transition:transform .15s}.sitt tr.on .chev{transform:rotate(90deg)}
 .sitt tr.sub{display:none}.sitt tr.sub.on{display:table-row}.sitt tr.sub td{font-size:11px;color:var(--muted);background:var(--paper);text-align:left;padding:5px 8px}
 .lgd{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin:6px 0 10px;font-size:12px;color:var(--ink)}
+.chip.GD{border-color:var(--gold)}.chip.GD .r{color:var(--gold)}.chip.on.GD .r{color:#1c1c1a}
+.pvm{margin-top:10px}
+.pvt{display:flex;align-items:center;gap:10px;padding:6px 0}
+.pvt .tlg.big img{height:44px}.pvt .tbadge.big{min-width:44px;height:30px;font-size:14px}
+.pvn{font:700 clamp(22px,6vw,30px)/1.05 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;flex:1}
+.pvt.b .pvn{color:var(--green)}
+.pvn small{display:block;font:500 12px Inter,system-ui,sans-serif;color:var(--muted);text-transform:none;margin-top:2px}
+.pvn .rk{font-size:.6em;color:var(--muted);margin-right:5px;vertical-align:.25em}
+.pvs{font:700 32px Oswald,'Arial Narrow',sans-serif}
+.pvat{font:600 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);padding-left:54px}
+.pvx{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:12px;border-top:2px solid var(--ink);padding-top:10px}
+.pvx span{display:block;font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.pvx b{font:700 17px Oswald,'Arial Narrow',sans-serif}
+.pvl{display:grid;grid-template-columns:1fr 74px 1fr;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pvl>span{font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);text-align:center}
+.pvl b{display:block;font:700 14px Oswald,'Arial Narrow',sans-serif}.pvl small{display:block;color:var(--muted);font-size:11px}
+.pvl .r{text-align:right}.pvl .r b{color:var(--green)}
+.pvl.pvh{border-bottom:2px solid var(--ink);font:700 13px Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}.pvl.pvh span{font:inherit;color:var(--ink);text-align:left}
+.pv5{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pvf{display:grid;grid-template-columns:20px 1fr auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pvf i{width:18px;height:18px;display:grid;place-items:center;font:700 10px Inter,sans-serif;font-style:normal;color:#fff;background:var(--green);border-radius:2px}.pvf i.L{background:var(--red)}
+.pvf b{font:700 13px Oswald,'Arial Narrow',sans-serif}
 </style>
 </head>
 <body>
@@ -272,6 +294,14 @@ const curSeason = () => B.seasons.find(s => s.year === B.seasonYear) || B.season
 function findGame(id){ for (const s of B.seasons){ const g = s.games.find(x => x.id === id); if (g) return {s, g}; } return null; }
 const played = s => s.games.filter(g => (g.completed || g.state === "in") && g.hasCard);
 const finals = s => s.games.filter(g => g.completed && g.pf != null);
+// Gameday: today's game (Central time) shows from midnight on, before kickoff and before ESPN logs a play.
+// A time-TBA game is stored as 05:00Z (midnight ET), so its UTC date is the real date.
+const ctDay = d => new Date(d).toLocaleDateString("en-CA", {timeZone: "America/Chicago"});
+const tbd = g => g.tbd != null ? g.tbd : /T05:00(:00)?Z$/.test(g.date);
+const gameDay = g => tbd(g) ? String(g.date).slice(0, 10) : ctDay(g.date);
+const isGameday = g => !g.completed && (g.state === "in" || gameDay(g) === ctDay(Date.now()));
+const shown = s => s.games.filter(g => ((g.completed || g.state === "in") && g.hasCard) || isGameday(g));
+const kickTime = g => tbd(g) ? "TBA" : new Date(g.date).toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"});
 
 /* ESPN summary -> compact game (same shape as scripts/build_cfb.py) */
 const SKIP = new Set(["Timeout", "End Period", "End of Half", "End of Game", "End of Regulation"]);
@@ -692,29 +722,94 @@ function boxScoreCard(gm){
     <div class="foot">Highlighted = team high. Defense = top five tacklers. Sacks count as rushes in college, so a QB's rushing yards include sacks.${gamePlays(gm).some(p => p.tgtNo || p.tgtName) ? " Targets from play-by-play." : ""} ${gm.completed ? "" : "Unofficial until final. "}Data: ESPN box score.</div></div></div>`;
 }
 
+/* ---------- gameday preview: before kickoff (and until ESPN logs the first play) ---------- */
+const PREV = {};              // id -> ESPN summary for a gameday game (pregame info)
+async function loadPreview(id){ if (!PREV[id]) PREV[id] = await getJSON(API + "/summary?event=" + id, 10000); return PREV[id]; }
+function previewCard(row, s, season){
+  const comp = s && s.header && s.header.competitions ? s.header.competitions[0] : null;
+  const cs = comp ? comp.competitors : [];
+  const cB = cs.find(c => c.team.id === BAY) || {}, cO = cs.find(c => c.team.id !== BAY) || {};
+  const tm = (c, fb) => ({id: (c.team || {}).id || fb.id, abbr: (c.team || {}).abbreviation || fb.abbr, color: (c.team || {}).color,
+    name: (c.team || {}).displayName || fb.name, loc: (c.team || {}).location || fb.loc});
+  const B0 = tm(cB, {id: BAY, abbr: "BAY", name: "Baylor Bears", loc: "Baylor"});
+  const O0 = tm(cO, {id: row.oppId, abbr: row.oppAbbr, name: row.oppName, loc: row.opp});
+  const rec = c => ((c.record || []).find(r => r.type === "total") || {}).displayValue || "";
+  const crec = c => ((c.record || []).find(r => r.type === "vsconf") || {}).displayValue || "";
+  const rank = c => { const r = c.curatedRank ? c.curatedRank.current : c.rank; return r && r < 26 ? `<span class="rk">#${r}</span>` : ""; };
+  const st = comp ? comp.status.type : {state: row.state};
+  const live = st.state === "in";
+  const kick = live ? `● ${esc(st.shortDetail || "In progress")}` : `Gameday · ${esc(new Date(row.date).toLocaleDateString("en-US", {weekday: "short", month: "short", day: "numeric", timeZone: "America/Chicago"}))} · ${kickTime(row)}${tbd(row) ? "" : " CT"}`;
+  const bayRec = rec(cB) || recStr(season);
+  const tmRow = (t, c, isB, r, cr) => `<div class="pvt${isB ? " b" : ""}">${badge(t, true)}<div class="pvn">${rank(c)}${esc(isB ? "Baylor" : (t.loc || t.name))}<small>${esc([r, cr && cr + " Big 12"].filter(Boolean).join(" · "))}</small></div>${live ? `<b class="pvs">${esc(c.score ?? "")}</b>` : ""}</div>`;
+  const home = row.site === "H";
+  const top = home ? [O0, cO, false] : [B0, cB, true], bot = home ? [B0, cB, true] : [O0, cO, false];
+  const line = t => tmRow(t[0], t[1], t[2], t[2] ? bayRec : rec(t[1]), crec(t[1]));
+  const gi = (s && s.gameInfo) || {}; const v = gi.venue || (comp && comp.venue) || {};
+  const where = [v.fullName, v.address && [v.address.city, v.address.state].filter(Boolean).join(", ")].filter(Boolean).join(" · ") || row.venue || "";
+  const tv = s ? ((comp && comp.broadcasts) || []).map(b => (b.media || {}).shortName).filter(Boolean).join(", ") : (row.tv || "");
+  const pc = s && s.pickcenter && s.pickcenter[0];
+  const pr = s && s.predictor;
+  const fpi = pr ? (() => { const h = +((pr.homeTeam || {}).gameProjection), a = +((pr.awayTeam || {}).gameProjection); const bHome = (pr.homeTeam || {}).id === BAY;
+    const bp = bHome ? h : a; return isFinite(bp) ? bp : null; })() : null;
+  const facts = [
+    pc && pc.details ? ["Line", pc.details] : null,
+    pc && pc.overUnder != null ? ["O/U", pc.overUnder] : null,
+    fpi != null ? ["ESPN FPI", `Baylor ${fpi.toFixed(0)}%`] : null,
+    tv ? ["TV", tv] : null,
+  ].filter(Boolean);
+  // season leaders, side by side
+  const lead = (s && s.leaders) || [];
+  const ldr = (tid, cat) => { const t = lead.find(x => x.team && x.team.id === tid); const c = t && (t.leaders || []).find(x => x.name === cat); const l = c && c.leaders && c.leaders[0];
+    return l ? `<b>${esc(l.athlete.displayName)}</b><small>${esc(l.displayValue)}</small>` : `<small>—</small>`; };
+  const cats = [["passingYards", "Passing"], ["rushingYards", "Rushing"], ["receivingYards", "Receiving"], ["sacks", "Sacks"], ["totalTackles", "Tackles"]];
+  const leaders = lead.length ? `<div class="card"><div class="hd"><span>Season leaders</span><span>${esc(O0.abbr || "")} vs BAY</span></div><div class="bd">
+      <div class="pvl pvh"><span>${badge(O0)} ${esc(O0.loc || O0.name)}</span><span></span><span style="text-align:right">Baylor ${badge(B0)}</span></div>
+      ${cats.map(([k, lb]) => `<div class="pvl"><div>${ldr(O0.id, k)}</div><span>${lb}</span><div class="r">${ldr(BAY, k)}</div></div>`).join("")}
+      <div class="foot">Season totals before this game. Data: ESPN.</div></div></div>` : "";
+  // each team's last five
+  const l5 = (s && s.lastFiveGames) || [];
+  const five = tid => { const t = l5.find(x => x.team && x.team.id === tid); return t ? t.events.map(e => `<div class="pvf"><i class="${e.gameResult === "W" ? "" : "L"}">${esc(e.gameResult)}</i><span>${esc(e.atVs === "@" ? "at" : "vs")} ${esc((e.opponent || {}).abbreviation || "")}</span><b>${esc(e.score)}</b></div>`).join("") : ""; };
+  const lastFive = l5.length ? `<div class="card"><div class="hd"><span>Last five</span><span></span></div><div class="bd"><div class="pv5">
+      <div><div class="sh">${esc(O0.loc || O0.name)}</div>${five(O0.id) || `<div class="note">—</div>`}</div>
+      <div><div class="sh" style="color:var(--green)">Baylor</div>${five(BAY) || `<div class="note">—</div>`}</div></div></div></div>` : "";
+  return `<div class="card sc pv"><div class="bd">
+      <div class="row"><span class="kick ${live ? "live" : ""}">${kick}</span><span class="kick">${row.post ? "Bowl" : (row.conf || (comp && comp.conferenceCompetition)) ? "Big 12" : ""}</span></div>
+      <div class="pvm">${line(top)}<div class="pvat">${row.site === "N" ? "vs" : "at"}</div>${line(bot)}</div>
+      ${where ? `<div class="sub">${esc(where)}${row.site === "N" ? " (neutral)" : ""}</div>` : ""}
+      ${facts.length ? `<div class="pvx">${facts.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b></div>`).join("")}</div>` : ""}
+      <div class="foot">${s ? "Game card fills in once the first play is logged — tap ↻ Refresh during the game." : "Couldn't reach ESPN for matchup details — tap ↻ Refresh."}</div>
+    </div></div>` + leaders + lastFive;
+}
+
 /* ---------- page ---------- */
 let state = {season: null, game: null, scope: "game"};
 function pickFromHash(){
   const h = (location.hash || "").slice(1);
   if (h.startsWith("g")){ const f = findGame(h.slice(1)); if (f){ state.season = f.s.year; state.game = f.g.id; return; } }
   if (h.startsWith("s")){ const s = B.seasons.find(x => String(x.year) === h.slice(1)); if (s){ state.season = s.year; state.game = null; return; } }
-  if (state.season == null){ const cs = curSeason(); state.season = played(cs).length ? cs.year : B.seasons[B.seasons.length - 2].year; }
+  if (state.season == null){ const cs = curSeason(); state.season = shown(cs).length ? cs.year : B.seasons[B.seasons.length - 2].year; }
 }
 let seq = 0;
 async function render(){
   const my = ++seq;
   pickFromHash();
   const season = B.seasons.find(s => s.year === state.season);
-  const games = played(season);
-  if (!state.game || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
+  const chipGames = shown(season), games = played(season);
+  if (!state.game || !chipGames.some(g => g.id === state.game)){ const gd = chipGames.find(isGameday); state.game = gd ? gd.id : chipGames.length ? chipGames[chipGames.length - 1].id : null; }
   $("#src").innerHTML = `ESPN box score &amp; play-by-play<br>${live ? "live" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}))}`;
   $("#season").innerHTML = B.seasons.slice().reverse().map(s => `<option value="${s.year}" ${s.year === season.year ? "selected" : ""}>${s.label}${s.year === B.seasonYear ? " (this season)" : ""} · ${recStr(s)}</option>`).join("");
   $("#rec").innerHTML = record(season);
-  $("#chips").innerHTML = games.slice().reverse().map(g => { const lv = !g.completed; const w = g.pf > g.pa;
-    return `<button class="chip ${g.id === state.game ? "on" : ""} ${lv ? "LV" : w ? "" : "L"}" data-g="${g.id}">${day(g.date)} ${g.site === "A" ? "at" : "vs"} ${esc(g.oppAbbr)}<span class="r">${lv ? "LIVE " : (w ? "W " : "L ")}${g.pf ?? 0}-${g.pa ?? 0}</span></button>`; }).join("");
+  $("#chips").innerHTML = chipGames.slice().reverse().map(g => { const pre = !g.completed && g.state !== "in"; const lv = !g.completed; const w = g.pf > g.pa;
+    return `<button class="chip ${g.id === state.game ? "on" : ""} ${pre ? "GD" : lv ? "LV" : w ? "" : "L"}" data-g="${g.id}">${day(g.date)} ${g.site === "A" ? "at" : "vs"} ${esc(g.oppAbbr)}<span class="r">${pre ? "TODAY " + kickTime(g) : (lv ? "LIVE " : (w ? "W " : "L ")) + (g.pf ?? 0) + "-" + (g.pa ?? 0)}</span></button>`; }).join("");
   const on = $("#chips .chip.on"); if (on) on.scrollIntoView({block: "nearest", inline: "nearest"});
   if (!state.game){ $("#app").innerHTML = `<div class="empty">No games in ${esc(season.label)} yet.</div>`; return; }
-  const row = games.find(g => g.id === state.game);
+  const row = chipGames.find(g => g.id === state.game);
+  if (!row.hasCard){   // gameday, before the first play: show the matchup
+    if (!PREV[row.id]) $("#app").innerHTML = previewCard(row, null, season).replace("Couldn't reach ESPN for matchup details — tap ↻ Refresh.", "Loading matchup…");
+    let s = null; try { s = await loadPreview(row.id); } catch(_){}
+    if (my === seq) $("#app").innerHTML = previewCard(row, s, season);
+    return;
+  }
   let gm, seasonGms;
   try { [gm, seasonGms] = await Promise.all([loadGame(row.id), Promise.all(games.map(g => loadGame(g.id).catch(() => null)))]); }
   catch(e){ if (my === seq) $("#app").innerHTML = `<div class="empty">Couldn't load this game's data.</div>`; return; }
@@ -781,6 +876,7 @@ async function tryLive(){
       let g = cs.games.find(x => x.id === e.id);
       if (!g){ g = {id: e.id, date: e.date, opp: o.team.location || o.team.displayName, oppName: o.team.displayName, oppAbbr: o.team.abbreviation, oppId: o.team.id,
                     site: c.neutralSite ? "N" : (b.homeAway === "home" ? "H" : "A"), post: false}; cs.games.push(g); }
+      g.date = e.date; g.tbd = c.timeValid === false;
       const wasDone = g.completed && g.hasCard;
       g.completed = !!st.completed; g.state = st.state;
       if (!(st.completed || st.state === "in") || wasDone) continue;
@@ -797,6 +893,7 @@ async function refresh(){
   btn.disabled = true; msg.textContent = "Refreshing…";
   try { await loadIndex(); } catch(_){}
   Object.keys(GAMES).forEach(k => { const f = findGame(k); if (f && !f.g.completed) delete GAMES[k]; });
+  Object.keys(PREV).forEach(k => delete PREV[k]);
   const ok = await tryLive();
   btn.disabled = false;
   msg.textContent = ok ? "Live from ESPN · " + new Date().toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit"}) : "Couldn't reach ESPN from here — showing saved data";

@@ -89,6 +89,12 @@ for y in range(FIRST, CUR + 1):
                  "oppName": opp["team"].get("displayName"), "oppAbbr": opp["team"].get("abbreviation"), "oppId": opp["team"]["id"],
                  "site": "N" if c.get("neutralSite") else ("H" if bay["homeAway"] == "home" else "A"),
                  "post": st == 3, "completed": bool(stt.get("completed")), "state": stt.get("state")}
+            if not g["completed"]:   # matchup basics for the gameday preview (the page adds the rest live from ESPN)
+                v = c.get("venue") or {}
+                ad = v.get("address") or {}
+                g.update({"tbd": c.get("timeValid") is False,
+                          "venue": " · ".join(x for x in [v.get("fullName"), ", ".join(y for y in [ad.get("city"), ad.get("state")] if y)] if x),
+                          "tv": ", ".join(b["media"]["shortName"] for b in c.get("broadcasts") or [] if (b.get("media") or {}).get("shortName"))})
             if g["completed"] or g["state"] == "in":
                 s = fetch(f"{API}/summary?event={e['id']}", f"{CACHE}/sum_{e['id']}.json", fresh=fresh and not os.path.exists(f"{GAMES}/{e['id']}.json") or g["state"] == "in")
                 try:
