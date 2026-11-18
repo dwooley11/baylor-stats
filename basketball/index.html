@@ -119,12 +119,14 @@ tr.dnp td{color:#a39d90}
 .chip.L .r{color:#e88c78}.chip.on.L .r{color:#7a1f10}
 .wt tr.pick-row{cursor:pointer}
 .pl{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left;text-decoration:underline;text-decoration-color:#b9af97;text-underline-offset:3px}
-.ov{position:fixed;inset:0;background:rgba(17,17,15,.6);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.ov{position:fixed;inset:0;overscroll-behavior:contain;background:rgba(17,17,15,.6);display:none;align-items:flex-end;justify-content:center;z-index:20}
 .ov.on{display:flex}
 @media(min-width:560px){.ov{align-items:center}}
-.pc{background:var(--cream);width:100%;max-width:440px;border-radius:10px 10px 0 0;overflow:hidden;max-height:88vh;overflow-y:auto}
+.pc{background:var(--cream);width:100%;max-width:440px;border-radius:10px 10px 0 0;overflow:hidden;max-height:88vh;max-height:88dvh;display:flex;flex-direction:column}
+.pc .pscroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+body.noscroll{overflow:hidden}
 @media(min-width:560px){.pc{border-radius:8px}}
-.pc .ph{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center;position:sticky;top:0;z-index:3}
+.pc .ph{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center;flex:none}
 .pc .num{font:700 40px/1 Oswald,'Arial Narrow',sans-serif;color:var(--gold);min-width:54px;text-align:center}
 .pc .nm{font:700 22px/1.1 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
 .pc .bio{font-size:12px;opacity:.85;margin-top:3px}
@@ -695,7 +697,7 @@ function playerCard(aid){
         <div><b>${fga}<small>of ${tb.fga}</small></b><span>Baylor's shots</span></div>
         <div><b>${ast}<small>to</small> ${to}</b><span>Assists, turnovers</span></div>
         <div><b>${efg != null ? efg + "<small>%</small>" : "—"}</b><span>eFG% · team ${teamEfg ?? "—"}%</span></div></div>`;
-  $("#pc").innerHTML = `<div class="ph"><div class="num">${a[4] !== "" && a[4] != null ? "#" + esc(a[4]) : ""}</div><div><div class="nm">${esc(a[0])}</div><div class="bio">${bio}</div>${sp.home ? `<div class="bio">${esc(sp.home)}</div>` : ""}</div><button class="x" data-close aria-label="Close">×</button></div>
+  $("#pc").innerHTML = `<div class="ph"><div class="num">${a[4] !== "" && a[4] != null ? "#" + esc(a[4]) : ""}</div><div><div class="nm">${esc(a[0])}</div><div class="bio">${bio}</div>${sp.home ? `<div class="bio">${esc(sp.home)}</div>` : ""}</div><button class="x" data-close aria-label="Close">×</button></div><div class="pscroll">
     <div class="pb">${gameBlock}</div>
     <div class="pfoot">ESPN box score and play-by-play (unofficial). eFG% counts a three as 1.5 twos. Shot chart: field goals ESPN logged with a location.</div>
     <div class="pb">
@@ -705,10 +707,10 @@ function playerCard(aid){
       <div class="sec" style="margin-top:14px">Prospect grades</div><div style="margin:4px 0 2px">${prospect}</div>
       ${rc && rc.school ? `<div class="note">${esc(rc.school)}</div>` : ""}
       <div class="foot">Stats from ESPN box scores. Prospect grades from 247Sports' Baylor roster and commits pages, 2019-20 on: high school rating (or 247 Composite where that's all 247 lists) and transfer portal rating. Stars: 98+ five, 90–97 four, 80–89 three, 70–79 two.</div>
-    </div>`;
-  $("#ov").classList.add("on");
+    </div></div>`;
+  $("#ov").classList.add("on"); document.body.classList.add("noscroll"); $("#pc .pscroll").scrollTop = 0;
 }
-function closeCard(){ $("#ov").classList.remove("on"); }
+function closeCard(){ $("#ov").classList.remove("on"); document.body.classList.remove("noscroll"); }
 
 /* ---------- season record ---------- */
 function record(season){
