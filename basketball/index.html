@@ -124,7 +124,7 @@ tr.dnp td{color:#a39d90}
 @media(min-width:560px){.ov{align-items:center}}
 .pc{background:var(--cream);width:100%;max-width:440px;border-radius:10px 10px 0 0;overflow:hidden;max-height:88vh;overflow-y:auto}
 @media(min-width:560px){.pc{border-radius:8px}}
-.pc .ph{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.pc .ph{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:12px;align-items:center;position:sticky;top:0;z-index:3}
 .pc .num{font:700 40px/1 Oswald,'Arial Narrow',sans-serif;color:var(--gold);min-width:54px;text-align:center}
 .pc .nm{font:700 22px/1.1 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase}
 .pc .bio{font-size:12px;opacity:.85;margin-top:3px}
@@ -640,7 +640,7 @@ function halfCourt(shots){
   const hy = 5.25, r3 = 22.146, cx3 = 3.35, run = hy + Math.sqrt(r3 * r3 - (25 - cx3) ** 2), H = 35;
   const ln = `stroke="var(--green)" stroke-width=".28" fill="none"`;
   // basket at the top; ESPN x runs sideline to sideline, y is feet out from the rim
-  const dots = shots.map(s => { const px = 50 - s.x, py = Math.min(H - 1, s.y + hy);
+  const dots = shots.map(s => { const px = s.x, py = Math.min(H - 1, s.y + hy);
     return `<circle cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="1.05" fill="${s.made ? "var(--green)" : "none"}" stroke="${s.made ? "none" : "#5f7d6c"}" stroke-width=".28"/>`; }).join("");
   return `<svg viewBox="-.5 -.5 51 ${H + 1}" role="img" aria-label="Shot chart">
     <rect x="0" y="0" width="50" height="${H}" fill="#f1efe9" stroke="var(--green)" stroke-width=".35"/>
