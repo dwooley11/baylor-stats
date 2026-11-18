@@ -84,7 +84,8 @@ def compact(s):
                       p.get("homeScore"), p.get("awayScore"), "T" if tv else ("F" if ft else "S"),
                       p.get("scoreValue", 0) if p.get("scoringPlay") else 0,
                       co.get("x"), co.get("y"), 1 if p.get("scoringPlay") else 0,
-                      3 if (p.get("pointsAttempted") == 3 or p.get("scoreValue") == 3) else 0])
+                      3 if (p.get("pointsAttempted") == 3 or p.get("scoreValue") == 3) else 0,
+                      (((p.get("participants") or [{}])[0].get("athlete") or {}).get("id") or "")])
     return {"date": comp["date"], "neutral": comp.get("neutralSite", False), "conf": bool(comp.get("conferenceCompetition")), "teams": teams, "players": players, "plays": plays}
 
 
