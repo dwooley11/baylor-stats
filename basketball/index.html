@@ -68,7 +68,11 @@ svg{display:block;width:100%;height:auto}
 .trk .t.same{background:#9b958a}
 .vd{display:flex;justify-content:space-between;gap:8px;white-space:nowrap;min-width:128px;background:var(--green);color:#fff;padding:5px 8px;font:600 11px Inter,system-ui,sans-serif;border-radius:2px}
 .vd.bad{background:var(--red)}.vd.same{background:#a9a397}
-.vd .k{font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px}
+.vd .k{font:700 11px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;align-self:center}
+.cmp .raw{grid-column:1/-1;margin:-5px 0 3px;font:500 11px Inter,system-ui,sans-serif;color:var(--muted);padding-bottom:7px;border-bottom:1px solid #e4dccb}
+.cmp .raw b{font:700 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--ink);margin-right:3px}
+.cmp .raw .sep{margin:0 6px}
+.trk:after{content:"";position:absolute;left:50%;top:3px;width:1px;height:11px;background:#c9bfa6}
 .sec{font:700 12px Oswald,'Arial Narrow',sans-serif;letter-spacing:1.4px;color:var(--green);text-transform:uppercase;margin:4px 0 8px}
 .sec small{color:var(--muted);font:500 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;margin-left:8px}
 /* box */
@@ -301,11 +305,13 @@ function totalsFrom(stats, pts){
 function factors(t){
   if (!t || !t.fga) return null;
   const poss = t.fga - t.orb + t.to + 0.475 * t.fta;
-  return {poss, ppp: t.pts / poss, efg: (t.fgm + 0.5 * t.tpm) / t.fga, tov: t.to / poss, orbMiss: t.orb / (t.fga - t.fgm)};
+  const g = t.g || 1; // season/multi-game totals carry a game count so raw numbers can be shown per game
+  return {poss, ppp: t.pts / poss, efg: (t.fgm + 0.5 * t.tpm) / t.fga, tov: t.to / poss, orbMiss: t.orb / (t.fga - t.fgm),
+          raw: {g, pts: t.pts / g, poss: poss / g, fgm: t.fgm / g, fga: t.fga / g, tpm: t.tpm / g, to: t.to / g, orb: t.orb / g, miss: (t.fga - t.fgm) / g}};
 }
 function seasonTeam(s){
   if (!s || !s.fieldGoalsAttempted) return null;
-  return {pts: s.points, fgm: s.fieldGoalsMade, fga: s.fieldGoalsAttempted, tpm: s.threePointFieldGoalsMade, fta: s.freeThrowsAttempted, orb: s.offensiveRebounds, to: s.turnovers};
+  return {pts: s.points, fgm: s.fieldGoalsMade, fga: s.fieldGoalsAttempted, tpm: s.threePointFieldGoalsMade, fta: s.freeThrowsAttempted, orb: s.offensiveRebounds, to: s.turnovers, g: s.gamesPlayed || 0};
 }
 function clockSecs(d){ const p = String(d || "0:00").split(":").map(Number); return p.length === 2 ? p[0] * 60 + p[1] : (+p[0] || 0); }
 function elapsed(period, clock){
@@ -460,7 +466,7 @@ function fullCourt(m){
 
 /* "Usual" baseline: last season (full) or this season (Baylor: every other game this season; opponent: ESPN season stats) */
 const baseOf = () => store.get("bgn_base", "last");
-const sumTotals = gs => { const o = {}; gs.forEach(g => Object.entries(g.bay).forEach(([k, v]) => o[k] = (o[k] || 0) + (+v || 0))); return o; };
+const sumTotals = gs => { const o = {}; gs.forEach(g => Object.entries(g.bay).forEach(([k, v]) => o[k] = (o[k] || 0) + (+v || 0))); o.g = gs.length; return o; };
 const OPP_PENDING = {};
 async function needOppStats(year, id){
   const k = String(year); B.stats[k] = B.stats[k] || {};
@@ -490,23 +496,33 @@ function compare(m){
     head = `This game ● vs. their usual ○ · full ${lab(yr - 1)} season`;
     bNote = `vs. Baylor's own ${lab(yr - 1)} offense`; oNote = `in ${lab(yr - 1)}`;
   }
-  const off = [["Points per trip", m.bf.ppp, bl && bl.ppp, true, f2, .6, 1.5, .03],
-               ["eFG%", m.bf.efg, bl && bl.efg, true, pc, .3, .7, .015],
-               ["Turnovers", m.bf.tov, bl && bl.tov, false, pc, .05, .35, .01],
-               ["Off. rebounds", m.bf.orbMiss, bl && bl.orbMiss, true, pc, .15, .65, .015]];
-  const def = [["Points per trip allowed", m.of.ppp, ol && ol.ppp, false, f2, .6, 1.5, .03],
-               ["eFG% allowed", m.of.efg, ol && ol.efg, false, pc, .3, .7, .015],
-               ["Turnovers forced", m.of.tov, ol && ol.tov, true, pc, .05, .35, .01],
-               ["Off. rebounds allowed", m.of.orbMiss, ol && ol.orbMiss, false, pc, .15, .65, .015]];
-  const row = ([lab, t, u, hib, fmt, lo, hi, tol]) => {
-    // right = a good night, so lower-is-better stats run the other way
-    const pos = v => { const p = Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100)); return hib ? p : 100 - p; };
+  // raw counts behind each rate: tonight as whole numbers, "usual" as a per-game average
+  const n0 = x => String(Math.round(x)), n1 = x => (Math.round(x * 10) / 10).toFixed(1);
+  const rawOf = {
+    ppp: (r, n) => `${n(r.pts)} pts on ${n(r.poss)} trips`,
+    efg: (r, n) => `${n(r.fgm)}-${n(r.fga)} FG, ${n(r.tpm)} 3s`,
+    tov: (r, n) => `${n(r.to)} turnovers`,
+    orbMiss: (r, n) => `${n(r.orb)} of ${n(r.miss)} misses`};
+  // [label, stat key, tonight factors, usual factors, higher is better, format, half-width of the track (usual sits in the middle), "same" tolerance]
+  const off = [["Points per trip", "ppp", m.bf, bl, true, f2, .3, .03],
+               ["eFG%", "efg", m.bf, bl, true, pc, .15, .015],
+               ["Turnovers", "tov", m.bf, bl, false, pc, .08, .01],
+               ["Off. rebounds", "orbMiss", m.bf, bl, true, pc, .2, .015]];
+  const def = [["Points per trip allowed", "ppp", m.of, ol, false, f2, .3, .03],
+               ["eFG% allowed", "efg", m.of, ol, false, pc, .15, .015],
+               ["Turnovers forced", "tov", m.of, ol, true, pc, .08, .01],
+               ["Off. rebounds allowed", "orbMiss", m.of, ol, false, pc, .2, .015]];
+  const row = ([lab, k, tf, uf, hib, fmt, span, tol]) => {
+    const t = tf[k], u = uf && uf[k];
     const has = u != null && isFinite(u);
     let cls = "same", word = has ? "SAME" : "—";
     if (has && Math.abs(t - u) > tol){ const good = hib ? t > u : t < u; cls = good ? "" : "bad"; word = good ? "BETTER" : "WORSE"; }
-    const a = has ? pos(u) : null, b = pos(t);
-    return `<div class="m">${lab}</div><div class="trk">${a != null ? `<div class="seg ${cls}" style="left:${Math.min(a, b)}%;width:${Math.abs(b - a)}%"></div><div class="u" style="left:${a}%"></div>` : ""}<div class="t ${cls}" style="left:${b}%"></div></div>
-      <div class="vd ${cls}"><span class="k">${word}</span><span>${fmt(t)}${has ? " · usual " + fmt(u) : ""}</span></div>`;
+    // usual is pinned to the center; tonight's dot moves right for a good night, left for a bad one, by how far it swung
+    const d = has ? (hib ? t - u : u - t) : 0, b = 50 + Math.max(-50, Math.min(50, d / span * 50)), a = 50;
+    const rawT = rawOf[k](tf.raw, n0), rawU = has && uf.raw ? rawOf[k](uf.raw, n1) : "";
+    return `<div class="m">${lab}</div><div class="trk">${has ? `<div class="seg ${cls}" style="left:${Math.min(a, b)}%;width:${Math.abs(b - a)}%"></div><div class="u" style="left:${a}%"></div>` : ""}<div class="t ${cls}" style="left:${b}%"></div></div>
+      <div class="vd ${cls}"><span class="k">${word}</span><span>${fmt(t)}${has ? " · usual " + fmt(u) : ""}</span></div>
+      <div class="raw"><b>Tonight</b> ${rawT}${rawU ? `<span class="sep">·</span><b>Usual</b> ${rawU}` : ""}</div>`;
   };
   const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
   const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
@@ -697,7 +713,7 @@ async function render(){
   const m = model(season, row, gm); CURM = m;
   $("#app").innerHTML =
       `<div class="gc"><div class="in">${header(m)}${flowChart(m)}${fullCourt(m)}${compare(m)}</div>
-        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Data: ESPN box score &amp; play-by-play.</div></div>`
+        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages. Data: ESPN box score &amp; play-by-play.</div></div>`
     + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
         <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
     + watch(season);
