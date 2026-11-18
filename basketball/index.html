@@ -714,8 +714,8 @@ async function render(){
   $("#app").innerHTML =
       `<div class="gc"><div class="in">${header(m)}${flowChart(m)}${fullCourt(m)}</div>
         <div class="cf">Data: ESPN box score &amp; play-by-play.</div></div>`
-    + `<div class="gc"><div class="in">${scoring(m)}${compare(m)}<div class="note" style="margin:8px 0 4px">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages.</div>${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
-        <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
+    + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
+        <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div><div style="margin-top:18px">${compare(m)}<div class="note" style="margin:8px 0 4px">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages.</div></div></div></div>`
     + watch(season);
   wireFlowTip(m); fitBox();
 }
