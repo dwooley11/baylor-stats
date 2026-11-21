@@ -564,7 +564,7 @@ function qbCard(m){
   const bucket = (lo, hi) => { const x = passes.filter(p => p.air != null && p.air >= lo && p.air < hi); return {c: x.filter(p => p.complete).length, a: x.length, y: x.reduce((s, p) => s + (p.complete ? p.yds : 0), 0), td: x.filter(p => p.td && p.complete).length}; };
   const bk = [["Under 10 yds downfield", bucket(-99, 10)], ["10 to 19 yds", bucket(10, 20)], ["20+ yds", bucket(20, 999)]];
   const noSpot = passes.length - charted.length;
-  return `<div class="card qb"><div class="qh"><div class="kick" style="color:var(--gold)">Baylor ${esc(bay(m.gm).score)}, ${esc(oppName(m.gm))} ${esc(opp(m.gm).score)}</div>
+  return `<div class="card qb"><div class="hd"><span>Quarterback</span><span>${m.gm.completed ? "Final" : esc(m.gm.status || "In progress")}</span></div><div class="qh"><div class="kick" style="color:var(--gold)">Baylor ${esc(bay(m.gm).score)}, ${esc(oppName(m.gm))} ${esc(opp(m.gm).score)}</div>
       <div class="qn">${esc(qb[0])}</div>
       <div class="qs"><div><b>${c}–${a}</b><span>Comp-att</span></div><div><b>${yds}</b><span>Pass yds</span></div><div><b>${esc(td)}</b><span>Pass TD</span></div><div><b>${a ? (yds / a).toFixed(1) : "—"}</b><span>Yds per att</span></div></div>
       <div class="qm">${esc(int)} INT${qr ? ` · ${esc(val(rc, qr, "rushingAttempts"))} rushes for ${esc(val(rc, qr, "rushingYards"))} yds` : ""} · sacked ${sacks}x</div>
@@ -722,7 +722,7 @@ function flowCard(gm){
     <rect x="0" y="${rowY[o.id] + 5}" width="30" height="${rh - 10}" rx="3" fill="${oc}"/><text x="15" y="${rowY[o.id] + rh / 2 + 4}" text-anchor="middle" font-size="${String(o.abbr || "").length > 3 ? 9 : 11}" font-weight="700" font-family="Oswald,Arial Narrow,sans-serif" fill="#fff">${esc(String(o.abbr || "").slice(0, 4))}</text>`;
   const driveSvg = `<svg viewBox="0 0 ${RW} ${RH}" id="cfbdrives">${rq}${rowLab}${blocks}</svg>`;
   const trail = minL < 0 ? "Biggest deficit " + (-minL) : "Never trailed";
-  return `<div class="card"><div class="bd">
+  return `<div class="card"><div class="hd"><span>Game flow</span><span>${gm.completed ? "Final" : esc(gm.status || "In progress")}</span></div><div class="bd">
     <div class="row"><span class="label">Every drive</span><span class="strong">Baylor ${counts[BAY]} TD · ${esc(oppName(gm))} ${counts[o.id]} TD</span></div>
     ${driveSvg}
     <div class="lgd dlg"><span><i class="sw d-td"></i>TD</span><span><i class="sw d-fg"></i>FG</span><span><i class="sw d-punt"></i>Punt</span><span><i class="sw d-miss"></i>Missed FG</span><span><i class="sw d-to"></i>Turnover / downs</span><span><i class="sw d-clock"></i>Clock ran out</span></div>
@@ -746,7 +746,7 @@ function teamStatsCard(gm){
   const barRow = ([lab, bv, ov, f]) => { const ok = isFinite(bv) && isFinite(ov) && bv + ov > 0; const share = ok ? Math.max(0, bv) / (Math.max(0, bv) + Math.max(0, ov)) * 100 : 50;
     return `<div class="tsr"><b class="l">${ok ? f(bv) : "—"}</b><div class="tsm"><span>${lab}</span><div class="tsb"><i style="width:${share}%"></i><i style="width:${100 - share}%"></i></div></div><b class="r">${ok ? f(ov) : "—"}</b></div>`; };
   const plainRow = ([lab, bv, ov]) => `<div class="tsr"><b class="l">${esc(bv ?? "—")}</b><div class="tsm"><span>${lab}</span></div><b class="r">${esc(ov ?? "—")}</b></div>`;
-  return `<div class="card"><div class="bd"><div class="row"><span class="label">Team stats</span></div>
+  return `<div class="card"><div class="hd"><span>Team stats</span><span>${gm.completed ? "Final" : esc(gm.status || "In progress")}</span></div><div class="bd">
     <div class="tsh"><span style="color:var(--green)">${badge(bay(gm))} Baylor</span><span>${esc(oppName(gm))} ${badge(opp(gm))}</span></div>
     ${bars.map(barRow).join("")}${plain.map(plainRow).join("")}
     <div class="foot">Yards per play = total yards ÷ (rushes + pass attempts); sacks count as rushes in college stats.</div></div></div>`;
