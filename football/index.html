@@ -305,6 +305,11 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
   .ls th{padding:0 2px}.ls td{padding:1px 2px}
   .tsh{font-size:16px}.tsh .tlg img{height:30px}
 }
+
+/* lead chart under the drive strip, smaller */
+.fl2{border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
+.fl2 .label{font-size:10px}.fl2 .strong{font-size:11px;letter-spacing:1px}
+.fl2 .sub{font-size:11.5px;margin:1px 0 4px}
 </style>
 </head>
 <body>
@@ -690,7 +695,7 @@ function flowCard(gm){
   flow.push({t: end, m: flow[flow.length - 1].m});
   let led = 0, maxL = 0, minL = 0;
   for (let i = 0; i < flow.length - 1; i++){ const a = Math.min(flow[i].t, 4 * QSEC), z = Math.min(flow[i + 1].t, 4 * QSEC); if (flow[i].m > 0) led += Math.max(0, z - a); maxL = Math.max(maxL, flow[i].m); minL = Math.min(minL, flow[i].m); }
-  const W = 700, H = 160, L = 40, R = 8, T = 12, Bm = 24;
+  const W = 700, H = 118, L = 40, R = 8, T = 10, Bm = 22;
   const top = Math.max(7, maxL), bot = Math.min(-7, minL);
   const x = t => L + t / total * (W - L - R), y = v => T + (top - v) / (top - bot) * (H - T - Bm);
   let d = `M${x(0)},${y(0)}`; flow.forEach((p, i) => { if (i) d += `H${x(p.t).toFixed(1)}V${y(p.m).toFixed(1)}`; });
@@ -718,12 +723,12 @@ function flowCard(gm){
   const driveSvg = `<svg viewBox="0 0 ${RW} ${RH}" id="cfbdrives">${rq}${rowLab}${blocks}</svg>`;
   const trail = minL < 0 ? "Biggest deficit " + (-minL) : "Never trailed";
   return `<div class="card"><div class="bd">
-    <div class="row"><span class="label">Game flow · Baylor's lead after every score</span><span class="strong">Biggest lead ${maxL} · ${trail}</span></div>
-    <div class="sub" style="margin:2px 0 6px">Baylor led for ${fmtClock(led)} of ${gm.completed || end >= 4 * QSEC ? "60:00" : fmtClock(Math.min(end, 4 * QSEC)) + " so far"}</div>
-    ${flowSvg}<hr class="rule">
-    <div class="row"><span class="label">Every drive · same clock as above</span><span class="strong">Baylor ${counts[BAY]} TD · ${esc(oppName(gm))} ${counts[o.id]} TD</span></div>
+    <div class="row"><span class="label">Every drive</span><span class="strong">Baylor ${counts[BAY]} TD · ${esc(oppName(gm))} ${counts[o.id]} TD</span></div>
     ${driveSvg}
     <div class="lgd dlg"><span><i class="sw d-td"></i>TD</span><span><i class="sw d-fg"></i>FG</span><span><i class="sw d-punt"></i>Punt</span><span><i class="sw d-miss"></i>Missed FG</span><span><i class="sw d-to"></i>Turnover / downs</span><span><i class="sw d-clock"></i>Clock ran out</span></div>
+    <div class="fl2"><div class="row"><span class="label">Baylor's lead after every score · same clock</span><span class="strong">Biggest lead ${maxL} · ${trail}</span></div>
+    <div class="sub">Baylor led for ${fmtClock(led)} of ${gm.completed || end >= 4 * QSEC ? "60:00" : fmtClock(Math.min(end, 4 * QSEC)) + " so far"}</div>
+    ${flowSvg}</div>
     <div class="foot">Lead = Baylor's points minus the opponent's, after every score. Drives start and end on ESPN's drive chart; tap one for details.</div>
   </div></div>`;
 }
