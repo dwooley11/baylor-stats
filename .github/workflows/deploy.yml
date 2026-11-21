@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.first.outputs.page_url || steps.retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
@@ -29,8 +29,21 @@ jobs:
           pip install --quiet pillow
           curl -fsSL -o /tmp/logo.png "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/239.png"
           python scripts/make_icon.py /tmp/logo.png .
+      # Each attempt uploads under its own name, so a re-run never finds two "github-pages" artifacts.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-      - id: deployment
+          name: github-pages-${{ github.run_attempt }}
+      - id: first
+        continue-on-error: true
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+      # GitHub sometimes can't see a just-uploaded artifact yet; wait and try once more.
+      - if: steps.first.outcome == 'failure'
+        run: sleep 30
+      - id: retry
+        if: steps.first.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
