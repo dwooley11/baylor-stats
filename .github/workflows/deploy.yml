@@ -23,6 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Build home-screen icon from the Baylor logo
+        continue-on-error: true
+        run: |
+          pip install --quiet pillow
+          curl -fsSL -o /tmp/logo.png "https://a.espncdn.com/i/teamlogos/ncaa/500-dark/239.png"
+          python scripts/make_icon.py /tmp/logo.png .
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
