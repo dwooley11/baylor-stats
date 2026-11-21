@@ -315,6 +315,11 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 <!-- FOOTBALL V2 THEMES: Classic = the original look; every rule below only applies to the other themes -->
 <style>
 .v2-mark,.v2-sub,.v2-band{display:none}
+/* Classic: bigger BU logo + BAYLOR FOOTBALL header */
+html[data-theme="classic"] .brand{font-size:28px;gap:9px;white-space:nowrap}
+html[data-theme="classic"] .blogo{height:40px}
+html[data-theme="classic"] .src{flex:0 1 132px;min-width:110px}
+@media(max-width:380px){html[data-theme="classic"] .brand{font-size:24px}html[data-theme="classic"] .blogo{height:34px}}
 .pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}
 .v2-field{display:flex;flex-direction:column;gap:4px;min-width:0}
 .v2-field .sel{width:100%;min-width:0;text-overflow:ellipsis}
