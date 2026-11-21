@@ -285,6 +285,12 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
   .lgd{gap:3px 10px;margin:4px 0 6px;font-size:11px}
   .foot{margin-top:4px}
 }
+
+/* game tabs: same pills as the game chips */
+.tabs{display:flex;gap:6px;margin:-4px 0 12px}
+.tab{flex:1 1 0;border:1px solid #3c3b36;background:#1d1c19;color:#e8e0cc;border-radius:999px;padding:6px 8px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--gold);color:#1c1c1a;border-color:var(--gold)}
+@media(max-width:520px){.tabs{margin:-2px 0 8px}.tab{padding:5px 6px;font-size:11.5px}}
 </style>
 </head>
 <body>
@@ -817,7 +823,7 @@ function previewCard(row, s, season){
 }
 
 /* ---------- page ---------- */
-let state = {season: null, game: null, scope: "game"};
+let state = {season: null, game: null, scope: "game", tab: "flow"};
 function pickFromHash(){
   const h = (location.hash || "").slice(1);
   if (h.startsWith("g")){ const f = findGame(h.slice(1)); if (f){ state.season = f.s.year; state.game = f.g.id; return; } }
@@ -864,18 +870,20 @@ async function render(){
       base = pg.map(g => GAMES[g.id]).filter(Boolean).flatMap(gamePlays); baseLbl = `Baylor's ${prev.label} season`; } }
   else { base = others.flatMap(gamePlays); baseLbl = `Baylor's other ${season.label} games`; }
   const scopeLbl = scope === "season" ? `${season.label} season (${games.filter(g => g.completed).length} games)` : `This game`;
-  $("#app").innerHTML = scoreCard(gm, row)
-    + flowCard(gm) + teamStatsCard(gm)
-    + qbCard(m)
-    + boxScoreCard(gm)
-    + `<div class="card"><div class="hd"><span>Offense &amp; defense vs. season</span><span>${esc(oppName(gm))}</span></div><div class="bd">${strips("Baylor offense, " + (gm.completed ? "full game" : "so far"), summary(gm, BAY), offAvg, true)}
+  const tab = state.tab;
+  const TABS = [["flow", "Game Flow"], ["box", "Box Score"], ["eff", "Efficiency"]];
+  const tabBar = `<div class="tabs" role="tablist">${TABS.map(([k, t]) => `<button type="button" role="tab" class="tab ${tab === k ? "on" : ""}" aria-selected="${tab === k}" data-tab="${k}">${t}</button>`).join("")}</div>`;
+  $("#app").innerHTML = scoreCard(gm, row) + tabBar
+    + (tab === "flow" ? flowCard(gm) + teamStatsCard(gm) + qbCard(m) : "")
+    + (tab === "box" ? boxScoreCard(gm) : "")
+    + (tab !== "eff" ? "" : `<div class="card"><div class="hd"><span>Offense &amp; defense vs. season</span><span>${esc(oppName(gm))}</span></div><div class="bd">${strips("Baylor offense, " + (gm.completed ? "full game" : "so far"), summary(gm, BAY), offAvg, true)}
        <div style="height:12px"></div>${strips("Baylor defense, " + (gm.completed ? "full game" : "so far"), summary(gm, opp(gm).id), defAvg, false)}
        <div class="lgd" style="justify-content:flex-start;margin-top:10px"><span><i class="lg dotl"></i>This game</span>${others.length ? `<span><i class="lg dial"></i>Baylor's other ${esc(season.label)} games</span>` : ""}</div>
        <div class="foot">Plays = runs, passes and sacks (no kneels or spikes); the box score counts sacks as runs, the strips count them as dropbacks. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Explosive = runs and catches of 20+ yds. Trip = drive with a snap at or inside the opponent's 40 (TD 7, FG 3).</div></div></div>`
     + `<div class="card"><div class="hd"><span>Baylor offense by situation</span><span></span></div><div class="bd">
         <div class="filters" style="margin-top:0"><button class="f ${scope === "game" ? "on" : ""}" data-scope="game">This game</button><button class="f ${scope === "season" ? "on" : ""}" data-scope="season">${esc(season.label)} season</button></div>
         ${situationCard(scoped, base, scopeLbl, baseLbl || "baseline")}
-        <div class="foot">Tap a row for run vs. pass success and the baseline. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Inside run = ESPN "rush middle"; outside = left or right. Pass depth = air yards from the catch or target spot (logged by ESPN from partway through 2025 on).</div></div></div>`;
+        <div class="foot">Tap a row for run vs. pass success and the baseline. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Inside run = ESPN "rush middle"; outside = left or right. Pass depth = air yards from the catch or target spot (logged by ESPN from partway through 2025 on).</div></div></div>`);
   wireTip();
 }
 
@@ -895,6 +903,7 @@ function wireTip(){
 document.addEventListener("click", e => {
   const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; return; }
   const so = e.target.closest("[data-open]"); if (so){ const r = document.getElementById(so.dataset.open); if (r){ r.classList.toggle("on"); so.classList.toggle("on"); } return; }
+  const tb = e.target.closest("[data-tab]"); if (tb){ if (state.tab !== tb.dataset.tab){ state.tab = tb.dataset.tab; const y = Math.min(window.scrollY, $("#app").offsetTop); render().then(() => window.scrollTo({top: y})); } return; }
   const sc = e.target.closest("[data-scope]"); if (sc){ state.scope = sc.dataset.scope; const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
   if (!e.target.closest(".pt,.dv")) $("#tip").style.display = "none";
 });
