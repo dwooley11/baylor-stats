@@ -257,6 +257,34 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 .pvf{display:grid;grid-template-columns:20px 1fr auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
 .pvf i{width:18px;height:18px;display:grid;place-items:center;font:700 10px Inter,sans-serif;font-style:normal;color:#fff;background:var(--green);border-radius:2px}.pvf i.L{background:var(--red)}
 .pvf b{font:700 13px Oswald,'Arial Narrow',sans-serif}
+
+/* phones: tighter top of page */
+.rec .form{margin-top:5px}
+@media(max-width:520px){
+  .wrap{padding:6px 8px 32px}
+  .top{padding:2px 2px 6px}
+  .brand{font-size:18px}.blogo{height:24px}
+  .src{font-size:10px;line-height:1.3}.rf{margin-top:4px;padding:3px 9px}
+  .pick{margin:0 0 8px}.sel{padding:4px 8px;font-size:12px}
+  .rec,.rec[id]{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px}
+  .rec .wl2{font-size:32px}
+  .rec .grid{width:auto;flex:1;grid-template-columns:repeat(auto-fit,minmax(38px,1fr));gap:4px 6px}
+  .rec .lbl{font-size:9px;letter-spacing:.7px}
+  .rec .grid b{font-size:15px}
+  .rec .form i{width:14px;height:14px;font-size:8px}
+  .chips{padding-bottom:8px}.chip{padding:5px 10px;font-size:11.5px}
+  .card{margin-bottom:8px}
+  .card .bd{padding:10px 12px}
+  .ls{margin-top:4px}
+  .ls th{font-size:10px;padding:0 3px}
+  .ls td,.ls td.tn{font-size:19px;padding:1px 3px}
+  .ls .t{font-size:24px}
+  .sc .sub{margin-top:2px;font-size:12px}
+  .row .label{font-size:10px;letter-spacing:1px}
+  .row .strong{font-size:11px}
+  .lgd{gap:3px 10px;margin:4px 0 6px;font-size:11px}
+  .foot{margin-top:4px}
+}
 </style>
 </head>
 <body>
@@ -413,9 +441,10 @@ function record(season){
   if (gs.length){ const won = gs[gs.length - 1].pf > gs[gs.length - 1].pa; let n = 0; for (let i = gs.length - 1; i >= 0 && (gs[i].pf > gs[i].pa) === won; i--) n++; streak = (won ? "W" : "L") + n; }
   const post = wl(g => g.post);
   const cell = (lab, v) => `<div><span class="lbl">${lab}</span><b>${v}</b></div>`;
-  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(wl(() => true))}</div></div>
+  const form = `<div class="form">${gs.slice(-5).map(g => g.pf > g.pa ? "<i>W</i>" : `<i class="L">L</i>`).join("")}</div>`;
+  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(wl(() => true))}</div>${form}</div>
     <div class="grid">${cell("Big 12", fmt(wl(g => g.conf && g.site !== "N")))}${cell("Home", fmt(wl(g => g.site === "H")))}${cell("Away", fmt(wl(g => g.site === "A")))}${cell("Neutral", fmt(wl(g => g.site === "N")))}${post[0] + post[1] ? cell("Bowl", fmt(post)) : ""}
-    <div><span class="lbl">Streak</span><b>${streak || "—"}</b><div class="form">${gs.slice(-5).map(g => g.pf > g.pa ? "<i>W</i>" : `<i class="L">L</i>`).join("")}</div></div></div>`;
+    <div><span class="lbl">Streak</span><b>${streak || "—"}</b></div></div>`;
 }
 const recStr = s => { const gs = finals(s), w = gs.filter(g => g.pf > g.pa).length; return w + "-" + (gs.length - w); };
 
@@ -641,21 +670,21 @@ function flowCard(gm){
   flow.push({t: end, m: flow[flow.length - 1].m});
   let led = 0, maxL = 0, minL = 0;
   for (let i = 0; i < flow.length - 1; i++){ const a = Math.min(flow[i].t, 4 * QSEC), z = Math.min(flow[i + 1].t, 4 * QSEC); if (flow[i].m > 0) led += Math.max(0, z - a); maxL = Math.max(maxL, flow[i].m); minL = Math.min(minL, flow[i].m); }
-  const W = 700, H = 190, L = 34, R = 8, T = 10, Bm = 20;
+  const W = 700, H = 160, L = 40, R = 8, T = 12, Bm = 24;
   const top = Math.max(7, maxL), bot = Math.min(-7, minL);
   const x = t => L + t / total * (W - L - R), y = v => T + (top - v) / (top - bot) * (H - T - Bm);
   let d = `M${x(0)},${y(0)}`; flow.forEach((p, i) => { if (i) d += `H${x(p.t).toFixed(1)}V${y(p.m).toFixed(1)}`; });
   const area = d + `V${y(0)}Z`;
   const qlines = Array.from({length: periods - 1}, (_, i) => { const t = i < 3 ? (i + 1) * QSEC : 4 * QSEC + (i - 3) * OTSEC; return `<line x1="${x(t)}" x2="${x(t)}" y1="${T}" y2="${H - Bm}" stroke="#b9af97" stroke-dasharray="${i === 1 ? "4 3" : "2 4"}"/>`; }).join("");
-  const qlabs = Array.from({length: periods}, (_, i) => { const a = i < 4 ? i * QSEC : 4 * QSEC + (i - 4) * OTSEC, z = i < 4 ? a + QSEC : a + OTSEC; return `<text x="${x((a + z) / 2)}" y="${H - 4}" text-anchor="middle" font-size="11" font-family="ui-monospace,monospace" fill="#6f6a5e">${i < 4 ? "Q" + (i + 1) : (i === 4 ? "OT" : (i - 3) + "OT")}</text>`; }).join("");
-  const lab = (v, s) => `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="#6f6a5e">${s}</text>`;
+  const qlabs = Array.from({length: periods}, (_, i) => { const a = i < 4 ? i * QSEC : 4 * QSEC + (i - 4) * OTSEC, z = i < 4 ? a + QSEC : a + OTSEC; return `<text x="${x((a + z) / 2)}" y="${H - 4}" text-anchor="middle" font-size="16" font-family="ui-monospace,monospace" fill="#6f6a5e">${i < 4 ? "Q" + (i + 1) : (i === 4 ? "OT" : (i - 3) + "OT")}</text>`; }).join("");
+  const lab = (v, s) => `<text x="${L - 6}" y="${y(v) + 5}" text-anchor="end" font-size="16" font-family="ui-monospace,monospace" fill="#6f6a5e">${s}</text>`;
   const flowSvg = `<svg viewBox="0 0 ${W} ${H}" id="cfbflow" role="img" aria-label="Baylor's lead after every score">
     <defs><clipPath id="fpos"><rect x="0" y="0" width="${W}" height="${y(0)}"/></clipPath><clipPath id="fneg"><rect x="0" y="${y(0)}" width="${W}" height="${H}"/></clipPath></defs>
     ${qlines}<path d="${area}" fill="#3f5f4d" stroke="#1c1c1a" stroke-width="1.5" clip-path="url(#fpos)"/><path d="${area}" fill="#d9634f" stroke="#1c1c1a" stroke-width="1.5" clip-path="url(#fneg)"/>
     <line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="#1c1c1a" stroke-width="1.2"/>
     ${lab(top, "+" + top)}${lab(0, "0")}${minL < 0 ? lab(bot, String(bot)) : ""}${qlabs}</svg>`;
   // every drive
-  const RW = 700, RH = 92, rowY = {[BAY]: 6, [o.id]: 50}, rh = 34;
+  const RW = 700, RH = 84, rowY = {[BAY]: 2, [o.id]: 44}, rh = 38;
   const counts = {[BAY]: 0, [o.id]: 0};
   const blocks = gm.drives.map(dv => { if (!(dv.team in rowY)) return ""; const t0 = gclock(dv.t0[0], dv.t0[1]), t1 = gclock(dv.t1[0], dv.t1[1]);
     if (t0 == null) return ""; const a = x(t0), z = Math.max(a + 5, x(t1 == null ? t0 : t1)), w = z - a;
