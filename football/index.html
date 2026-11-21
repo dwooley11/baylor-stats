@@ -837,12 +837,12 @@ async function render(){
   const scopeLbl = scope === "season" ? `${season.label} season (${games.filter(g => g.completed).length} games)` : `This game`;
   $("#app").innerHTML = scoreCard(gm, row)
     + flowCard(gm) + teamStatsCard(gm)
+    + qbCard(m)
+    + boxScoreCard(gm)
     + `<div class="card"><div class="hd"><span>Offense &amp; defense vs. season</span><span>${esc(oppName(gm))}</span></div><div class="bd">${strips("Baylor offense, " + (gm.completed ? "full game" : "so far"), summary(gm, BAY), offAvg, true)}
        <div style="height:12px"></div>${strips("Baylor defense, " + (gm.completed ? "full game" : "so far"), summary(gm, opp(gm).id), defAvg, false)}
        <div class="lgd" style="justify-content:flex-start;margin-top:10px"><span><i class="lg dotl"></i>This game</span>${others.length ? `<span><i class="lg dial"></i>Baylor's other ${esc(season.label)} games</span>` : ""}</div>
        <div class="foot">Plays = runs, passes and sacks (no kneels or spikes); the box score counts sacks as runs, the strips count them as dropbacks. Success = 50% of the yards to go on 1st down, 70% on 2nd, all of it on 3rd and 4th. Explosive = runs and catches of 20+ yds. Trip = drive with a snap at or inside the opponent's 40 (TD 7, FG 3).</div></div></div>`
-    + qbCard(m)
-    + boxScoreCard(gm)
     + `<div class="card"><div class="hd"><span>Baylor offense by situation</span><span></span></div><div class="bd">
         <div class="filters" style="margin-top:0"><button class="f ${scope === "game" ? "on" : ""}" data-scope="game">This game</button><button class="f ${scope === "season" ? "on" : ""}" data-scope="season">${esc(season.label)} season</button></div>
         ${situationCard(scoped, base, scopeLbl, baseLbl || "baseline")}
