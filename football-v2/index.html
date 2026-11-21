@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#154734">
 <title>Baylor Football V2</title>
-<script>/* FOOTBALL V2: apply saved theme before paint */try{document.documentElement.dataset.theme=localStorage.getItem("fbv2-theme")||"classic"}catch(e){document.documentElement.dataset.theme="classic"}</script>
+<script>/* FOOTBALL V2: apply saved theme before paint */try{var t=localStorage.getItem("fbv2-theme");document.documentElement.dataset.theme=/^(classic|throwback|gameday-(paws|ball|stars|bear))$/.test(t)?t:"classic"}catch(e){document.documentElement.dataset.theme="classic"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -314,12 +314,13 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 </style>
 <!-- FOOTBALL V2 THEMES: Classic = the original look; every rule below only applies to the other themes -->
 <style>
-.v2-mark,.v2-sub,.v2-band,.v2-hero{display:none}
-.v2-theme{display:flex;align-items:center;gap:8px;margin-left:auto}
-.pick{flex-wrap:wrap}
+.v2-mark,.v2-sub,.v2-band{display:none}
+.pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}
+.v2-field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.v2-field .sel{width:100%;min-width:0;text-overflow:ellipsis}
 /* shared by every non-classic theme */
 html:not([data-theme="classic"]) .brand{display:none}
-html:not([data-theme="classic"]) .v2-mark{display:block;margin:2px 0 0;font:400 clamp(44px,13vw,64px)/.95 'Archivo Black',sans-serif;color:#fff;-webkit-text-stroke:5px var(--gold);paint-order:stroke fill;letter-spacing:.01em}
+html:not([data-theme="classic"]) .v2-mark{display:block;margin:2px 0 0;font:400 clamp(38px,11vw,60px)/.95 'Archivo Black',sans-serif;color:#fff;-webkit-text-stroke:5px var(--gold);paint-order:stroke fill;letter-spacing:.01em}
 html:not([data-theme="classic"]) .v2-sub{display:flex;align-items:center;gap:8px;margin-top:6px;font:400 15px 'Archivo Black',sans-serif;color:var(--gold);letter-spacing:.04em}
 .v2-stars{display:inline-flex;gap:5px}
 .v2-stars i{width:14px;height:14px;background:#fff;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
@@ -339,25 +340,26 @@ html:not([data-theme="classic"]) .wl.L{background:var(--red);color:#fff}
 html:not([data-theme="classic"]) .sec{font:400 12px 'Archivo Black',sans-serif;letter-spacing:.06em}
 html:not([data-theme="classic"]) .big{font-family:'Archivo Black',sans-serif;font-weight:400}
 html:not([data-theme="classic"]) .empty{color:#fff}
-html:not([data-theme="classic"]) .v2-hero{display:block;height:220px;margin:6px 0 14px;border-radius:10px}
-/* Throwback: green grid, star band, chrome helmet photo */
+html[data-theme^="gameday"] .card,html[data-theme^="gameday"] .rec{background:rgba(243,235,216,.8);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+html[data-theme="throwback"] .card,html[data-theme="throwback"] .rec{background:rgba(243,235,216,.86)}
+html:not([data-theme="classic"]) .box{background:var(--cream)}
+/* Throwback: green grid and star band */
 html[data-theme="throwback"],html[data-theme="throwback"] body{background-color:#1b5a3d;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:22px 22px}
 html[data-theme="throwback"] .v2-band{display:block;height:28px;margin:6px 0 10px;background-color:var(--gold);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23154734' d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'/%3E%3C/svg%3E");background-size:22px 22px;background-repeat:space no-repeat;background-position:center;border-top:3px solid #fff;border-bottom:3px solid #fff}
-html[data-theme="throwback"] .v2-hero{background:url(img/chrome.jpg) 60% 52%/cover no-repeat;border:2px solid var(--gold)}
 /* Gameday: full-screen wallpaper behind the cards */
 html[data-theme^="gameday"]{background:#0b2219}
 html[data-theme^="gameday"] body{background:transparent}
 html[data-theme^="gameday"] body:before,html[data-theme^="gameday"] body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
 html[data-theme^="gameday"] body:before{background:var(--wall) center/cover no-repeat}
 html[data-theme^="gameday"] body:after{background:rgba(6,20,14,.3)}
-html[data-theme^="gameday"] .v2-hero{height:240px}
 html[data-theme^="gameday"] .top,html[data-theme^="gameday"] .pick{background:rgba(9,30,21,.82);border-radius:10px;padding:10px 12px}
+html[data-theme^="gameday"] .top{margin-bottom:12px}
 html[data-theme^="gameday"] .pick{margin-bottom:12px}
+html:not([data-theme="classic"]) .src{max-width:46%}
 html[data-theme="gameday-paws"]{--wall:url(img/paws.jpg)}
 html[data-theme="gameday-ball"]{--wall:url(img/ball.jpg)}
 html[data-theme="gameday-bear"]{--wall:url(img/bear.jpg)}
 html[data-theme="gameday-stars"]{--wall:url(img/stars.jpg)}
-html[data-theme="gameday-chrome"]{--wall:url(img/chrome.jpg)}
 </style>
 <!-- END FOOTBALL V2 THEMES -->
 </head>
@@ -365,8 +367,7 @@ html[data-theme="gameday-chrome"]{--wall:url(img/chrome.jpg)}
 <div class="wrap">
   <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><h1 class="v2-mark">BAYLOR</h1><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="v2-hero" aria-hidden="true"></div>
-  <div class="pick"><label for="season">Season</label><select id="season" class="sel"></select><span class="v2-theme"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><option value="classic">Classic</option><option value="throwback">Throwback</option><optgroup label="Gameday wallpaper"><option value="gameday-paws">Gameday · Paws</option><option value="gameday-ball">Gameday · Ball</option><option value="gameday-chrome">Gameday · Chrome</option><option value="gameday-stars">Gameday · Stars</option><option value="gameday-bear">Gameday · Bear</option></optgroup></select></span></div>
+  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><option value="classic">Classic</option><option value="throwback">Throwback</option><optgroup label="Gameday wallpaper"><option value="gameday-paws">Gameday · Paws</option><option value="gameday-ball">Gameday · Ball</option><option value="gameday-stars">Gameday · Stars</option><option value="gameday-bear">Gameday · Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
