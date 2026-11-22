@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#154734">
 <title>Baylor Football V2</title>
-<script>/* FOOTBALL V2: apply saved theme before paint */window.fbv2Apply=function(t){var d=document.documentElement;if(!/^(classic|throwback|gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|script-gold)$/.test(t||""))t="classic";d.dataset.theme=t;d.classList.toggle("wall",/^(gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|script-gold)$/.test(t));return t};try{fbv2Apply(localStorage.getItem("fbv2-theme"))}catch(e){fbv2Apply("classic")}</script>
+<script>/* FOOTBALL V2: apply saved theme before paint */window.fbv2Apply=function(t){var d=document.documentElement;if(!/^(classic|throwback|gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green)$/.test(t||""))t="classic";d.dataset.theme=t;d.classList.toggle("wall",/^(gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green)$/.test(t));return t};try{fbv2Apply(localStorage.getItem("fbv2-theme"))}catch(e){fbv2Apply("classic")}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -370,7 +370,6 @@ html[data-theme="gameday-stars"]{--wall:url(img/stars.jpg)}
 html[data-theme="blackout"]{--wall:url(img/blackout.jpg);--scrim:rgba(0,0,0,.15)}
 html[data-theme="stripes"]{--wall:url(img/stripes.jpg);--scrim:rgba(0,0,0,.2)}
 html[data-theme="script-green"]{--wall:url(img/script-green.jpg)}
-html[data-theme="script-gold"]{--wall:url(img/script-gold.jpg);--scrim:rgba(6,20,14,.12)}
 /* Black Out: charcoal panels with gold trim */
 html[data-theme="blackout"] .top,html[data-theme="blackout"] .pick{background:rgba(12,12,10,.85)}
 html[data-theme="blackout"] .card .hd{background:#141412}
@@ -382,7 +381,7 @@ html[data-theme="blackout"] .sel,html[data-theme="blackout"] .chip{background:rg
 <div class="wrap">
   <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option><option value="blackout">Black Out</option><option value="stripes">Stripes</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup><optgroup label="Script Baylor"><option value="script-green">Green Script Baylor</option><option value="script-gold">Gold Script Baylor</option></optgroup></select></span></div>
+  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option><option value="blackout">Black Out</option><option value="stripes">Stripes</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
