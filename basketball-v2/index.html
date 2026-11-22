@@ -315,13 +315,19 @@ html[data-theme="gold-green"] .card .hd{background:#0f3526;color:var(--gold)}
 html[data-theme="gold-green"] .empty{color:#f3ebd8}
 /* Basketball 80s Classic: no star band */
 html[data-theme="throwback"] .v2-band{display:none}
+/* Black: original look with the same gold trim as Green */
+html[data-theme="classic"] .rf{border-color:var(--gold);color:var(--gold)}
+html[data-theme="classic"] .sel,html[data-theme="classic"] .chip,html[data-theme="classic"] .tab{border-color:rgba(255,184,28,.5)}
+html[data-theme="classic"] .chip.on,html[data-theme="classic"] .tab.on{border-color:var(--gold)}
+html[data-theme="classic"] .card,html[data-theme="classic"] .rec{border:2px solid var(--gold)}
+html[data-theme="classic"] .card .hd{color:var(--gold)}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
 <div class="wrap">
   <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>BASKETBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>BASKETBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Standard Black</option><option value="gold-green">Standard Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
+  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Black</option><option value="gold-green">Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
