@@ -314,7 +314,7 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 </style>
 <!-- FOOTBALL V2 THEMES: Classic = the original look; every rule below only applies to the other themes -->
 <style>
-.v2-mark,.v2-sub,.v2-band{display:none}
+.v2-mark,.v2-sub,.v2-band,.v2-paw{display:none}
 /* Classic: bigger BU logo + BAYLOR FOOTBALL header */
 html[data-theme="classic"] .brand{font-size:28px;gap:9px;white-space:nowrap}
 html[data-theme="classic"] .blogo{height:40px}
@@ -325,6 +325,8 @@ html[data-theme="classic"] .src{flex:0 1 132px;min-width:110px}
 .v2-field .sel{width:100%;min-width:0;text-overflow:ellipsis}
 /* shared by every non-classic theme */
 html:not([data-theme="classic"]) .brand{display:none}
+html:not([data-theme="classic"]) .v2-markrow{display:flex;align-items:center;gap:8px}
+html:not([data-theme="classic"]) .v2-paw{display:block;height:clamp(32px,9vw,48px);width:auto;flex:none}
 html:not([data-theme="classic"]) .v2-mark{display:block;margin:2px 0 0;font:400 clamp(38px,11vw,60px)/.95 'Archivo Black',sans-serif;color:#fff;-webkit-text-stroke:5px var(--gold);paint-order:stroke fill;letter-spacing:.01em}
 html:not([data-theme="classic"]) .v2-sub{display:flex;align-items:center;gap:8px;margin-top:6px;font:400 15px 'Archivo Black',sans-serif;color:var(--gold);letter-spacing:.04em}
 .v2-stars{display:inline-flex;gap:5px}
@@ -370,7 +372,7 @@ html[data-theme="gameday-stars"]{--wall:url(img/stars.jpg)}
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><h1 class="v2-mark">BAYLOR</h1><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
+  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
   <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Classic</option><option value="throwback">80s Throwback</option></optgroup><optgroup label="Mobile Themes"><option value="gameday-paws">Gameday · Paws</option><option value="gameday-ball">Gameday · Ball</option><option value="gameday-stars">Gameday · Stars</option><option value="gameday-bear">Gameday · Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
