@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#154734">
 <title>Baylor Football V2</title>
-<script>/* FOOTBALL V2: apply saved theme before paint */window.fbv2Apply=function(t){var d=document.documentElement;if(!/^(classic|throwback|gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|homecoming|revivalry)$/.test(t||""))t="classic";d.dataset.theme=t;d.classList.toggle("wall",/^(gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|homecoming|revivalry)$/.test(t));return t};try{fbv2Apply(localStorage.getItem("fbv2-theme"))}catch(e){fbv2Apply("classic")}</script>
+<script>/* FOOTBALL V2: apply saved theme before paint */window.fbv2Apply=function(t){var d=document.documentElement;if(!/^(classic|gold-green|green-gold|throwback|gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|homecoming|revivalry)$/.test(t||""))t="classic";d.dataset.theme=t;d.classList.toggle("wall",/^(gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|homecoming|revivalry)$/.test(t));d.classList.toggle("plain",/^(classic|gold-green|green-gold)$/.test(t));d.classList.toggle("eighties",/^(throwback|gameday-)/.test(t));return t};try{fbv2Apply(localStorage.getItem("fbv2-theme"))}catch(e){fbv2Apply("classic")}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -316,40 +316,41 @@ table.fb tr.tot td{font-weight:700;border-top:2px solid var(--ink);background:#e
 <style>
 .v2-mark,.v2-sub,.v2-band,.v2-paw{display:none}
 /* Classic: bigger BU logo + BAYLOR FOOTBALL header */
-html[data-theme="classic"] .brand{font-size:28px;gap:9px;white-space:nowrap}
-html[data-theme="classic"] .blogo{height:40px}
-html[data-theme="classic"] .src{flex:0 1 132px;min-width:110px}
-@media(max-width:380px){html[data-theme="classic"] .brand{font-size:24px}html[data-theme="classic"] .blogo{height:34px}}
+html:not(.eighties) .brand{font-size:28px;gap:9px;white-space:nowrap}
+html:not(.eighties) .blogo{height:40px}
+html:not(.eighties) .src{flex:0 1 132px;min-width:110px}
+@media(max-width:380px){html:not(.eighties) .brand{font-size:24px}html:not(.eighties) .blogo{height:34px}}
+@media(max-width:520px){html.wall:not(.eighties) .brand{font-size:24px;gap:7px}html.wall:not(.eighties) .blogo{height:34px}html.wall:not(.eighties) .src{flex-basis:118px;min-width:100px}}
 .pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}
 .v2-field{display:flex;flex-direction:column;gap:4px;min-width:0}
 .v2-field .sel{width:100%;min-width:0;text-overflow:ellipsis}
 /* shared by every non-classic theme */
-html:not([data-theme="classic"]) .brand{display:none}
-html:not([data-theme="classic"]) .v2-markrow{display:flex;align-items:center;gap:8px}
-html:not([data-theme="classic"]) .v2-paw{display:block;height:clamp(32px,9vw,48px);width:auto;flex:none}
-html:not([data-theme="classic"]) .v2-mark{display:block;margin:2px 0 0;font:400 clamp(38px,11vw,60px)/.95 'Archivo Black',sans-serif;color:#fff;-webkit-text-stroke:5px var(--gold);paint-order:stroke fill;letter-spacing:.01em}
-html:not([data-theme="classic"]) .v2-sub{display:flex;align-items:center;gap:8px;margin-top:6px;font:400 15px 'Archivo Black',sans-serif;color:var(--gold);letter-spacing:.04em}
+html.eighties .brand{display:none}
+html.eighties .v2-markrow{display:flex;align-items:center;gap:8px}
+html.eighties .v2-paw{display:block;height:clamp(32px,9vw,48px);width:auto;flex:none}
+html.eighties .v2-mark{display:block;margin:2px 0 0;font:400 clamp(38px,11vw,60px)/.95 'Archivo Black',sans-serif;color:#fff;-webkit-text-stroke:5px var(--gold);paint-order:stroke fill;letter-spacing:.01em}
+html.eighties .v2-sub{display:flex;align-items:center;gap:8px;margin-top:6px;font:400 15px 'Archivo Black',sans-serif;color:var(--gold);letter-spacing:.04em}
 .v2-stars{display:inline-flex;gap:5px}
 .v2-stars i{width:14px;height:14px;background:#fff;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
-html:not([data-theme="classic"]) .top{background:transparent;align-items:flex-end}
-html:not([data-theme="classic"]) .home{color:#e8f0eb}
-html:not([data-theme="classic"]) .src,html:not([data-theme="classic"]) .pick{color:#e8f0eb}
-html:not([data-theme="classic"]) .rf{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(11,34,25,.55)}
-html:not([data-theme="classic"]) .sel,html:not([data-theme="classic"]) .chip{background:rgba(18,63,43,.88);border-color:rgba(255,255,255,.3);color:#f3ebd8}
-html:not([data-theme="classic"]) .chip.on{background:var(--gold);color:#154734;border-color:var(--gold)}
-html:not([data-theme="classic"]) .card{border:2px solid var(--gold);border-radius:8px}
-html:not([data-theme="classic"]) .card .hd{background:var(--green);color:var(--gold);font:400 13px 'Archivo Black',sans-serif;letter-spacing:.06em;justify-content:flex-start;gap:8px}
-html:not([data-theme="classic"]) .card .hd:before{content:"";flex:none;width:20px;height:20px;background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23154734' d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'/%3E%3C/svg%3E") center/13px no-repeat}
-html:not([data-theme="classic"]) .card .hd>*:first-child{margin-right:auto}
-html:not([data-theme="classic"]) .score h1{font:400 clamp(20px,5.2vw,30px)/1.05 'Archivo Black',sans-serif}
-html:not([data-theme="classic"]) .wl{font:400 22px 'Archivo Black',sans-serif;background:var(--gold);color:var(--green)}
-html:not([data-theme="classic"]) .wl.L{background:var(--red);color:#fff}
-html:not([data-theme="classic"]) .sec{font:400 12px 'Archivo Black',sans-serif;letter-spacing:.06em}
-html:not([data-theme="classic"]) .big{font-family:'Archivo Black',sans-serif;font-weight:400}
-html:not([data-theme="classic"]) .empty{color:#fff}
+html:not(.plain) .top{background:transparent;align-items:flex-end}
+html:not(.plain) .home{color:#e8f0eb}
+html:not(.plain) .src,html:not(.plain) .pick{color:#e8f0eb}
+html:not(.plain) .rf{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(11,34,25,.55)}
+html:not(.plain) .sel,html:not(.plain) .chip{background:rgba(18,63,43,.88);border-color:rgba(255,255,255,.3);color:#f3ebd8}
+html:not(.plain) .chip.on{background:var(--gold);color:#154734;border-color:var(--gold)}
+html:not(.plain) .card{border:2px solid var(--gold);border-radius:8px}
+html:not(.plain) .card .hd{background:var(--green);color:var(--gold);font:400 13px 'Archivo Black',sans-serif;letter-spacing:.06em;justify-content:flex-start;gap:8px}
+html:not(.plain) .card .hd:before{content:"";flex:none;width:20px;height:20px;background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23154734' d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'/%3E%3C/svg%3E") center/13px no-repeat}
+html:not(.plain) .card .hd>*:first-child{margin-right:auto}
+html:not(.plain) .score h1{font:400 clamp(20px,5.2vw,30px)/1.05 'Archivo Black',sans-serif}
+html:not(.plain) .wl{font:400 22px 'Archivo Black',sans-serif;background:var(--gold);color:var(--green)}
+html:not(.plain) .wl.L{background:var(--red);color:#fff}
+html:not(.plain) .sec{font:400 12px 'Archivo Black',sans-serif;letter-spacing:.06em}
+html:not(.plain) .big{font-family:'Archivo Black',sans-serif;font-weight:400}
+html:not(.plain) .empty{color:#fff}
 html.wall .card,html.wall .rec{background:rgba(243,235,216,.8);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 html[data-theme="throwback"] .card,html[data-theme="throwback"] .rec{background:rgba(243,235,216,.86)}
-html:not([data-theme="classic"]) .box{background:var(--cream)}
+html:not(.plain) .box{background:var(--cream)}
 /* Throwback: green grid and star band */
 html[data-theme="throwback"],html[data-theme="throwback"] body{background-color:#1b5a3d;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:22px 22px}
 html[data-theme="throwback"] .v2-band{display:block;height:28px;margin:6px 0 10px;background-color:var(--gold);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23154734' d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'/%3E%3C/svg%3E");background-size:22px 22px;background-repeat:space no-repeat;background-position:center;border-top:3px solid #fff;border-bottom:3px solid #fff}
@@ -362,7 +363,7 @@ html.wall body:after{background:var(--scrim,rgba(6,20,14,.3))}
 html.wall .top,html.wall .pick{background:rgba(9,30,21,.82);border-radius:10px;padding:10px 12px}
 html.wall .top{margin-bottom:12px}
 html.wall .pick{margin-bottom:12px}
-html:not([data-theme="classic"]) .src{max-width:46%}
+html:not(.plain) .src{max-width:46%}
 html[data-theme="gameday-paws"]{--wall:url(img/paws.jpg)}
 html[data-theme="gameday-ball"]{--wall:url(img/ball.jpg)}
 html[data-theme="gameday-bear"]{--wall:url(img/bear.jpg)}
@@ -376,6 +377,28 @@ html[data-theme="revivalry"]{--wall:url(img/revivalry.jpg);--scrim:rgba(0,0,0,.1
 html[data-theme="blackout"] .top,html[data-theme="blackout"] .pick,html[data-theme="revivalry"] .top,html[data-theme="revivalry"] .pick{background:rgba(12,12,10,.85)}
 html[data-theme="blackout"] .card .hd,html[data-theme="revivalry"] .card .hd{background:#141412}
 html[data-theme="blackout"] .sel,html[data-theme="blackout"] .chip,html[data-theme="revivalry"] .sel,html[data-theme="revivalry"] .chip{background:rgba(20,20,18,.9)}
+
+/* Gold on Green: Original Black layout on Baylor green, gold trim */
+html[data-theme="gold-green"],html[data-theme="gold-green"] body,html[data-theme="gold-green"] .top{background:#154734}
+html[data-theme="gold-green"] .home,html[data-theme="gold-green"] .src,html[data-theme="gold-green"] .pick{color:#d4e3da}
+html[data-theme="gold-green"] .rf{border-color:var(--gold);color:var(--gold)}
+html[data-theme="gold-green"] .sel,html[data-theme="gold-green"] .chip,html[data-theme="gold-green"] .tab{background:#0f3526;border-color:rgba(255,184,28,.5);color:#f3ebd8}
+html[data-theme="gold-green"] .chip.on,html[data-theme="gold-green"] .tab.on{background:var(--gold);border-color:var(--gold);color:#154734}
+html[data-theme="gold-green"] .card,html[data-theme="gold-green"] .rec{border:2px solid var(--gold)}
+html[data-theme="gold-green"] .card .hd{background:#0f3526;color:var(--gold)}
+html[data-theme="gold-green"] .empty{color:#f3ebd8}
+/* Green on Gold: Original Black layout on Baylor gold, green + white trim */
+html[data-theme="green-gold"],html[data-theme="green-gold"] body,html[data-theme="green-gold"] .top{background:var(--gold)}
+html[data-theme="green-gold"] .brand{color:#154734}
+html[data-theme="green-gold"] .brand span{color:#fff;-webkit-text-stroke:3px #154734;paint-order:stroke fill}
+html[data-theme="green-gold"] .blogo{content:url(https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/239.png&h=96&w=96)}
+html[data-theme="green-gold"] .home,html[data-theme="green-gold"] .src,html[data-theme="green-gold"] .pick{color:#154734}
+html[data-theme="green-gold"] .rf{border-color:#154734;color:#154734;font-weight:700}
+html[data-theme="green-gold"] .sel,html[data-theme="green-gold"] .chip,html[data-theme="green-gold"] .tab{background:#154734;border-color:#154734;color:#fff}
+html[data-theme="green-gold"] .chip.on,html[data-theme="green-gold"] .tab.on{background:#fff;border-color:#fff;color:#154734}
+html[data-theme="green-gold"] .card,html[data-theme="green-gold"] .rec{border:2px solid #154734}
+html[data-theme="green-gold"] .card .hd{background:#154734;color:var(--gold)}
+html[data-theme="green-gold"] .empty{color:#154734}
 </style>
 <!-- END FOOTBALL V2 THEMES -->
 </head>
@@ -383,7 +406,7 @@ html[data-theme="blackout"] .sel,html[data-theme="blackout"] .chip,html[data-the
 <div class="wrap">
   <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option></optgroup><optgroup label="Special Occasions"><option value="homecoming">Homecoming</option><option value="revivalry">Revivalry</option><option value="blackout">Black Out</option><option value="stripes">Stripes</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
+  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option><option value="gold-green">Gold on Green</option><option value="green-gold">Green on Gold</option></optgroup><optgroup label="Special Occasions"><option value="homecoming">Homecoming</option><option value="revivalry">Revivalry</option><option value="blackout">Black Out</option><option value="stripes">Stripes</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
