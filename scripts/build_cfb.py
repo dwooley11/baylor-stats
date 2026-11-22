@@ -96,7 +96,12 @@ for y in range(FIRST, CUR + 1):
                           "venue": " · ".join(x for x in [v.get("fullName"), ", ".join(y for y in [ad.get("city"), ad.get("state")] if y)] if x),
                           "tv": ", ".join(b["media"]["shortName"] for b in c.get("broadcasts") or [] if (b.get("media") or {}).get("shortName"))})
             if g["completed"] or g["state"] == "in":
-                s = fetch(f"{API}/summary?event={e['id']}", f"{CACHE}/sum_{e['id']}.json", fresh=fresh and not os.path.exists(f"{GAMES}/{e['id']}.json") or g["state"] == "in")
+                saved = f"{GAMES}/{e['id']}.json"
+                # Re-download when there is no saved game yet, when the game is live, or when the saved copy
+                # was written mid-game (otherwise a game saved during the 4th quarter stays stuck there).
+                try: stale = not json.load(open(saved)).get("completed")
+                except Exception: stale = True
+                s = fetch(f"{API}/summary?event={e['id']}", f"{CACHE}/sum_{e['id']}.json", fresh=fresh and stale or g["state"] == "in")
                 try:
                     cg = compact(s)
                     bt = next(t for t in cg["teams"] if t["id"] == BAY); ot = next(t for t in cg["teams"] if t["id"] != BAY)

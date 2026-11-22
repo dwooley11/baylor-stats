@@ -1026,7 +1026,10 @@ async function tryLive(){
       if (!g){ g = {id: e.id, date: e.date, opp: o.team.location || o.team.displayName, oppName: o.team.displayName, oppAbbr: o.team.abbreviation, oppId: o.team.id,
                     site: c.neutralSite ? "N" : (b.homeAway === "home" ? "H" : "A"), post: false}; cs.games.push(g); }
       g.date = e.date; g.tbd = c.timeValid === false;
-      const wasDone = g.completed && g.hasCard;
+      // Skip the download only when the saved final score matches ESPN's (a game saved mid-game gets re-pulled).
+      const sv = t => { const v = t && t.score != null ? +(typeof t.score === "object" ? t.score.value : t.score) : NaN; return isNaN(v) ? null : v; };
+      const sameScore = (sv(b) == null || sv(b) === g.pf) && (sv(o) == null || sv(o) === g.pa);
+      const wasDone = g.completed && g.hasCard && sameScore;
       g.completed = !!st.completed; g.state = st.state;
       if (!(st.completed || st.state === "in") || wasDone) continue;
       const gm = compact(await getJSON(API + "/summary?event=" + e.id, 15000));
