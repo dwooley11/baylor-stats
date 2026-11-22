@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#154734">
 <title>Baylor Football V2</title>
-<script>/* FOOTBALL V2: apply saved theme before paint */try{var t=localStorage.getItem("fbv2-theme");document.documentElement.dataset.theme=/^(classic|throwback|gameday-(paws|ball|stars|bear))$/.test(t)?t:"classic"}catch(e){document.documentElement.dataset.theme="classic"}</script>
+<script>/* FOOTBALL V2: apply saved theme before paint */window.fbv2Apply=function(t){var d=document.documentElement;if(!/^(classic|throwback|gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|script-gold)$/.test(t||""))t="classic";d.dataset.theme=t;d.classList.toggle("wall",/^(gameday-paws|gameday-ball|gameday-stars|gameday-bear|blackout|stripes|script-green|script-gold)$/.test(t));return t};try{fbv2Apply(localStorage.getItem("fbv2-theme"))}catch(e){fbv2Apply("classic")}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -347,26 +347,34 @@ html:not([data-theme="classic"]) .wl.L{background:var(--red);color:#fff}
 html:not([data-theme="classic"]) .sec{font:400 12px 'Archivo Black',sans-serif;letter-spacing:.06em}
 html:not([data-theme="classic"]) .big{font-family:'Archivo Black',sans-serif;font-weight:400}
 html:not([data-theme="classic"]) .empty{color:#fff}
-html[data-theme^="gameday"] .card,html[data-theme^="gameday"] .rec{background:rgba(243,235,216,.8);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+html.wall .card,html.wall .rec{background:rgba(243,235,216,.8);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
 html[data-theme="throwback"] .card,html[data-theme="throwback"] .rec{background:rgba(243,235,216,.86)}
 html:not([data-theme="classic"]) .box{background:var(--cream)}
 /* Throwback: green grid and star band */
 html[data-theme="throwback"],html[data-theme="throwback"] body{background-color:#1b5a3d;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:22px 22px}
 html[data-theme="throwback"] .v2-band{display:block;height:28px;margin:6px 0 10px;background-color:var(--gold);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23154734' d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'/%3E%3C/svg%3E");background-size:22px 22px;background-repeat:space no-repeat;background-position:center;border-top:3px solid #fff;border-bottom:3px solid #fff}
 /* Gameday: full-screen wallpaper behind the cards */
-html[data-theme^="gameday"]{background:#0b2219}
-html[data-theme^="gameday"] body{background:transparent}
-html[data-theme^="gameday"] body:before,html[data-theme^="gameday"] body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
-html[data-theme^="gameday"] body:before{background:var(--wall) center/cover no-repeat}
-html[data-theme^="gameday"] body:after{background:rgba(6,20,14,.3)}
-html[data-theme^="gameday"] .top,html[data-theme^="gameday"] .pick{background:rgba(9,30,21,.82);border-radius:10px;padding:10px 12px}
-html[data-theme^="gameday"] .top{margin-bottom:12px}
-html[data-theme^="gameday"] .pick{margin-bottom:12px}
+html.wall{background:#0b2219}
+html.wall body{background:transparent}
+html.wall body:before,html.wall body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+html.wall body:before{background:var(--wall) center/cover no-repeat}
+html.wall body:after{background:var(--scrim,rgba(6,20,14,.3))}
+html.wall .top,html.wall .pick{background:rgba(9,30,21,.82);border-radius:10px;padding:10px 12px}
+html.wall .top{margin-bottom:12px}
+html.wall .pick{margin-bottom:12px}
 html:not([data-theme="classic"]) .src{max-width:46%}
 html[data-theme="gameday-paws"]{--wall:url(img/paws.jpg)}
 html[data-theme="gameday-ball"]{--wall:url(img/ball.jpg)}
 html[data-theme="gameday-bear"]{--wall:url(img/bear.jpg)}
 html[data-theme="gameday-stars"]{--wall:url(img/stars.jpg)}
+html[data-theme="blackout"]{--wall:url(img/blackout.jpg);--scrim:rgba(0,0,0,.15)}
+html[data-theme="stripes"]{--wall:url(img/stripes.jpg);--scrim:rgba(0,0,0,.2)}
+html[data-theme="script-green"]{--wall:url(img/script-green.jpg)}
+html[data-theme="script-gold"]{--wall:url(img/script-gold.jpg);--scrim:rgba(6,20,14,.12)}
+/* Black Out: charcoal panels with gold trim */
+html[data-theme="blackout"] .top,html[data-theme="blackout"] .pick{background:rgba(12,12,10,.85)}
+html[data-theme="blackout"] .card .hd{background:#141412}
+html[data-theme="blackout"] .sel,html[data-theme="blackout"] .chip{background:rgba(20,20,18,.9)}
 </style>
 <!-- END FOOTBALL V2 THEMES -->
 </head>
@@ -374,13 +382,13 @@ html[data-theme="gameday-stars"]{--wall:url(img/stars.jpg)}
 <div class="wrap">
   <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>FOOTBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>FOOTBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
+  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Original Black</option><option value="blackout">Black Out</option><option value="stripes">Stripes</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-stars">80s Stars</option><option value="gameday-ball">80s Ball</option><option value="gameday-bear">80s Bear</option></optgroup><optgroup label="Script Baylor"><option value="script-green">Green Script Baylor</option><option value="script-gold">Gold Script Baylor</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
 </div>
 <div class="tip" id="tip"></div>
-<script>/* FOOTBALL V2: theme menu */(function(){const s=document.getElementById("v2theme");if(!s)return;s.value=document.documentElement.dataset.theme;if(!s.value){s.value="classic";document.documentElement.dataset.theme="classic"}s.addEventListener("change",()=>{document.documentElement.dataset.theme=s.value;try{localStorage.setItem("fbv2-theme",s.value)}catch(e){}})})();</script>
+<script>/* FOOTBALL V2: theme menu */(function(){const s=document.getElementById("v2theme");if(!s)return;s.value=document.documentElement.dataset.theme;s.addEventListener("change",()=>{fbv2Apply(s.value);try{localStorage.setItem("fbv2-theme",s.value)}catch(e){}})})();</script>
 <script>
 (function(){
 "use strict";
