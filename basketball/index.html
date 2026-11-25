@@ -597,8 +597,8 @@ function fullCourt(m){
 }
 
 /* "Usual" baseline: last season (full) or this season (Baylor: every other game this season; opponent: ESPN season stats) */
-const baseOf = () => store.get("bgn_base", "last");
-const sumTotals = gs => { const o = {}; gs.forEach(g => Object.entries(g.bay).forEach(([k, v]) => o[k] = (o[k] || 0) + (+v || 0))); o.g = gs.length; return o; };
+const baseOf = () => { const v = store.get("bgn_base2", "this"); return ["this", "last", "2021"].includes(v) ? v : "this"; };
+const sumTotals = (gs, side = "bay") => { const o = {}; gs.forEach(g => Object.entries(g[side]).forEach(([k, v]) => o[k] = (o[k] || 0) + (+v || 0))); o.g = gs.length; return o; };
 const OPP_PENDING = {};
 async function needOppStats(year, id){
   const k = String(year); B.stats[k] = B.stats[k] || {};
@@ -622,6 +622,11 @@ function compare(m){
     head = `This game ● vs. their usual ○ · ${lab(yr)} season`;
     bNote = `vs. Baylor's other ${others.length} game${others.length === 1 ? "" : "s"} in ${lab(yr)}`;
     oNote = n ? `in its ${n} game${n === 1 ? "" : "s"} of ${lab(yr)}` : `in ${lab(yr)}`;
+  } else if (base === "2021"){
+    // the 2020-21 national title team: Baylor's offense and defense across that season's games
+    const s21 = B.seasons.find(x => x.year === 2021), gs = s21 ? played(s21).filter(g => g.id !== m.row.id) : [];
+    bl = gs.length ? factors(sumTotals(gs)) : null; ol = gs.length ? factors(sumTotals(gs, "o")) : null;
+    bNote = "vs. Baylor's 2020-21 national title offense"; oNote = "";
   } else {
     const st = (B.stats || {})[String(yr - 1)] || {};
     bl = factors(seasonTeam(st[BAY])); ol = factors(seasonTeam(st[m.opp.id]));
@@ -656,13 +661,13 @@ function compare(m){
       <div class="vd ${cls}"><span class="k">${word}</span><span>${fmt(t)}${has ? " · usual " + fmt(u) : ""}</span></div>
       <div class="raw"><b>Tonight</b> ${rawT}${rawU ? `<span class="sep">·</span><b>Usual</b> ${rawU}` : ""}</div>`;
   };
-  const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : lab(yr - 1);
+  const oname = esc(oppShort(m)), seasonLab = base === "this" ? lab(yr) : base === "2021" ? "2020-21" : lab(yr - 1);
   const pending = base === "this" && OPP_PENDING[yr + m.opp.id];
-  const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button></div>`;
+  const toggle = `<div class="filters" style="margin-bottom:10px"><button class="f ${base === "this" ? "on" : ""}" data-base="this">vs. this season</button><button class="f ${base === "last" ? "on" : ""}" data-base="last">vs. last season</button><button class="f ${base === "2021" ? "on" : ""}" data-base="2021">vs. 2020-21</button></div>`;
   return secHead(`How Baylor played vs. usual`) + toggle + `<div class="nightk"><span class="b"><svg class="ar" viewBox="0 0 8 10" aria-hidden="true"><path d="M8 0V10L0 5Z" fill="currentColor"/></svg> Bad night</span><span class="k">○ usual · ● tonight</span><span class="g">Great night <svg class="ar" viewBox="0 0 8 10" aria-hidden="true"><path d="M0 0V10L8 5Z" fill="currentColor"/></svg></span></div>
     <div class="sub2">Baylor's offense <small>${bNote}</small></div>
     ${bl ? `<div class="cmp">${off.map(row).join("")}</div>` : `<div class="note">${base === "this" ? `No other ${seasonLab} games yet.` : `No ${seasonLab} Baylor stats on ESPN.`}</div>`}
-    <div class="sub2">Baylor's defense <small>vs. what ${oname} scored ${oNote}</small></div>
+    <div class="sub2">Baylor's defense <small>${base === "2021" ? "vs. Baylor's 2020-21 national title defense" : `vs. what ${oname} scored ${oNote}`}</small></div>
     ${ol ? `<div class="cmp">${def.map(row).join("")}</div>` : `<div class="note">${pending ? "Loading…" : `No ${seasonLab} season stats on ESPN for ${oname}${(m.season.games.find(g => g.oppId === m.opp.id) || {}).rank == null ? " (not a Division I team)" : ""}.`}</div>`}`;
 }
 
@@ -882,7 +887,7 @@ async function render(){
     + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
         <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
     + `<div class="gc"><div class="in">${compare(m)}</div>
-        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = the full previous season on ESPN, or this season's other games (opponent: their ESPN season stats so far). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages. Data: ESPN.</div></div>`
+        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = this season's other games (opponent: their ESPN season stats so far), the full previous season on ESPN, or Baylor's 2020-21 national title team (offense and defense). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages. Data: ESPN.</div></div>`
     + watch(season);
   wireFlowTip(m); fitBox();
 }
@@ -929,7 +934,7 @@ document.addEventListener("click", e => {
   const pl = e.target.closest("[data-pl]"); if (pl){ playerCard(pl.dataset.pl); return; }
   if (e.target.closest("[data-close]") || e.target.id === "ov"){ closeCard(); return; }
   const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; if (c.closest("#watch")) window.scrollTo({top: 0}); return; }
-  const bs = e.target.closest("[data-base]"); if (bs){ store.set("bgn_base", bs.dataset.base); const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
+  const bs = e.target.closest("[data-base]"); if (bs){ store.set("bgn_base2", bs.dataset.base); const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
   const f = e.target.closest("[data-tier]"); if (f){ store.set("bgn_tier", f.dataset.tier); render().then(() => $("#watch").scrollIntoView({block: "nearest"})); return; }
   const mt = e.target.closest("[data-metric]"); if (mt){ store.set("bgn_metric", mt.dataset.metric); render().then(() => $("#watch").scrollIntoView({block: "nearest"})); }
 });
