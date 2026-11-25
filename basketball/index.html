@@ -335,6 +335,17 @@ html .cbtn[aria-expanded="true"]{background:var(--gold);border-color:var(--gold)
 html.wall .top .pick,html[data-theme="gold-green"] .top .pick{margin:0;padding:12px;background:rgba(9,30,21,.97);border-color:rgba(255,255,255,.25)}
 html.wall[data-theme="blackout"] .top .pick,html.wall[data-theme="revivalry"] .top .pick{background:rgba(12,12,10,.97)}
 .top .pick.open{display:grid}
+
+/* record card: same compact layout as football */
+.rec .form{margin-top:5px}
+@media(max-width:520px){
+  .rec,.rec[id]{flex-direction:row;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px}
+  .rec .wl2{font-size:32px}
+  .rec .grid{width:auto;flex:1;grid-template-columns:repeat(auto-fit,minmax(38px,1fr));gap:4px 6px}
+  .rec .lbl{font-size:9px;letter-spacing:.7px}
+  .rec .grid b{font-size:15px}
+  .rec .form i{width:14px;height:14px;font-size:8px}
+}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
@@ -821,9 +832,9 @@ function record(season){
     for (let i = gs.length - 1; i >= 0 && (gs[i].bay.pts > gs[i].o.pts) === won; i--) n++; streak = (won ? "W" : "L") + n; }
   const form = gs.slice(-5).map(g => g.bay.pts > g.o.pts ? `<i>W</i>` : `<i class="L">L</i>`).join("");
   const cell = (lab, v) => `<div><span class="lbl">${lab}</span><b>${v}</b></div>`;
-  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(all)}</div></div>
+  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(all)}</div><div class="form">${form}</div></div>
     <div class="grid">${cell("Big 12", fmt(conf))}${cell("Home", fmt(home))}${cell("Away", fmt(away))}${cell("Neutral", fmt(neu))}${post[0] + post[1] ? cell("Postseason", fmt(post)) : ""}
-      <div><span class="lbl">Streak</span><b>${streak || "—"}</b><div class="form">${form}</div></div></div>`;
+      <div><span class="lbl">Streak</span><b>${streak || "—"}</b></div></div>`;
 }
 const recStr = s => { const gs = played(s), w = gs.filter(g => g.bay.pts > g.o.pts).length; return w + "-" + (gs.length - w); };
 
