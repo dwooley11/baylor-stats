@@ -363,6 +363,10 @@ html.wall[data-theme="blackout"] .top .pick,html.wall[data-theme="revivalry"] .t
 }
 
 @media(min-width:521px){html:not(.eighties) .top>.src{flex:0 0 auto;min-width:0;max-width:none}}
+
+/* section borders: gold trim on plain-color themes, none on photo-background themes */
+html:not(.wall) .card,html:not(.wall) .rec,html:not(.wall) .gc{border:2px solid var(--gold)}
+html.wall .card,html.wall .rec,html.wall .gc{border:0}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
