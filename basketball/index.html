@@ -321,13 +321,26 @@ html[data-theme="classic"] .sel,html[data-theme="classic"] .chip,html[data-theme
 html[data-theme="classic"] .chip.on,html[data-theme="classic"] .tab.on{border-color:var(--gold)}
 html[data-theme="classic"] .card,html[data-theme="classic"] .rec{border:2px solid var(--gold)}
 html[data-theme="classic"] .card .hd{color:var(--gold)}
+
+/* SETTINGS MENU: back + settings pills, Season/Theme in a popover */
+.top{flex-wrap:wrap;position:relative}
+.top>.navrow+div{flex:1 1 1px}
+.navrow{flex:0 0 100%;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.cbtn{display:inline-flex;align-items:center;gap:5px;margin:0;background:transparent;border:1px solid #57544c;color:#f3ebd8;border-radius:999px;padding:4px 10px;font:600 11px Inter,system-ui,sans-serif;line-height:1.35;cursor:pointer;text-decoration:none}
+.cbtn svg{width:12px;height:12px;flex:none}
+html:not(.plain) .cbtn{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(11,34,25,.55)}
+html[data-theme="gold-green"] .cbtn,html[data-theme="classic"] .cbtn{border-color:var(--gold);color:var(--gold)}
+html .cbtn[aria-expanded="true"]{background:var(--gold);border-color:var(--gold);color:#154734}
+.top .pick{display:none;position:absolute;right:0;top:38px;z-index:15;width:min(280px,calc(100vw - 24px));grid-template-columns:1fr;gap:10px;margin:0;padding:12px;border-radius:10px;background:#1d1c19;border:1px solid #3c3b36;box-shadow:0 10px 28px rgba(0,0,0,.45)}
+html.wall .top .pick,html[data-theme="gold-green"] .top .pick{margin:0;padding:12px;background:rgba(9,30,21,.97);border-color:rgba(255,255,255,.25)}
+html.wall[data-theme="blackout"] .top .pick,html.wall[data-theme="revivalry"] .top .pick{background:rgba(12,12,10,.97)}
+.top .pick.open{display:grid}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
 <div class="wrap">
-  <div class="top"><div><a class="home" href="../index.html">‹ Baylor Stats</a><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>BASKETBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>BASKETBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div></div>
+  <div class="top"><div class="navrow"><a class="home cbtn" href="../index.html">‹ Baylor Stats</a><button class="cbtn" id="gear" type="button" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>Settings</button></div><div><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>BASKETBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i></span>BASKETBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div><div class="pick" id="settings" role="dialog" aria-label="Settings"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Black</option><option value="gold-green">Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div></div>
   <div class="v2-band" aria-hidden="true"></div>
-  <div class="pick"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Black</option><option value="gold-green">Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
   <div id="app"><div class="empty">Loading…</div></div>
@@ -970,5 +983,6 @@ $("#refresh").addEventListener("click", refresh);
 })();
 })();
 </script>
+<script>/* SETTINGS MENU */(function(){const b=document.getElementById("gear"),p=document.getElementById("settings");if(!b||!p)return;const set=o=>{p.classList.toggle("open",o);b.setAttribute("aria-expanded",o?"true":"false")};b.addEventListener("click",e=>{e.stopPropagation();set(!p.classList.contains("open"))});document.addEventListener("click",e=>{if(!p.contains(e.target))set(false)});document.addEventListener("keydown",e=>{if(e.key==="Escape")set(false)})})();</script>
 </body>
 </html>
