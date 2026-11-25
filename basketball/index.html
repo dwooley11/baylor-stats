@@ -347,25 +347,22 @@ html.wall[data-theme="blackout"] .top .pick,html.wall[data-theme="revivalry"] .t
   .rec .form i{width:14px;height:14px;font-size:8px}
 }
 
-/* phones, every theme: source line + Refresh on one row under the title */
-#src .sbr{display:none}.sdot{display:inline;font-style:normal}
+/* source text: two right-aligned lines (standard themes); 80s themes on phones: one row under the wordmark */
+.sdot{font-style:normal}.sdx{display:none}
+#src .s1,#src .s2{white-space:nowrap}#src .s2{display:block}
 @media(max-width:520px){
-  .top>.src,html:not(.plain) .top>.src,html:not(.eighties) .top>.src,html.wall:not(.eighties) .top>.src{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 10px;flex:1 1 100%;max-width:none;min-width:0;text-align:left;margin-top:6px}
-  #src{font-size:11px;line-height:1.3;min-width:0;flex:1 1 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #src .sbr,#src .s1x{display:none}#src .sdot{display:inline}
-  .top>.src .rf{margin:0;padding:4px 11px;font-size:12px;flex:none}
-  #rfmsg{flex:1 1 100%;max-width:none;text-align:right}
-  #rfmsg:empty{display:none}
+  html:not(.eighties) .top>.src{flex:0 0 auto;min-width:0;max-width:none}
+  html:not(.eighties) .top>.navrow+div{min-width:0}
+  html:not(.eighties) #src{font-size:10px;line-height:1.35}
+  html.eighties .top>.src{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 10px;flex:1 1 100%;max-width:none;min-width:0;text-align:left;margin-top:6px}
+  html.eighties #src{font-size:11px;line-height:1.3;min-width:0;flex:1 1 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.eighties #src .sbr,html.eighties #src .s1x{display:none}html.eighties #src .s2{display:inline}html.eighties #src .sdx{display:inline}
+  html.eighties .top>.src .rf{margin:0;padding:4px 11px;font-size:12px;flex:none}
+  html.eighties #rfmsg{flex:1 1 100%;max-width:none;text-align:right}
+  html.eighties #rfmsg:empty{display:none}
 }
 
-/* standard themes: bigger BAYLOR FOOTBALL / BASKETBALL title */
-html:not(.eighties) .brand,html.wall:not(.eighties) .brand{font-size:36px;gap:10px;white-space:nowrap}
-html:not(.eighties) .blogo,html.wall:not(.eighties) .blogo{height:48px}
-@media(max-width:520px){
-  html:not(.eighties) .brand,html.wall:not(.eighties) .brand{font-size:clamp(24px,7.9vw,33px);gap:8px;margin-top:4px}
-  html:not(.eighties) .blogo,html.wall:not(.eighties) .blogo{height:clamp(32px,10vw,42px)}
-}
-@media(min-width:521px){html:not(.eighties) .top>.src{flex:0 0 auto;min-width:0;max-width:none}#src .s1,#src .s2{white-space:nowrap}}
+@media(min-width:521px){html:not(.eighties) .top>.src{flex:0 0 auto;min-width:0;max-width:none}}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
@@ -880,7 +877,9 @@ async function render(){
   // No game picked: show the latest game that has tipped off (a live game takes over once it starts)
   const picked = (location.hash || "").startsWith("#g");
   if (!picked || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
-  $("#src").innerHTML = `<span class="s1">ESPN<span class="s1x"> box score &amp; play-by-play</span></span><br class="sbr"><span class="s2"><i class="sdot"> · </i>${live ? "live" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}))}</span>`;
+  const saved = live ? "" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}));
+  // live: "ESPN box score &" / "play-by-play · live"; saved: the save time gets its own third line
+  $("#src").innerHTML = `<span class="s1">ESPN<span class="s1x"> box score &amp;</span></span><br class="sbr"><span class="s2"><span class="s1x">play-by-play</span>${live ? `<i class="sdot"> · </i>live` : ""}</span>${live ? "" : `<span class="s2"><i class="sdot sdx"> · </i>${saved}</span>`}`;
   $("#season").innerHTML = B.seasons.slice().reverse().map(s => `<option value="${s.year}" ${s.year === season.year ? "selected" : ""}>${s.label}${s.year === B.seasonYear ? " (this season)" : ""} · ${recStr(s)}</option>`).join("");
   $("#rec").innerHTML = record(season);
   $("#chips").innerHTML = games.slice().reverse().map(g => { const w = g.bay.pts > g.o.pts, lv = !g.completed;
