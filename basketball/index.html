@@ -425,11 +425,18 @@ html.eighties .v2-sub{font-size:.52em !important;margin-top:.35em !important;gap
   .rec .grid>div:last-child{flex:0 0 auto}
   .rec .form i{width:13px;height:13px;font-size:7.5px}
 }
+
+/* standard themes: big BU logo on the left, BAYLOR over BASKETBALL/FOOTBALL beside it */
+.brand .bw{color:inherit;margin:0}.brand .bw b{font-weight:inherit}
+html:not(.eighties) .brand,html.wall:not(.eighties) .brand{gap:.32em !important;align-items:center}
+html:not(.eighties) .brand .bw{display:flex;flex-direction:column;line-height:.95}
+html:not(.eighties) .brand .bw>span{color:var(--gold);margin:0}
+html:not(.eighties) .blogo,html.wall:not(.eighties) .blogo{height:2.05em !important}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
 <div class="wrap">
-  <div class="top"><div class="navrow"><a class="home cbtn" href="../index.html">‹ Baylor Stats</a><button class="cbtn" id="gear" type="button" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>Settings</button></div><div><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()">BAYLOR <span>BASKETBALL</span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>BASKETBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div><div class="pick" id="settings" role="dialog" aria-label="Settings"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Black</option><option value="gold-green">Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div></div>
+  <div class="top"><div class="navrow"><a class="home cbtn" href="../index.html">‹ Baylor Stats</a><button class="cbtn" id="gear" type="button" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.6 7.6 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.5-1-2 3.5L4.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>Settings</button></div><div><div class="brand"><img class="blogo" src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500-dark/239.png&h=96&w=96" alt="" onerror="this.remove()"><span class="bw"><b>BAYLOR</b> <span>BASKETBALL</span></span></div><div class="v2-markrow"><h1 class="v2-mark">BAYLOR</h1><img class="v2-paw" src="img/paw.png" alt=""></div><div class="v2-sub"><span class="v2-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>BASKETBALL</div></div><div class="src"><div id="src"></div><button class="rf" id="refresh" type="button">↻ Refresh</button><div id="rfmsg"></div></div><div class="pick" id="settings" role="dialog" aria-label="Settings"><span class="v2-field"><label for="season">Season</label><select id="season" class="sel"></select></span><span class="v2-field"><label for="v2theme">Theme</label><select id="v2theme" class="sel"><optgroup label="Standard Themes"><option value="classic">Black</option><option value="gold-green">Green</option><option value="script-green">Script Baylor</option></optgroup><optgroup label="80s Throwback"><option value="throwback">80s Classic</option><option value="gameday-paws">80s Paw</option><option value="gameday-bear">80s Bear</option></optgroup></select></span></div></div>
   <div class="v2-band" aria-hidden="true"></div>
   <div class="rec" id="rec"></div>
   <div class="chips" id="chips"></div>
@@ -1123,10 +1130,10 @@ function fitTitle(){
   const box = document.querySelector(".top>.navrow+div"); if (!box) return;
   const vis = [...box.children].filter(e => e.offsetParent !== null);
   // size both sport pages the same: measure with the longer word, BASKETBALL, then put the real word back
-  const words = [box.querySelector(".brand span"), box.querySelector(".v2-sub")].filter(Boolean).map(el => { const n = [...el.childNodes].reverse().find(x => x.nodeType === 3 && x.textContent.trim()); const t = n ? n.textContent : null; if (n) n.textContent = "BASKETBALL"; return [n, t]; });
+  const words = [box.querySelector(".brand .bw > span"), box.querySelector(".v2-sub")].filter(Boolean).map(el => { const n = [...el.childNodes].reverse().find(x => x.nodeType === 3 && x.textContent.trim()); const t = n ? n.textContent : null; if (n) n.textContent = "BASKETBALL"; return [n, t]; });
   const right = e => Math.max(e.getBoundingClientRect().right, ...[...e.querySelectorAll("*")].filter(c => c.offsetParent !== null).map(c => c.getBoundingClientRect().right));
   const fits = () => { const bx = box.getBoundingClientRect(); return vis.every(e => right(e) <= bx.right + 1) && (vis.length ? vis[vis.length - 1].getBoundingClientRect().bottom - vis[0].getBoundingClientRect().top : 0) <= box.clientHeight; };
-  let lo = 14, hi = window.innerWidth > 520 ? 40 : 34;
+  let lo = 14, hi = window.innerWidth > 520 ? 44 : 40;
   while (hi - lo > .5){ const mid = (lo + hi) / 2; box.style.setProperty("--tf", mid + "px"); if (fits()) lo = mid; else hi = mid; }
   box.style.setProperty("--tf", lo + "px");
   words.forEach(([n, t]) => { if (n) n.textContent = t; });
