@@ -1135,7 +1135,8 @@ function fitTitle(){
   const fits = () => { const bx = box.getBoundingClientRect(); return vis.every(e => right(e) <= bx.right + 1) && (vis.length ? vis[vis.length - 1].getBoundingClientRect().bottom - vis[0].getBoundingClientRect().top : 0) <= box.clientHeight; };
   let lo = 14, hi = window.innerWidth > 520 ? 44 : 40;
   while (hi - lo > .5){ const mid = (lo + hi) / 2; box.style.setProperty("--tf", mid + "px"); if (fits()) lo = mid; else hi = mid; }
-  box.style.setProperty("--tf", lo + "px");
+  // standard themes: a step under the max so the big logo + stacked title doesn't crowd the section
+  box.style.setProperty("--tf", (document.documentElement.classList.contains("eighties") ? lo : lo * .86) + "px");
   words.forEach(([n, t]) => { if (n) n.textContent = t; });
 }
 window.addEventListener("resize", () => fitTitle());
