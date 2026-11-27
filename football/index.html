@@ -1160,6 +1160,9 @@ async function tryLive(){
 function fitTitle(){
   const box = document.querySelector(".top>.navrow+div"); if (!box) return;
   const vis = [...box.children].filter(e => e.offsetParent !== null);
+  // size as if the status line under Refresh shows its longest text, so the title is the same before and after Refresh
+  const rm = document.getElementById("rfmsg"), rmText = rm ? rm.textContent : "";
+  if (rm) rm.textContent = "Live from ESPN · 12:59 PM";
   // size both sport pages the same: measure with the longer word, BASKETBALL, then put the real word back
   const words = [box.querySelector(".brand .bw > span"), box.querySelector(".v2-sub")].filter(Boolean).map(el => { const n = [...el.childNodes].reverse().find(x => x.nodeType === 3 && x.textContent.trim()); const t = n ? n.textContent : null; if (n) n.textContent = "BASKETBALL"; return [n, t]; });
   const right = e => Math.max(e.getBoundingClientRect().right, ...[...e.querySelectorAll("*")].filter(c => c.offsetParent !== null).map(c => c.getBoundingClientRect().right));
@@ -1169,6 +1172,7 @@ function fitTitle(){
   // standard themes: a step under the max so the big logo + stacked title doesn't crowd the section
   box.style.setProperty("--tf", (document.documentElement.classList.contains("eighties") ? lo : lo * .86) + "px");
   words.forEach(([n, t]) => { if (n) n.textContent = t; });
+  if (rm) rm.textContent = rmText;
 }
 window.addEventListener("resize", () => fitTitle());
 new MutationObserver(() => requestAnimationFrame(fitTitle)).observe(document.documentElement, {attributes: true, attributeFilter: ["class", "data-theme"]});
