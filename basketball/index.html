@@ -729,7 +729,7 @@ function boxTable(m, teamId, isBay){
   ath.forEach(a => {
     const cls = !a[2] && !sawBench ? "split" : "";
     if (!a[2]) sawBench = true;
-    const nm = isBay && a[5] ? `<button class="pl" data-pl="${esc(a[5])}">${esc(a[0])}</button>` : esc(a[0]);
+    const nm = a[5] ? `<button class="pl" data-pl="${esc(a[5])}" data-tm="${esc(teamId)}">${esc(a[0])}</button>` : esc(a[0]);
     rows += `<tr class="${cls}"><td class="no">${esc(a[4] ?? "")}</td><td class="nm">${nm}${a[1] ? `<span class="ps">${esc(a[1])}</span>` : ""}</td>${cols.map(c => `<td>${cell(a, c)}</td>`).join("")}</tr>`;
   });
   const team = isBay ? m.bay : m.opp, t = isBay ? m.bayBox : m.oppBox, tm = team.stats;
@@ -762,7 +762,7 @@ function leaders(m){
       reb: +v(a, "rebounds") || 0, ast: +v(a, "assists") || 0})).sort((x, y) => y.pts - x.pts || y.reb - x.reb).slice(0, n); };
   const tile = (r, tid, color, team) => { const a = r.a, mine = m.shots.filter(s => s.team === tid && s.pid === a[5]);
     const extra = r.ast >= r.reb && r.ast >= 3 ? r.ast + " ast" : r.reb >= 3 ? r.reb + " reb" : "";
-    const nm = tid === BAY && a[5] ? `<button class="pl" data-pl="${esc(a[5])}">${esc(a[0])}</button>` : esc(a[0]);
+    const nm = a[5] ? `<button class="pl" data-pl="${esc(a[5])}" data-tm="${esc(tid)}">${esc(a[0])}</button>` : esc(a[0]);
     return `<div class="ldr ${tid === BAY ? "" : "op"}"><div class="lt"><span class="lj">${a[4] !== "" ? "#" + esc(a[4]) : ""}</span><span class="ln">${nm}</span><span class="lteam">${esc(team)}</span></div>
       <div class="lp"><b>${r.pts}</b><span>pts</span></div><div class="ls2">${esc(r.fg || "0-0")} FG · ${esc(r.tp || "0-0")} 3PT${extra ? " · " + extra : ""}</div>
       ${hasPid ? leaderCourt(mine, color) : ""}</div>`; };
@@ -846,12 +846,13 @@ function halfCourt(shots){
     <line x1="22" x2="28" y1="4" y2="4" stroke="var(--green)" stroke-width=".4"/><circle cx="25" cy="${hy}" r=".75" ${ln}/>
     ${dots}</svg>`;
 }
-function playerCard(aid){
+function playerCard(aid, tid = BAY){
   const m = CURM; if (!m) return;
-  const p = m.gm.players[BAY], ix = k => p.keys.indexOf(k);
+  const isBay = tid === BAY, p = m.gm.players[tid]; if (!p) return;
+  const ix = k => p.keys.indexOf(k);
   const a = p.athletes.find(x => x[5] === aid); if (!a) return;
-  const sp = (m.season.players || {})[aid] || {};
-  const rc = recruitFor(a[0]);
+  const sp = isBay ? (m.season.players || {})[aid] || {} : {};
+  const rc = isBay ? recruitFor(a[0]) : null, teamName = isBay ? "Baylor" : oppShort(m);
   const st = a[3] || [], g = k => st[ix(k)];
   const n = starsFor(rc && rc.rating);
   const avg = k => sp.gp ? (sp[k] / sp.gp).toFixed(1) : "—";
@@ -873,9 +874,9 @@ function playerCard(aid){
   } else prospect = `<span class="note">No 247Sports grade on file for this player</span>`;
   // ---- this game, @mcbaylor-style ----
   const sp2 = v => split(v || "0-0"), [fgm, fga] = sp2(g("fieldGoalsMade-fieldGoalsAttempted")), [tpm, tpa] = sp2(g("threePointFieldGoalsMade-threePointFieldGoalsAttempted"));
-  const hasPid = m.shots.some(s => s.pid), mine = m.shots.filter(s => s.team === BAY && s.pid === aid);
+  const hasPid = m.shots.some(s => s.pid), mine = m.shots.filter(s => s.team === tid && s.pid === aid);
   const nameParts = String(a[0]).split(" "), first = nameParts.shift(), rest = nameParts.join(" ");
-  const tb = m.bayBox, efg = fga ? Math.round((fgm + .5 * tpm) / fga * 100) : null, teamEfg = tb.fga ? Math.round((tb.fgm + .5 * tb.tpm) / tb.fga * 100) : null;
+  const tb = isBay ? m.bayBox : m.oppBox, efg = fga ? Math.round((fgm + .5 * tpm) / fga * 100) : null, teamEfg = tb.fga ? Math.round((tb.fgm + .5 * tb.tpm) / tb.fga * 100) : null;
   const ast = +(g("assists") || 0), to = +(g("turnovers") || 0);
   const minutes = g("minutes"), posName = {G: "Guard", F: "Forward", C: "Center"}[a[1]] || a[1] || "";
   const gameBlock = `
@@ -887,22 +888,44 @@ function playerCard(aid){
       <div class="pshot">${hasPid ? halfCourt(mine) : `<div class="note">ESPN's play-by-play for this game doesn't say who took each shot yet — it fills in on the next data update.</div>`}
         <div class="sc3"><div><span>Field goals</span><b>${esc(g("fieldGoalsMade-fieldGoalsAttempted") ?? "—")}</b></div><div><span>Threes</span><b>${esc(g("threePointFieldGoalsMade-threePointFieldGoalsAttempted") ?? "—")}</b></div><div><span>Free throws</span><b>${esc(g("freeThrowsMade-freeThrowsAttempted") ?? "—")}</b></div></div></div>
       <div class="bot4">
-        <div><b>${esc(g("points") ?? 0)}<small>of ${tb.pts}</small></b><span>Baylor's points</span></div>
-        <div><b>${fga}<small>of ${tb.fga}</small></b><span>Baylor's shots</span></div>
+        <div><b>${esc(g("points") ?? 0)}<small>of ${tb.pts}</small></b><span>${esc(teamName)}'s points</span></div>
+        <div><b>${fga}<small>of ${tb.fga}</small></b><span>${esc(teamName)}'s shots</span></div>
         <div><b>${ast}<small>to</small> ${to}</b><span>Assists, turnovers</span></div>
         <div><b>${efg != null ? efg + "<small>%</small>" : "—"}</b><span>eFG% · team ${teamEfg ?? "—"}%</span></div></div>`;
   $("#pc").innerHTML = `<div class="ph"><div class="num">${a[4] !== "" && a[4] != null ? "#" + esc(a[4]) : ""}</div><div><div class="nm">${esc(a[0])}</div><div class="bio">${bio}</div>${sp.home ? `<div class="bio">${esc(sp.home)}</div>` : ""}</div><button class="x" data-close aria-label="Close">×</button></div><div class="pscroll">
     <div class="pb">${gameBlock}</div>
     <div class="pfoot">ESPN box score and play-by-play (unofficial). eFG% counts a three as 1.5 twos. Shot chart: field goals ESPN logged with a location.</div>
-    <div class="pb">
+    ${isBay ? `<div class="pb">
       <div class="sec" style="margin-top:14px">${esc(m.season.label)} averages <small>${sp.gp ? sp.gp + " games, " + sp.gs + " starts" : "no games"}${m.season.year === B.seasonYear ? " · season to date" : ""}</small></div>
       <div class="pg">${box("PPG", avg("points"))}${box("RPG", avg("rebounds"))}${box("APG", avg("assists"))}${box("MPG", avg("minutes"))}
         ${box("FG%", pct("fgm", "fga"))}${box("3P%", pct("tpm", "tpa"))}${box("FT%", pct("ftm", "fta"))}${box("SPG", avg("steals"))}</div>
       <div class="sec" style="margin-top:14px">Prospect grades</div><div style="margin:4px 0 2px">${prospect}</div>
       ${rc && rc.school ? `<div class="note">${esc(rc.school)}</div>` : ""}
-      <div class="foot">Stats from ESPN box scores. Prospect grades from 247Sports' Baylor roster and commits pages, 2019-20 on: high school rating (or 247 Composite where that's all 247 lists) and transfer portal rating. Stars: 98+ five, 90–97 four, 80–89 three, 70–79 two.</div>
+      <div class="foot">Stats from ESPN box scores. Prospect grades from 247Sports' Baylor roster and commits pages, 2019-20 on: high school rating (or 247 Composite where that's all 247 lists) and transfer portal rating. Stars: 98+ five, 90–97 four, 80–89 three, 70–79 two.</div>` : `<div class="pb"><div class="sec" style="margin-top:14px">${esc(m.season.label)} averages <small>${esc(teamName)} · from ESPN</small></div>
+      <div id="oppavg"><div class="note">Loading season stats from ESPN…</div></div>
+      <div class="foot">Season averages from ESPN's player page. Prospect grades are only kept for Baylor players.</div></div>`}
     </div></div>`;
   $("#ov").classList.add("on"); document.body.classList.add("noscroll"); $("#pc .pscroll").scrollTop = 0;
+  if (!isBay) oppAverages(aid, m.season.label);
+}
+// Opponent season averages + bio, straight from ESPN's athlete endpoints (CORS-open)
+async function oppAverages(aid, label){
+  const base = "https://site.api.espn.com/apis/common/v3/sports/basketball/mens-college-basketball/athletes/" + encodeURIComponent(aid);
+  const box = (lab, v) => `<div><b>${esc(v ?? "—")}</b><span>${lab}</span></div>`;
+  try {
+    const [st, bio] = await Promise.all([getJSON(base + "/stats", 8000), getJSON(base, 8000).catch(() => null)]);
+    const ath = bio && bio.athlete;
+    if (ath){ const b = [ath.position && ath.position.abbreviation, ath.displayClass || (ath.experience && ath.experience.displayValue), ath.displayHeight, ath.displayWeight].filter(Boolean).map(esc).join(" · ");
+      const el = $("#pc .bio"); if (el && b) el.textContent = ""; if (el && b) el.innerHTML = b; }
+    const cat = (st.categories || []).find(c => c.name === "averages"); if (!cat) throw 0;
+    const row = (cat.statistics || []).find(x => (x.season || {}).displayName === label) || (cat.statistics || []).slice(-1)[0];
+    if (!row) throw 0;
+    const L = cat.labels, v = k => row.stats[L.indexOf(k)];
+    const pctv = k => v(k) != null && v(k) !== "" ? v(k) + "%" : "—";
+    const el = $("#oppavg"); if (!el) return;
+    el.innerHTML = `<div class="note" style="margin-top:2px">${esc(v("GP") || 0)} games, ${esc(v("GS") || 0)} starts · ${esc((row.season || {}).displayName || "")}</div>
+      <div class="pg">${box("PPG", v("PTS"))}${box("RPG", v("REB"))}${box("APG", v("AST"))}${box("MPG", v("MIN"))}${box("FG%", pctv("FG%"))}${box("3P%", pctv("3P%"))}${box("FT%", pctv("FT%"))}${box("SPG", v("STL"))}</div>`;
+  } catch(e){ const el = $("#oppavg"); if (el) el.innerHTML = `<div class="note">Couldn't load season stats from ESPN right now.</div>`; }
 }
 function closeCard(){ $("#ov").classList.remove("on"); document.body.classList.remove("noscroll"); }
 
@@ -1008,7 +1031,7 @@ function wireFlowTip(m){
 document.addEventListener("click", e => {
   if (e.target.closest("input")) return;
   const tb = e.target.closest("[data-tab]"); if (tb){ if (state.tab !== tb.dataset.tab){ state.tab = tb.dataset.tab; const y = Math.min(window.scrollY, $("#app").offsetTop); render().then(() => window.scrollTo({top: y})); } return; }
-  const pl = e.target.closest("[data-pl]"); if (pl){ playerCard(pl.dataset.pl); return; }
+  const pl = e.target.closest("[data-pl]"); if (pl){ playerCard(pl.dataset.pl, pl.dataset.tm || BAY); return; }
   if (e.target.closest("[data-close]") || e.target.id === "ov"){ closeCard(); return; }
   const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; if (c.closest("#watch")) window.scrollTo({top: 0}); return; }
   const bs = e.target.closest("[data-base]"); if (bs){ store.set("bgn_base2", bs.dataset.base); const y = window.scrollY; render().then(() => window.scrollTo({top: y})); return; }
