@@ -373,6 +373,27 @@ html.wall .card,html.wall .rec,html.wall .gc{background:rgba(243,235,216,.55);-w
 html.wall .card .box,html.wall .gc .box{background:transparent}
 html.wall{--muted:#4a463e}
 html.wall .bigs .l,html.wall .sbd .tm.r,html.wall .ls td.dim{color:#5f5a50}
+
+/* game tabs: same pills as the game chips (matches football) */
+.tabs{display:flex;gap:6px;margin:-4px 0 12px}
+.tab{flex:1 1 0;border:1px solid #3c3b36;background:#1d1c19;color:#e8e0cc;border-radius:999px;padding:6px 8px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--gold);color:#1c1c1a;border-color:var(--gold)}
+@media(max-width:520px){.tabs{margin:-2px 0 8px}.tab{padding:5px 6px;font-size:11.5px}}
+/* leading scorers */
+.ldrs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+.ldr{min-width:0}
+.ldr .lt{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap;row-gap:1px;font:700 15px/1.1 Oswald,'Arial Narrow',sans-serif;text-transform:uppercase;color:var(--green)}
+.ldr.op .lt{color:#5f5a50}
+.ldr .lj{color:var(--muted);font-weight:600;font-size:12px;flex:none}
+.ldr .ln{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ldr .ln .pl{font:inherit;color:inherit;text-transform:inherit}
+.ldr .lteam{flex-basis:100%;font:600 10px Oswald,'Arial Narrow',sans-serif;letter-spacing:1px;color:var(--muted)}
+.ldr .lp{display:flex;align-items:baseline;gap:4px;margin-top:2px}
+.ldr .lp b{font:700 30px/1 Oswald,'Arial Narrow',sans-serif;color:var(--green)}.ldr.op .lp b{color:#1d1c19}
+.ldr .lp span{font:600 11px Oswald,'Arial Narrow',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.ldr .ls2{font-size:11.5px;color:var(--muted);margin:2px 0 6px}
+.ldr svg{width:100%;display:block}
+@media(max-width:620px){.ldrs{grid-template-columns:repeat(2,1fr);gap:14px 10px}}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
@@ -553,7 +574,7 @@ function scoring(m){
   const seg = (v, [bg, fg]) => v ? `<i style="width:${v / max * 100}%;background:${bg};color:${fg}">${v / max > .05 ? v : ""}</i>` : "";
   // key shows both teams' shades: Baylor's color, then the opponent's gray
   const key = (bc, oc, lab) => `<span><i style="background:${bc};margin-right:1px"></i><i style="background:${oc}"></i>${lab}</span>`;
-  return secHead("Where the points came from", `<span class="lgd">${key("var(--green)", rows[1][2][0][0], "2s")}${key("var(--gold)", rows[1][2][1][0], "3s")}${key("var(--sage)", rows[1][2][2][0], "Free throws")}</span>`)
+  return secHead("Box score", `<span class="lgd">${key("var(--green)", rows[1][2][0][0], "2s")}${key("var(--gold)", rows[1][2][1][0], "3s")}${key("var(--sage)", rows[1][2][2][0], "Free throws")}</span>`)
     + `<div class="pts">` + rows.map(([team, s, c, col]) => `<span class="tn" style="color:${col}">${mark(team)}${esc(team.id === BAY ? "Baylor" : oppShort(m))}</span>
       <div class="bar">${seg(s.two, c[0])}${seg(s.three, c[1])}${seg(s.ft, c[2])}</div><span class="tot" style="color:${col}">${esc(team.score)}</span>`).join("") + `</div>`;
 }
@@ -719,6 +740,38 @@ function boxTable(m, teamId, isBay){
     <div class="bxw"><table class="bs"><thead><tr><th class="no">#</th><th class="nm"></th>${cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
+
+/* ---------- leading scorers: top 3 Baylor + the opponent's top scorer, each with a shot chart ---------- */
+function leaderCourt(shots, color){
+  const hy = 5.25, r3 = 22.146, cx3 = 3.35, run = hy + Math.sqrt(r3 * r3 - (25 - cx3) ** 2), H = 35;
+  const ln = `stroke="#8f8b83" stroke-width=".3" fill="none"`;
+  const dots = shots.map(s => { const px = s.x, py = Math.min(H - 1, s.y + hy);
+    return `<circle cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="1.25" fill="${s.made ? color : "none"}" stroke="${color}" stroke-width="${s.made ? 0 : .32}" opacity="${s.made ? 1 : .85}"/>`; }).join("");
+  return `<svg viewBox="-.5 -.5 51 ${H + 1}" role="img" aria-label="Shot chart">
+    <rect x="0" y="0" width="50" height="${H}" fill="#34343a" stroke="#1c1c1a" stroke-width=".4"/>
+    <rect x="19" y="0" width="12" height="19" ${ln}/><path d="M19,19 A6,6 0 0 0 31,19" ${ln}/>
+    <path d="M${cx3},0 V${run.toFixed(2)} A${r3},${r3} 0 0 0 ${50 - cx3},${run.toFixed(2)} V0" ${ln}/>
+    <line x1="22" x2="28" y1="4" y2="4" stroke="#e6e2da" stroke-width=".4"/><circle cx="25" cy="${hy}" r=".75" ${ln}/>
+    ${dots}</svg>`;
+}
+function leaders(m){
+  const hasPid = m.shots.some(s => s.pid);
+  const top = (tid, n) => { const p = m.gm.players[tid]; if (!p) return [];
+    const ix = k => p.keys.indexOf(k), v = (a, k) => ix(k) >= 0 ? a[3][ix(k)] : "";
+    return p.athletes.filter(a => a[3].length).map(a => ({a, pts: +v(a, "points") || 0, fg: v(a, "fieldGoalsMade-fieldGoalsAttempted"), tp: v(a, "threePointFieldGoalsMade-threePointFieldGoalsAttempted"),
+      reb: +v(a, "rebounds") || 0, ast: +v(a, "assists") || 0})).sort((x, y) => y.pts - x.pts || y.reb - x.reb).slice(0, n); };
+  const tile = (r, tid, color, team) => { const a = r.a, mine = m.shots.filter(s => s.team === tid && s.pid === a[5]);
+    const extra = r.ast >= r.reb && r.ast >= 3 ? r.ast + " ast" : r.reb >= 3 ? r.reb + " reb" : "";
+    const nm = tid === BAY && a[5] ? `<button class="pl" data-pl="${esc(a[5])}">${esc(a[0])}</button>` : esc(a[0]);
+    return `<div class="ldr ${tid === BAY ? "" : "op"}"><div class="lt"><span class="lj">${a[4] !== "" ? "#" + esc(a[4]) : ""}</span><span class="ln">${nm}</span><span class="lteam">${esc(team)}</span></div>
+      <div class="lp"><b>${r.pts}</b><span>pts</span></div><div class="ls2">${esc(r.fg || "0-0")} FG · ${esc(r.tp || "0-0")} 3PT${extra ? " · " + extra : ""}</div>
+      ${hasPid ? leaderCourt(mine, color) : ""}</div>`; };
+  const bay = top(BAY, 3), opp = top(m.opp.id, 1);
+  if (!bay.length) return "";
+  return secHead("Leading scorers", hasPid ? "● made · ○ missed" : "") + `<div class="ldrs">${bay.map(r => tile(r, BAY, "#FFB81C", "Baylor")).join("")}${opp.map(r => tile(r, m.opp.id, "#ffffff", oppShort(m))).join("")}</div>
+    ${hasPid ? "" : `<div class="note">ESPN hasn't tagged who took each shot for this game yet; shot charts fill in on the next data update.</div>`}`;
+}
+
 /* ---------- the number I'm watching ---------- */
 const TIERS = [["all", "All games", () => true], ["top100", "Top 100", r => r <= 100], ["mid", "101–249", r => r > 100 && r < 250], ["low", "250th or worse", r => r >= 250]];
 const METRICS = [
@@ -871,7 +924,7 @@ function record(season){
 const recStr = s => { const gs = played(s), w = gs.filter(g => g.bay.pts > g.o.pts).length; return w + "-" + (gs.length - w); };
 
 /* ---------- page ---------- */
-let state = {season: null, game: null};
+let state = {season: null, game: null, tab: "flow"};
 function pickFromHash(){
   const h = (location.hash || "").slice(1);
   if (h.startsWith("g")){ const f = findGame(h.slice(1)); if (f){ state.season = f.s.year; state.game = f.g.id; return; } }
@@ -901,14 +954,17 @@ async function render(){
   try { gm = await loadGame(row.id); } catch(e){ if (seq === renderSeq) $("#app").innerHTML = `<div class="empty">Couldn't load this game's data.</div>` + watch(season); return; }
   if (seq !== renderSeq) return;
   const m = model(season, row, gm); CURM = m;
+  const tab = state.tab;
+  const TABS = [["flow", "Game Flow"], ["box", "Box Score"], ["eff", "Efficiency"]];
+  const tabBar = `<div class="tabs" role="tablist">${TABS.map(([k, t]) => `<button type="button" role="tab" class="tab ${tab === k ? "on" : ""}" aria-selected="${tab === k}" data-tab="${k}">${t}</button>`).join("")}</div>`;
   $("#app").innerHTML =
-      `<div class="gc"><div class="in">${header(m)}${flowChart(m)}${fullCourt(m)}</div>
-        <div class="cf">Data: ESPN box score &amp; play-by-play.</div></div>`
-    + `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
-        <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>`
-    + `<div class="gc"><div class="in">${compare(m)}</div>
-        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = this season's other games (opponent: their ESPN season stats so far), the full previous season on ESPN, or Baylor's 2020-21 national title team (offense and defense). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages. Data: ESPN.</div></div>`
-    + watch(season);
+      `<div class="gc"><div class="in">${header(m)}</div></div>` + tabBar
+    + (tab === "flow" ? `<div class="gc"><div class="in">${flowChart(m)}${fullCourt(m)}</div></div>`
+        + `<div class="gc"><div class="in">${leaders(m)}</div><div class="cf">Data: ESPN box score &amp; play-by-play.</div></div>` : "")
+    + (tab === "box" ? `<div class="gc"><div class="in">${scoring(m)}${boxTable(m, BAY, true)}${boxTable(m, m.opp.id, false)}
+        <div class="bkey">Starters above the line · <span style="background:var(--green);color:#fff">boxed</span> = team high · <span style="background:#ecb7ab">hotter</span> / <span style="background:#c3cfe9">colder</span> than D1 average (FG 44%, 3PT 34%, FT 71%), 3+ tries</div></div></div>` : "")
+    + (tab === "eff" ? `<div class="gc"><div class="in">${compare(m)}</div>
+        <div class="cf">Points per trip = points per possession · eFG% counts threes 1.5× · turnovers = % of trips · off. rebounds = offensive rebounds per missed field goal · usual = this season's other games (opponent: their ESPN season stats so far), the full previous season on ESPN, or Baylor's 2020-21 national title team (offense and defense). Usual sits at the center of each track; the dot shows how far tonight swung. Usual counts are per-game averages. Data: ESPN.</div></div>` + watch(season) : "");
   wireFlowTip(m); fitBox();
 }
 function fitBox(){
@@ -951,6 +1007,7 @@ function wireFlowTip(m){
 
 document.addEventListener("click", e => {
   if (e.target.closest("input")) return;
+  const tb = e.target.closest("[data-tab]"); if (tb){ if (state.tab !== tb.dataset.tab){ state.tab = tb.dataset.tab; const y = Math.min(window.scrollY, $("#app").offsetTop); render().then(() => window.scrollTo({top: y})); } return; }
   const pl = e.target.closest("[data-pl]"); if (pl){ playerCard(pl.dataset.pl); return; }
   if (e.target.closest("[data-close]") || e.target.id === "ov"){ closeCard(); return; }
   const c = e.target.closest("[data-g]"); if (c){ location.hash = "g" + c.dataset.g; if (c.closest("#watch")) window.scrollTo({top: 0}); return; }
