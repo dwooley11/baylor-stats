@@ -394,6 +394,27 @@ html.wall .bigs .l,html.wall .sbd .tm.r,html.wall .ls td.dim{color:#5f5a50}
 .ldr .ls2{font-size:11.5px;color:var(--muted);margin:2px 0 6px}
 .ldr svg{width:100%;display:block}
 @media(max-width:620px){.ldrs{grid-template-columns:repeat(2,1fr);gap:14px 10px}}
+
+/* ===== title section: identical on every theme and on both pages =====
+   left: title (logo + BAYLOR BASKETBALL, or the 80s wordmark) sized by JS to fill the space;
+   right: "ESPN box score &" / "play-by-play · live", Refresh, status line. Fixed height. */
+:root{--th:92px}
+@media(max-width:520px){:root{--th:84px}}
+.top,html:not(.plain) .top,html.wall .top,html:not(.eighties) .top,html.eighties .top{display:flex;flex-wrap:wrap;align-items:center;padding:10px 12px;border-radius:10px;margin-bottom:12px;gap:0 10px}
+.top>.navrow+div{flex:1 1 0 !important;min-width:0 !important;height:var(--th);display:flex;flex-direction:column;justify-content:center;overflow:hidden;font-size:var(--tf,24px)}
+.top>.src,html:not(.plain) .top>.src,html.eighties .top>.src,html:not(.eighties) .top>.src{flex:0 0 auto !important;height:var(--th);max-width:none !important;min-width:0;margin:0 !important;display:flex !important;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;gap:0}
+#src,html.eighties #src,html:not(.eighties) #src{font-size:11px !important;line-height:1.35 !important;white-space:normal !important;overflow:visible !important;flex:none !important;min-width:0}
+#src .sbr,html.eighties #src .sbr{display:inline !important}#src .s1x,html.eighties #src .s1x{display:inline !important}
+#src .s2,html.eighties #src .s2{display:block !important}#src .sdx,html.eighties #src .sdx{display:none !important}
+.top>.src .rf,html.eighties .top>.src .rf{margin:6px 0 0 !important;padding:4px 11px !important;font-size:12px !important;flex:none}
+#rfmsg,html.eighties #rfmsg{display:block !important;flex:none !important;margin:3px 0 0 !important;max-width:none !important;min-height:1.35em;font-size:11px;line-height:1.35;text-align:right;white-space:nowrap}
+/* title, scaled from --tf */
+html:not(.eighties) .brand,html.wall:not(.eighties) .brand{font-size:1em !important;gap:.3em !important;white-space:nowrap;margin:0}
+html:not(.eighties) .blogo,html.wall:not(.eighties) .blogo{height:1.45em !important;width:auto}
+html.eighties .v2-markrow{gap:.25em}
+html.eighties .v2-mark{font-size:1.75em !important;margin:0 !important;line-height:.95 !important;-webkit-text-stroke-width:.12em}
+html.eighties .v2-paw{height:1.3em !important;width:auto}
+html.eighties .v2-sub{font-size:.52em !important;margin-top:.35em !important;gap:.5em}
 </style>
 <!-- END BASKETBALL V2 THEMES --></head>
 <body>
@@ -963,9 +984,10 @@ async function render(){
   // No game picked: show the latest game that has tipped off (a live game takes over once it starts)
   const picked = (location.hash || "").startsWith("#g");
   if (!picked || !games.some(g => g.id === state.game)) state.game = games.length ? games[games.length - 1].id : null;
-  const saved = live ? "" : "saved " + esc(new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"}));
-  // live: "ESPN box score &" / "play-by-play · live"; saved: the save time gets its own third line
-  $("#src").innerHTML = `<span class="s1">ESPN<span class="s1x"> box score &amp;</span></span><br class="sbr"><span class="s2"><span class="s1x">play-by-play</span>${live ? `<i class="sdot"> · </i>live` : ""}</span>${live ? "" : `<span class="s2"><i class="sdot sdx"> · </i>${saved}</span>`}`;
+  const saved = live ? "" : "Saved " + new Date(B.pulled).toLocaleString("en-US", {month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago"});
+  $("#src").innerHTML = `<span class="s1">ESPN<span class="s1x"> box score &amp;</span></span><br class="sbr"><span class="s2"><span class="s1x">play-by-play</span><i class="sdot"> · </i>${live ? "live" : "saved"}</span>`;
+  { const rm = $("#rfmsg"); if (rm && (!rm.textContent || rm.dataset.auto)){ rm.textContent = saved; rm.dataset.auto = saved ? "1" : ""; } }
+  fitTitle();
   $("#season").innerHTML = B.seasons.slice().reverse().map(s => `<option value="${s.year}" ${s.year === season.year ? "selected" : ""}>${s.label}${s.year === B.seasonYear ? " (this season)" : ""} · ${recStr(s)}</option>`).join("");
   $("#rec").innerHTML = record(season);
   $("#chips").innerHTML = games.slice().reverse().map(g => { const w = g.bay.pts > g.o.pts, lv = !g.completed;
@@ -1084,15 +1106,32 @@ async function tryLive(){
   } catch(_){ return false; }
 }
 
+// Title fills the left side of the title section: largest size (up to 40px) that fits its width and height
+function fitTitle(){
+  const box = document.querySelector(".top>.navrow+div"); if (!box) return;
+  const vis = [...box.children].filter(e => e.offsetParent !== null);
+  // size both sport pages the same: measure with the longer word, BASKETBALL, then put the real word back
+  const words = [box.querySelector(".brand span"), box.querySelector(".v2-sub")].filter(Boolean).map(el => { const n = [...el.childNodes].reverse().find(x => x.nodeType === 3 && x.textContent.trim()); const t = n ? n.textContent : null; if (n) n.textContent = "BASKETBALL"; return [n, t]; });
+  const fits = () => vis.every(e => e.scrollWidth <= box.clientWidth + 1) && vis.reduce((h, e) => h + e.offsetHeight, 0) <= box.clientHeight;
+  let lo = 14, hi = window.innerWidth > 520 ? 40 : 34;
+  while (hi - lo > .5){ const mid = (lo + hi) / 2; box.style.setProperty("--tf", mid + "px"); if (fits()) lo = mid; else hi = mid; }
+  box.style.setProperty("--tf", lo + "px");
+  words.forEach(([n, t]) => { if (n) n.textContent = t; });
+}
+window.addEventListener("resize", () => fitTitle());
+new MutationObserver(() => requestAnimationFrame(fitTitle)).observe(document.documentElement, {attributes: true, attributeFilter: ["class", "data-theme"]});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitTitle());
+document.addEventListener("load", e => { if (e.target.matches && e.target.matches(".blogo,.v2-paw")) fitTitle(); }, true);
+
 async function refresh(){
   const btn = $("#refresh"), msg = $("#rfmsg");
-  btn.disabled = true; msg.textContent = "Refreshing…";
+  btn.disabled = true; msg.textContent = "Refreshing…"; msg.dataset.auto = "";
   try { await loadIndex(); } catch(_){}
   Object.keys(GAMES).forEach(k => { const f = findGame(k); if (!f || !f.g.completed) delete GAMES[k]; });
   const ok = await tryLive();
   btn.disabled = false;
   msg.textContent = ok ? "Live from ESPN · " + new Date().toLocaleTimeString("en-US", {hour: "numeric", minute: "2-digit"})
-                       : "Couldn't reach ESPN from here — showing saved data";
+                       : "ESPN unreachable · saved data";
   await render();
 }
 $("#refresh").addEventListener("click", refresh);
