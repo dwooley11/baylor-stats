@@ -475,6 +475,16 @@ html.eighties .v2-markrow{gap:.25em}
 html.eighties .v2-mark{font-size:1.75em !important;margin:0 !important;line-height:.95 !important;-webkit-text-stroke-width:.12em}
 html.eighties .v2-paw{height:1.3em !important;width:auto}
 html.eighties .v2-sub{font-size:.52em !important;margin-top:.35em !important;gap:.5em}
+
+/* W/L chips under Streak: keep each chip full size, let the row run past the narrow column */
+.rec .form{display:flex;gap:2px;flex-wrap:nowrap;white-space:nowrap;width:max-content;margin-top:5px}
+.rec .form i{flex:none}
+@media(max-width:520px){
+  .rec .grid{display:flex !important;gap:4px 6px}
+  .rec .grid>div{flex:1 1 0;min-width:0}
+  .rec .grid>div:last-child{flex:0 0 auto}
+  .rec .form i{width:13px;height:13px;font-size:7.5px}
+}
 </style>
 <!-- END FOOTBALL V2 THEMES -->
 </head>
@@ -634,9 +644,9 @@ function record(season){
   const post = wl(g => g.post);
   const cell = (lab, v) => `<div><span class="lbl">${lab}</span><b>${v}</b></div>`;
   const form = `<div class="form">${gs.slice(-5).map(g => g.pf > g.pa ? "<i>W</i>" : `<i class="L">L</i>`).join("")}</div>`;
-  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(wl(() => true))}</div>${form}</div>
+  return `<div><div class="lbl">${esc(season.label)} record</div><div class="wl2">${fmt(wl(() => true))}</div></div>
     <div class="grid">${cell("Big 12", fmt(wl(g => g.conf && g.site !== "N")))}${cell("Home", fmt(wl(g => g.site === "H")))}${cell("Away", fmt(wl(g => g.site === "A")))}${cell("Neutral", fmt(wl(g => g.site === "N")))}${post[0] + post[1] ? cell("Bowl", fmt(post)) : ""}
-    <div><span class="lbl">Streak</span><b>${streak || "—"}</b></div></div>`;
+    <div><span class="lbl">Streak</span><b>${streak || "—"}</b>${form}</div></div>`;
 }
 const recStr = s => { const gs = finals(s), w = gs.filter(g => g.pf > g.pa).length; return w + "-" + (gs.length - w); };
 
