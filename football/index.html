@@ -1145,7 +1145,8 @@ function fitTitle(){
   const vis = [...box.children].filter(e => e.offsetParent !== null);
   // size both sport pages the same: measure with the longer word, BASKETBALL, then put the real word back
   const words = [box.querySelector(".brand span"), box.querySelector(".v2-sub")].filter(Boolean).map(el => { const n = [...el.childNodes].reverse().find(x => x.nodeType === 3 && x.textContent.trim()); const t = n ? n.textContent : null; if (n) n.textContent = "BASKETBALL"; return [n, t]; });
-  const fits = () => vis.every(e => e.scrollWidth <= box.clientWidth + 1) && vis.reduce((h, e) => h + e.offsetHeight, 0) <= box.clientHeight;
+  const right = e => Math.max(e.getBoundingClientRect().right, ...[...e.querySelectorAll("*")].filter(c => c.offsetParent !== null).map(c => c.getBoundingClientRect().right));
+  const fits = () => { const bx = box.getBoundingClientRect(); return vis.every(e => right(e) <= bx.right + 1) && (vis.length ? vis[vis.length - 1].getBoundingClientRect().bottom - vis[0].getBoundingClientRect().top : 0) <= box.clientHeight; };
   let lo = 14, hi = window.innerWidth > 520 ? 40 : 34;
   while (hi - lo > .5){ const mid = (lo + hi) / 2; box.style.setProperty("--tf", mid + "px"); if (fits()) lo = mid; else hi = mid; }
   box.style.setProperty("--tf", lo + "px");
@@ -1153,7 +1154,9 @@ function fitTitle(){
 }
 window.addEventListener("resize", () => fitTitle());
 new MutationObserver(() => requestAnimationFrame(fitTitle)).observe(document.documentElement, {attributes: true, attributeFilter: ["class", "data-theme"]});
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitTitle());
+// Refit whenever a web font finishes loading (the 80s wordmark font often arrives after first paint)
+if (document.fonts){ document.fonts.ready.then(() => fitTitle()); document.fonts.addEventListener && document.fonts.addEventListener("loadingdone", () => fitTitle()); }
+[300, 1000, 2500].forEach(ms => setTimeout(() => fitTitle(), ms));
 document.addEventListener("load", e => { if (e.target.matches && e.target.matches(".blogo,.v2-paw")) fitTitle(); }, true);
 
 async function refresh(){
